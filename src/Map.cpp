@@ -22,7 +22,7 @@ void Map::load(const char *path, SDL_Texture *ts) {
 
     //parse width and height of map
     auto *mapNode = doc.FirstChildElement("map");
- width = mapNode->IntAttribute("width");
+    width = mapNode->IntAttribute("width");
     height = mapNode->IntAttribute("height");
     //parse terrain data
     auto *layer = mapNode->FirstChildElement("layer");
@@ -69,31 +69,6 @@ void Map::load(const char *path, SDL_Texture *ts) {
         }
         // else: ignore other groups (or handle more later)
     }
-    //next sibling element
-    // auto *objectGroup = layer->NextSiblingElement("objectgroup");
-    // //create a for loop with initialization and an increment
-    // for (auto *obj = objectGroup->FirstChildElement("object");
-    //      obj != nullptr;
-    //      obj = obj->NextSiblingElement("object")) {
-    //     Collider c;
-    //     c.rect.x = obj->FloatAttribute("x");
-    //     c.rect.y = obj->FloatAttribute("y");
-    //     c.rect.w = obj->FloatAttribute("width");
-    //     c.rect.h = obj->FloatAttribute("height");
-    //     colliders.push_back(c);
-    // }
-    // auto *coinGroup = objectGroup->NextSiblingElement("objectgroup");
-    // for (auto *obj = coinGroup->FirstChildElement("object");
-    //      obj != nullptr;
-    //      obj = obj->NextSiblingElement("object")) {
-    //     Collider c;
-    //     c.rect.x = obj->FloatAttribute("x");
-    //     c.rect.y = obj->FloatAttribute("y");
-    //     //shouldn't have width of height since coins are placed using points, not boxes
-    //     //c.rect.w = obj->FloatAttribute("width");
-    //     //c.rect.h = obj->FloatAttribute("height");
-    //     coins.push_back(c);
-    // }
 }
 
 void Map::draw(const Camera &cam) {

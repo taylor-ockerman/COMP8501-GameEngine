@@ -22,6 +22,7 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
         SDL_FRect menuSrc{0, 0, (float) windowWidth, (float) windowHeight};
         SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, menuSrc.w, menuSrc.h};
         menu.addComponent<Sprite>(tex, menuSrc, menuDest);
+        return;
     }
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset.png"));
