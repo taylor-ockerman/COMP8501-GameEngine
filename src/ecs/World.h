@@ -10,7 +10,7 @@
 #include "Component.h"
 #include "../Map.h"
 #include "Entity.h"
-#include "EventManager.h"
+#include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
 #include "system/MovementSystem.h"
@@ -20,6 +20,9 @@
 #include "system/CameraSystem.h"
 #include "system/DestructionSystem.h"
 #include "system/SpawnTimerSystem.h"
+#include "system/EventResponseSystem.h"
+#include "../scene/SceneType.h"
+#include "system/MainMenuSystem.h"
 
 class World {
     Map map;
@@ -34,18 +37,25 @@ class World {
     EventManager eventManager;
     SpawnTimerSystem spawnTimerSystem;
     DestructionSystem destructionSystem;
+    EventResponseSystem eventResponseSystem{*this};
+    MainMenuSystem mainMenuSystem;
 
 public:
-    World();
+    World() = default;
 
-    void update(float dt, const SDL_Event &event) {
-        keyboardInputSystem.update(entities, event);
-        movementSystem.update(entities, dt);
-        collisionSystem.update(*this);
-        animationSystem.update(entities, dt);
-        cameraSystem.update(entities);
-        spawnTimerSystem.update(entities, dt);
-        destructionSystem.update(entities);
+    void update(float dt, const SDL_Event &event, SceneType sceneType) {
+        if (sceneType == SceneType::MainMenu) {
+            mainMenuSystem.update(event);
+            return;
+        } else {
+            keyboardInputSystem.update(entities, event);
+            movementSystem.update(entities, dt);
+            collisionSystem.update(*this);
+            animationSystem.update(entities, dt);
+            cameraSystem.update(entities);
+            spawnTimerSystem.update(entities, dt);
+            destructionSystem.update(entities);
+        }
         synchronizeEntities();
         cleanup();
     }

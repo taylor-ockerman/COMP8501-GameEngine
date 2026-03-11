@@ -3,11 +3,26 @@
 //
 
 #include "Scene.h"
+#include "../Game.h"
+#include "../manager/AssetManager.h"
 
-#include "AssetManager.h"
+Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, const int windowWidth,
+             const int windowHeight) : name(
+                                           sceneName), sceneType(sceneType) {
+    if (sceneType == SceneType::MainMenu) {
+        //camera
+        auto &cam = world.createEntity();
+        cam.addComponent<Camera>();
 
-Scene::Scene(const char *sceneName, const char *mapPath, const int windowWidth, const int windowHeight) : name(
-    sceneName) {
+        //menu
+        auto &menu(world.createEntity());
+        auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
+
+        SDL_Texture *tex = TextureManager::load("../assets/menu.png");
+        SDL_FRect menuSrc{0, 0, (float) windowWidth, (float) windowHeight};
+        SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, menuSrc.w, menuSrc.h};
+        menu.addComponent<Sprite>(tex, menuSrc, menuDest);
+    }
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset.png"));
     for (auto &collider: world.getMap().colliders) {
@@ -67,6 +82,8 @@ Scene::Scene(const char *sceneName, const char *mapPath, const int windowWidth, 
     playerCollider.rect.h = playerDest.h;
 
     player.addComponent<PlayerTag>();
+
+    player.addComponent<Health>(Game::gameState.playerHealth);
 
     auto &spawner(world.createEntity());
     Transform t = spawner.addComponent<Transform>(Vector2D(windowWidth / 2, windowHeight - 5), 0.0f, 1.0f);

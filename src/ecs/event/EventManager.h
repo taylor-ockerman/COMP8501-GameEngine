@@ -7,13 +7,13 @@
 #include <functional>
 #include <vector>
 
-struct CollisionEvent {
-    Entity *entityA = nullptr;
-    Entity *entityB = nullptr;
-};
+#include "BaseEvent.h"
+
 
 //Observer pattern
 class EventManager {
+    using Handler = std::function<void(const BaseEvent &)>;
+
 public:
     // template<typename EventType>
     // void emit(const EventType &event) {
@@ -24,8 +24,8 @@ public:
     //         listener(event); // invoke the function here
     //     }
     // }
-    void emit(const CollisionEvent &event) const {
-        for (const auto &listener: collisionListeners) {
+    void emit(const BaseEvent &event) const {
+        for (const auto &listener: listeners) {
             listener(event);
         }
     }
@@ -35,8 +35,8 @@ public:
     //     //pass in the callback/callable wrapper/subscription
     //     getListeners<EventType>().push_back(callback);
     // }
-    void subscribe(std::function<void(const CollisionEvent &)> callback) {
-        collisionListeners.emplace_back(callback);
+    void subscribe(const Handler &callback) {
+        listeners.emplace_back(callback);
     }
 
 private:
@@ -48,6 +48,6 @@ private:
     //     return listeners;
     // }
 
-    std::vector<std::function<void(const CollisionEvent &)> > collisionListeners;
+    std::vector<Handler> listeners;
 };
 #endif //INC_8051TUTORIAL_EVENTMANAGER_H

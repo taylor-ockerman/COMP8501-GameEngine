@@ -18,6 +18,10 @@ void Map::load(const char *path, SDL_Texture *ts) {
 
     //parse width and height of map
     auto *mapNode = doc.FirstChildElement("map");
+    if (mapNode == nullptr) {
+        std::cout << "no map to load" << std::endl;
+        return;
+    }
     width = mapNode->IntAttribute("width");
     height = mapNode->IntAttribute("height");
     //parse terrain data

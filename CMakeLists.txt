@@ -30,11 +30,11 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/utils/Vector2D.cpp
         src/utils/Collision.cpp
         src/ecs/system/CollisionSystem.cpp
-        src/ecs/World.cpp
         src/vendor/tinyxml2.cpp
         src/manager/AssetManager.cpp
-        src/manager/Scene.cpp
-        src/manager/SceneManager.h)
+        src/scene/Scene.cpp
+        src/ecs/system/EventResponseSystem.cpp
+        src/ecs/system/MainMenuSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3
