@@ -15,22 +15,22 @@
         <frame x="256" y="384" w="64" h="64"></frame>
         <frame x="320" y="384" w="64" h="64"></frame>
     </walk_right>
-    <walk_up>
+    <walk_down>
         <frame x="0" y="256" w="64" h="64"></frame>
         <frame x="64" y="256" w="64" h="64"></frame>
         <frame x="128" y="256" w="64" h="64"></frame>
         <frame x="192" y="256" w="64" h="64"></frame>
         <frame x="256" y="256" w="64" h="64"></frame>
         <frame x="320" y="256" w="64" h="64"></frame>
-    </walk_up>
-    <walk_down>
+    </walk_down>
+    <walk_up>
         <frame x="0" y="448" w="64" h="64"></frame>
         <frame x="64" y="448" w="64" h="64"></frame>
         <frame x="128" y="448" w="64" h="64"></frame>
         <frame x="192" y="448" w="64" h="64"></frame>
         <frame x="256" y="448" w="64" h="64"></frame>
         <frame x="320" y="448" w="64" h="64"></frame>
-    </walk_down>
+    </walk_up>
     <idle_right>
         <frame x="0" y="128" w="64" h="64"></frame>
         <frame x="64" y="128" w="64" h="64"></frame>
