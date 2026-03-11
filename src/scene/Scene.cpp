@@ -93,14 +93,14 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
         e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
         e.addComponent<Velocity>(Vector2D(0, -1), 100.0f);
 
-        Animation anim = AssetManager::getAnimation("enemy");
+        auto &anim = AssetManager::getAnimation("enemy");
         e.addComponent<Animation>(anim);
 
         SDL_Texture *tex = TextureManager::load("../assets/animations/bird_anim.png");
         SDL_FRect src = {0, 0, 32, 32};
         SDL_FRect dest{t.position.x, t.position.y, 32, 32};
         e.addComponent<Sprite>(tex, src, dest);
-        Collider c = e.addComponent<Collider>("projectile");
+        auto &c = e.addComponent<Collider>("projectile");
         c.rect.w = dest.w;
         c.rect.h = dest.h;
 

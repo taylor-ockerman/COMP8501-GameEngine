@@ -12,17 +12,17 @@
 #include "vendor/tinyxml2.h"
 
 void Map::load(const char *path, SDL_Texture *ts) {
+    if (path == nullptr) {
+        std::cout << "no map to load" << std::endl;
+        return;
+    }
     tileset = ts;
     tinyxml2::XMLDocument doc;
     doc.LoadFile(path);
 
     //parse width and height of map
     auto *mapNode = doc.FirstChildElement("map");
-    if (mapNode == nullptr) {
-        std::cout << "no map to load" << std::endl;
-        return;
-    }
-    width = mapNode->IntAttribute("width");
+ width = mapNode->IntAttribute("width");
     height = mapNode->IntAttribute("height");
     //parse terrain data
     auto *layer = mapNode->FirstChildElement("layer");

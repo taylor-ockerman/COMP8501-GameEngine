@@ -46,7 +46,6 @@ public:
     void update(float dt, const SDL_Event &event, SceneType sceneType) {
         if (sceneType == SceneType::MainMenu) {
             mainMenuSystem.update(event);
-            return;
         } else {
             keyboardInputSystem.update(entities, event);
             movementSystem.update(entities, dt);
