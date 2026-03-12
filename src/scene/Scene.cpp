@@ -10,54 +10,63 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
              const int windowHeight) : name(
                                            sceneName), sceneType(sceneType) {
     if (sceneType == SceneType::MainMenu) {
-        //camera
-        auto &cam = world.createEntity();
-        cam.addComponent<Camera>();
-
-        //menu
-        auto &menu(world.createEntity());
-        auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
-
-        SDL_Texture *tex = TextureManager::load("../assets/menu.png");
-        SDL_FRect menuSrc{0, 0, (float) windowWidth, (float) windowHeight};
-        SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, menuSrc.w, menuSrc.h};
-        menu.addComponent<Sprite>(tex, menuSrc, menuDest);
+        initMainMenu(windowWidth, windowHeight);
         return;
     }
+    initGameplay(mapPath, windowWidth, windowHeight);
+}
+
+void Scene::createProjectile(Vector2D pos, Vector2D dir, int speed) {
+}
+
+void Scene::initMainMenu(int windowWidth, int windowHeight) {
+    //camera
+    auto &cam = world.createEntity();
+    cam.addComponent<Camera>();
+
+    //menu
+    auto &menu(world.createEntity());
+    auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
+
+    SDL_Texture *tex = TextureManager::load("../assets/menu.png");
+    SDL_FRect menuSrc{0, 0, (float) windowWidth, (float) windowHeight};
+    SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, menuSrc.w, menuSrc.h};
+    menu.addComponent<Sprite>(tex, menuSrc, menuDest);
+
+    auto &settingsOverlay = createSettingsOverlay(windowWidth, windowHeight);
+    createCogButton(windowWidth, windowHeight, settingsOverlay);
+}
+
+void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset.png"));
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
         e.addComponent<Transform>(Vector2D(collider.rect.x, collider.rect.y), 0.0f, 1.0f);
-        auto &c = e.addComponent<Collider>("no-wall"); //change to wall to turn on red colliders again
+        auto &c = e.addComponent<Collider>("wall"); //change to wall to turn on red colliders again
         c.rect.x = collider.rect.x;
         c.rect.y = collider.rect.y;
         c.rect.w = collider.rect.w;
         c.rect.h = collider.rect.h;
-
-        SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
-        SDL_FRect colSrc{0, 32, 32, 32};
-        SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
-        e.addComponent<Sprite>(tex, colSrc, colDst);
+        //uncomment this block to show red boxes on wall colliders
+        // SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
+        // SDL_FRect colSrc{0, 32, 32, 32};
+        // SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
+        // e.addComponent<Sprite>(tex, colSrc, colDst);
     }
-    //add entities
-    auto &item(world.createEntity());
-    auto &itemTransform = item.addComponent<Transform>(Vector2D(100.0f, 200.0f), 0.0f, 1.0f);
-    for (auto &collider: world.getMap().coins) {
-        auto &e = world.createEntity();
-        e.addComponent<Transform>(Vector2D(collider.rect.x, collider.rect.y), 0.0f, 1.0f);
-        auto &c = e.addComponent<Collider>("item");
-        c.rect.x = collider.rect.x;
-        c.rect.y = collider.rect.y;
-        // c.rect.w = collider.rect.w;
-        // c.rect.h = collider.rect.h;
 
-        SDL_Texture *tex = TextureManager::load("../assets/coin.png");
-        SDL_FRect colSrc{0, 0, 32, 32};
-        SDL_FRect colDst{c.rect.x, c.rect.y, 32, 32};
-        e.addComponent<Sprite>(tex, colSrc, colDst);
+    for (auto &sp: world.getMap().coins) {
+        auto &item = world.createEntity();
+        item.addComponent<Transform>(Vector2D(sp.rect.x, sp.rect.y), 0.0f, 1.0f);
+        auto &c = item.addComponent<Collider>("item");
+        c.rect.x = sp.rect.x;
+        c.rect.y = sp.rect.y;
+
+        SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
+        SDL_FRect itemSrc{0, 0, 32, 32};
+        SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
+        item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
     }
-    SDL_FRect itemSrc{0, 0, 32, 32};
 
     auto &cam = world.createEntity();
     SDL_FRect camView{};
@@ -74,7 +83,7 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
 
     SDL_Texture *texture = TextureManager::load("../assets/animations/human_anim.png");
     SDL_FRect playerSrc = anim.clips[anim.currentClip].frameIndices[0];
-    SDL_FRect playerDest{playerTrans.position.x, playerTrans.position.y, 128, 128};
+    SDL_FRect playerDest{playerTrans.position.x, playerTrans.position.y, 64, 64};
 
     player.addComponent<Sprite>(texture, playerSrc, playerDest);
 
@@ -101,6 +110,7 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
         SDL_FRect src = {0, 0, 32, 32};
         SDL_FRect dest{t.position.x, t.position.y, 32, 32};
         e.addComponent<Sprite>(tex, src, dest);
+
         auto &c = e.addComponent<Collider>("projectile");
         c.rect.w = dest.w;
         c.rect.h = dest.h;
@@ -108,9 +118,99 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
         e.addComponent<ProjectileTag>();
     });
 
+    //add scene state
     auto &state(world.createEntity());
     state.addComponent<SceneState>();
 }
 
-void Scene::createProjectile(Vector2D pos, Vector2D dir, int speed) {
+Entity &Scene::createSettingsOverlay(int windowWidth, int windowHeight) {
+    auto &overlay(world.createEntity());
+    SDL_Texture *overlayTex = TextureManager::load("../assets/ui/settings.jpg");
+    SDL_FRect overlaySrc{0, 0, windowWidth * 0.85f, windowHeight * 0.85f};
+    SDL_FRect overlayDest{
+        (float) windowWidth / 2 - overlaySrc.w / 2, (float) windowHeight / 2 - overlaySrc.h / 2, overlaySrc.w,
+        overlaySrc.h
+    };
+    overlay.addComponent<Transform>(Vector2D(overlayDest.x, overlayDest.y), 0.0f, 1.0f);
+    overlay.addComponent<Sprite>(overlayTex, overlaySrc, overlayDest, RenderLayer::UI, false);
+    createSettingsUIComponents(overlay);
+    return overlay;
+}
+
+Entity &Scene::createCogButton(int windowWidth, int windowHeight, Entity &overlay) {
+    //std::cout << "Creating Cog Button" << std::endl;
+    auto &cog(world.createEntity());
+    auto &cogTransform = cog.addComponent<Transform>(Vector2D((float) windowWidth - 50, (float) windowHeight - 50),
+                                                     0.0f, 1.0f);
+    SDL_Texture *tex = TextureManager::load("../assets/ui/cog.png");
+    SDL_FRect cogSrc{0, 0, 32, 32};
+    SDL_FRect cogDest{cogTransform.position.x, cogTransform.position.y, cogSrc.w, cogSrc.h};
+    cog.addComponent<Sprite>(tex, cogSrc, cogDest, RenderLayer::UI, true);
+    cog.addComponent<Collider>("ui", cogDest);
+    auto &clickable = cog.addComponent<Clickable>();
+    clickable.onPressed = [&cogTransform] {
+        cogTransform.scale = 0.5f;
+    };
+    clickable.onReleased = [this,&cogTransform, &overlay] {
+        cogTransform.scale = 1.0f;
+        toggleSettingsOverlayVisibility(overlay);
+    };
+    clickable.onCancel = [&cogTransform] {
+        cogTransform.scale = 1.0f;
+    };
+    return cog;
+}
+
+void Scene::createSettingsUIComponents(Entity &overlay) {
+    if (!overlay.hasComponent<Children>()) {
+        overlay.addComponent<Children>();
+    }
+    auto &overlayTransform = overlay.getComponent<Transform>();
+    auto &overlaySprite = overlay.getComponent<Sprite>();
+
+    float baseX = overlayTransform.position.x;
+    float baseY = overlayTransform.position.y;
+
+    auto &closeButton = world.createEntity();
+    auto &closeTransform = closeButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w - 40, baseY + 10),
+                                                               0.0f, 1.0f);
+    SDL_Texture *text = TextureManager::load("../assets/ui/close.png");
+    SDL_FRect closeSrc{0, 0, (float) 32, (float) 32};
+    SDL_FRect closeDest{closeTransform.position.x, closeTransform.position.y, closeSrc.w, closeSrc.h};
+    closeButton.addComponent<Sprite>(text, closeSrc, closeDest, RenderLayer::UI, false);
+    closeButton.addComponent<Collider>("ui", closeDest);
+
+    auto &clickable = closeButton.addComponent<Clickable>();
+    clickable.onPressed = [&closeTransform] {
+        closeTransform.scale = 0.5f;
+    };
+    clickable.onReleased = [this,&overlay,&closeTransform] {
+        closeTransform.scale = 1.0f;
+        toggleSettingsOverlayVisibility(overlay);
+    };
+    clickable.onCancel = [&closeTransform] {
+        closeTransform.scale = 1.0f;
+    };
+
+    closeButton.addComponent<Parent>(&overlay);
+    auto &parentChildren = overlay.getComponent<Children>();
+    parentChildren.children.push_back(&closeButton);
+}
+
+void Scene::toggleSettingsOverlayVisibility(Entity &overlay) {
+    auto &sprite = overlay.getComponent<Sprite>();
+    bool newVisibility = !sprite.visible;
+    sprite.visible = newVisibility;
+    if (overlay.hasComponent<Children>()) {
+        auto &c = overlay.getComponent<Children>();
+
+        for (auto &child: c.children) {
+            if (child && child->hasComponent<Sprite>()) {
+                child->getComponent<Sprite>().visible = newVisibility;
+            }
+            if (child && child->hasComponent<Collider>()) {
+                child->getComponent<Collider>().enabled = newVisibility;
+            }
+        }
+    }
 }

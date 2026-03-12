@@ -9,7 +9,8 @@
 
 enum class EventType {
     Collision,
-    PlayerAction
+    PlayerAction,
+    MouseInteraction
 };
 
 struct BaseEvent {
@@ -39,6 +40,17 @@ struct PlayerActionEvent : BaseEvent {
 
     PlayerActionEvent(Entity *player, PlayerAction action) : player(player), action(action) {
         type = EventType::PlayerAction;
+    }
+};
+
+enum class MouseInteractionState { Pressed, Released, Cancel };
+
+struct MouseInteractionEvent : BaseEvent {
+    Entity *entity = nullptr;
+    MouseInteractionState state{};
+
+    MouseInteractionEvent(Entity *entity, MouseInteractionState state) : entity(entity), state(state) {
+        type = EventType::MouseInteraction;
     }
 };
 #endif //INC_8051TUTORIAL_BASEEVENT_H

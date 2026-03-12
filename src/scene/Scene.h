@@ -32,5 +32,17 @@ private:
     SceneType sceneType;
 
     void createProjectile(Vector2D pos, Vector2D dir, int speed);
+
+    void initMainMenu(int windowWidth, int windowHeight);
+
+    void initGameplay(const char *mappath, int windowWidth, int windowHeight);
+
+    Entity &createSettingsOverlay(int windowWidth, int windowHeight);
+
+    Entity &createCogButton(int windowWidth, int windowHeight, Entity &overlay);
+
+    void createSettingsUIComponents(Entity &overlay);
+
+    void toggleSettingsOverlayVisibility(Entity &overlay);
 };
 #endif //INC_8051TUTORIAL_SCENE_H

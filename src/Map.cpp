@@ -45,7 +45,7 @@ void Map::load(const char *path, SDL_Texture *ts) {
         const char *nameC = group->Attribute("name");
         std::string groupName = nameC ? nameC : "";
 
-        if (groupName == "Collider Layer") {
+        if (groupName == "Collision Layer") {
             for (auto *obj = group->FirstChildElement("object");
                  obj != nullptr;
                  obj = obj->NextSiblingElement("object")) {

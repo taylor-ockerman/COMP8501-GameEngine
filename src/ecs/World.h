@@ -23,6 +23,8 @@
 #include "system/EventResponseSystem.h"
 #include "../scene/SceneType.h"
 #include "system/MainMenuSystem.h"
+#include "system/MouseInputSystem.h"
+#include "system/UIRenderSystem.h"
 
 class World {
     Map map;
@@ -39,6 +41,8 @@ class World {
     DestructionSystem destructionSystem;
     EventResponseSystem eventResponseSystem{*this};
     MainMenuSystem mainMenuSystem;
+    UIRenderSystem uiRenderSystem;
+    MouseInputSystem mouseInputSystem;
 
 public:
     World() = default;
@@ -55,6 +59,8 @@ public:
             spawnTimerSystem.update(entities, dt);
             destructionSystem.update(entities);
         }
+
+        mouseInputSystem.update(*this, event);
         synchronizeEntities();
         cleanup();
     }
@@ -67,6 +73,7 @@ public:
             }
         }
         renderSystem.render(entities);
+        uiRenderSystem.render(entities);
     }
 
     Entity &createEntity() {

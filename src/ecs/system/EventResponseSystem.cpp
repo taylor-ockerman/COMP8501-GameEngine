@@ -10,7 +10,7 @@ EventResponseSystem::EventResponseSystem(World &world) {
     world.getEventManager().subscribe(
         [this,&world](const BaseEvent &e) {
             if (e.type != EventType::Collision) return;
-            const auto &collision = static_cast<const CollisionEvent &>(e); //cast bast type to collision type
+            const auto &collision = static_cast<const CollisionEvent &>(e); //cast base type to collision type
 
             onCollision(collision, "item", world);
             onCollision(collision, "wall", world);
@@ -20,8 +20,15 @@ EventResponseSystem::EventResponseSystem(World &world) {
     world.getEventManager().subscribe(
         [this,&world](const BaseEvent &e) {
             if (e.type != EventType::PlayerAction) return;
-            const auto &playerAction = static_cast<const PlayerActionEvent &>(e); //cast bast type to collision type
+            const auto &playerAction = static_cast<const PlayerActionEvent &>(e); //cast base type to collision type
             //TODO onPlayerAction
+        });
+
+    world.getEventManager().subscribe(
+        [this,&world](const BaseEvent &e) {
+            if (e.type != EventType::MouseInteraction) return;
+            const auto &mouseInteractionEvent = static_cast<const MouseInteractionEvent &>(e);
+            onMouseInteraction(mouseInteractionEvent);
         });
 }
 
@@ -92,4 +99,23 @@ bool EventResponseSystem::getCollisionEntities(const CollisionEvent &e, const ch
 
 void EventResponseSystem::onPlayerAction(const CollisionEvent &e,
                                          const std::function<void(Entity *player, PlayerAction action)> &callback) {
+}
+
+void EventResponseSystem::onMouseInteraction(const MouseInteractionEvent &e) {
+    if (!e.entity->hasComponent<Clickable>()) return;
+
+    auto &clickable = e.entity->getComponent<Clickable>();
+    switch (e.state) {
+        case MouseInteractionState::Pressed:
+            clickable.onPressed();
+            break;
+        case MouseInteractionState::Released:
+            clickable.onReleased();
+            break;
+        case MouseInteractionState::Cancel:
+            clickable.onCancel();
+            break;
+        default:
+            break;
+    }
 }
