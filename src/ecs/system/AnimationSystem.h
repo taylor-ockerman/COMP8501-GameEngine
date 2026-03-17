@@ -4,6 +4,7 @@
 
 #ifndef INC_8051TUTORIAL_ANIMATIONSYSTEM_H
 #define INC_8051TUTORIAL_ANIMATIONSYSTEM_H
+#include <iostream>
 #include <memory>
 #include <vector>
 #include "../Entity.h"
@@ -53,12 +54,15 @@ public:
 
                 //Check if the animation has switched
                 //if the chosen clip is different from the current oen, switch to new clip, reset time and frame index
-                if (newClip != anim.currentClip) {
+                if (newClip != anim.currentClip && e->hasComponent<PlayerTag>()) {
                     anim.currentClip = newClip;
                     anim.time = 0.0f;
                     anim.currentFrame = 0;
                 }
-
+                std::cout << "Anim address: " << &anim << "\n";
+                std::cout << "Clip count: " << anim.clips.size() << "\n";
+                std::cout << "Current clip: " << anim.currentClip << "\n";
+                std::cout << "Clip exists: " << (anim.clips.find(anim.currentClip) != anim.clips.end()) << "\n\n";
                 //Playback system: advances the animation
                 float animFrameSpeed = anim.speed; //how long each animation frame should last
                 auto clip = anim.clips[anim.currentClip]; //retrieve the frame data from the current clip

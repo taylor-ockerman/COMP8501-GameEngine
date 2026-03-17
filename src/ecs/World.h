@@ -10,6 +10,7 @@
 #include "Component.h"
 #include "../Map.h"
 #include "Entity.h"
+#include "GravitySystem.h"
 #include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
@@ -43,6 +44,7 @@ class World {
     MainMenuSystem mainMenuSystem;
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
+    GravitySystem gravitySystem;
 
 public:
     World() = default;
@@ -53,6 +55,7 @@ public:
         } else {
             keyboardInputSystem.update(entities, event);
             movementSystem.update(entities, dt);
+            gravitySystem.update(entities, dt);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
