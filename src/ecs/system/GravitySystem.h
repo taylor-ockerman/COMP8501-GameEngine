@@ -17,16 +17,13 @@ public:
         for (auto &e: entities) {
             if (e->hasComponent<Transform>() && e->hasComponent<Velocity>()) {
                 auto &velocity = e->getComponent<Velocity>();
-                Vector2D dir = velocity.direction;
-                dir += gravity;
-                dir.normalize();
-                velocity.direction = dir;
+                velocity.direction += gravity * dt;
             }
         }
     }
 
 private:
-    Vector2D gravity{0.01f, 0.01f};
+    Vector2D gravity = Vector2D(0.0f, .3f);
 };
 
 #endif //INC_8051TUTORIAL_GRAVITYSYSTEM_H

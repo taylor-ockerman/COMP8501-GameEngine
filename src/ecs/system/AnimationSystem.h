@@ -59,10 +59,10 @@ public:
                     anim.time = 0.0f;
                     anim.currentFrame = 0;
                 }
-                std::cout << "Anim address: " << &anim << "\n";
-                std::cout << "Clip count: " << anim.clips.size() << "\n";
-                std::cout << "Current clip: " << anim.currentClip << "\n";
-                std::cout << "Clip exists: " << (anim.clips.find(anim.currentClip) != anim.clips.end()) << "\n\n";
+                // std::cout << "Anim address: " << &anim << "\n";
+                // std::cout << "Clip count: " << anim.clips.size() << "\n";
+                // std::cout << "Current clip: " << anim.currentClip << "\n";
+                // std::cout << "Clip exists: " << (anim.clips.find(anim.currentClip) != anim.clips.end()) << "\n\n";
                 //Playback system: advances the animation
                 float animFrameSpeed = anim.speed; //how long each animation frame should last
                 auto clip = anim.clips[anim.currentClip]; //retrieve the frame data from the current clip

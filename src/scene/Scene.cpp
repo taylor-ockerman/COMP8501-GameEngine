@@ -101,7 +101,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         //create our projectile
         auto &e(world.createDeferredEntity());
         e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
-        e.addComponent<Velocity>(Vector2D(0, -1), 100.0f);
+        e.addComponent<Velocity>(Vector2D(0, -1), 200.0f);
 
         auto &anim = AssetManager::getAnimation("enemy");
         e.addComponent<Animation>(anim);

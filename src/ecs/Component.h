@@ -50,7 +50,7 @@ struct Animation {
     std::string currentClip;
     float time{}; //time is accumulated for the current frame
     int currentFrame{}; //index of the current frame in the clip
-    float speed = 0.2f; //time per frame
+    float speed = 0.1f; //time per frame
     std::string lastMoveClip = "walk_down";
 };
 
