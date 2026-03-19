@@ -24,10 +24,10 @@ public:
                 Vector2D directionVec = v.direction;
 
                 //normalizing
-                //directionVec.normalize();
+                directionVec.normalize();
 
                 //Vector2D needs an operator function to multiply a float
-                Vector2D velocityVec = directionVec * v.speed;
+                Vector2D velocityVec = directionVec * v.magnitude;
                 //Vector2D velocityVec = directionVec;
                 t.position += velocityVec * dt;
             }

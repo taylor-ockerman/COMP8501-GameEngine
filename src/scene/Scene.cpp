@@ -39,7 +39,7 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
-    world.getMap().load(mapPath, TextureManager::load("../assets/tileset.png"));
+    world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
         e.addComponent<Transform>(Vector2D(collider.rect.x, collider.rect.y), 0.0f, 1.0f);
@@ -78,18 +78,21 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     auto &player(world.createEntity());
     auto &playerTrans = player.addComponent<Transform>(Vector2D(5.0f, 5.0f), 0.0f, 1.0f);
     player.addComponent<Velocity>(Vector2D(0.0f, 0.0f), 240.0f);
+    player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f), 0.0f, false);
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
 
     SDL_Texture *texture = TextureManager::load("../assets/animations/human_anim.png");
     SDL_FRect playerSrc = anim.clips[anim.currentClip].frameIndices[0];
     SDL_FRect playerDest{playerTrans.position.x, playerTrans.position.y, 64, 64};
-
     player.addComponent<Sprite>(texture, playerSrc, playerDest);
 
+
     auto &playerCollider = player.addComponent<Collider>("player");
-    playerCollider.rect.w = playerDest.w;
-    playerCollider.rect.h = playerDest.h;
+    playerCollider.rect.w = 24; //hard coded values for player collider rect size
+    playerCollider.rect.h = 34;
+    playerCollider.offset.x = (playerDest.w - playerCollider.rect.w) / 2;
+    playerCollider.offset.y = (playerDest.h - playerCollider.rect.h) / 2;
 
     player.addComponent<PlayerTag>();
 

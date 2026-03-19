@@ -35,7 +35,8 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/scene/Scene.cpp
         src/ecs/system/EventResponseSystem.cpp
         src/ecs/system/MainMenuSystem.cpp
-        src/ecs/system/MouseInputSystem.cpp)
+        src/ecs/system/MouseInputSystem.cpp
+        src/ecs/system/SpriteOffsetSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3

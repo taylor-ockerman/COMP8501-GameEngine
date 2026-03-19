@@ -13,12 +13,13 @@ void CollisionSystem::update(World &world) {
     const std::vector<Entity *> collidables = queryCollidables(world.getEntities());
 
     //update all collider positions first
-    for (auto entity: collidables) {
-        auto &t = entity->getComponent<Transform>();
-        auto &c = entity->getComponent<Collider>();
-        c.rect.x = t.position.x;
-        c.rect.y = t.position.y;
-    }
+    // for (auto entity: collidables) {
+    //     auto &t = entity->getComponent<Transform>();
+    //     auto &c = entity->getComponent<Collider>();
+    //     //applying offset to player collider so it better matches sprite
+    //     c.rect.x = t.position.x;
+    //     c.rect.y = t.position.y;
+    // }
 
     std::set<CollisionKey> currentCollisions;
 

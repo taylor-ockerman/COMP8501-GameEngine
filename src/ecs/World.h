@@ -11,6 +11,7 @@
 #include "../Map.h"
 #include "Entity.h"
 #include "GravitySystem.h"
+#include "SpriteOffsetSystem.h"
 #include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
@@ -45,6 +46,7 @@ class World {
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
     GravitySystem gravitySystem;
+    SpriteOffsetSystem spriteOffsetSystem;
 
 public:
     World() = default;
@@ -57,6 +59,7 @@ public:
             movementSystem.update(entities, dt);
             gravitySystem.update(entities, dt);
             collisionSystem.update(*this);
+            spriteOffsetSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
             spawnTimerSystem.update(entities, dt);
@@ -83,6 +86,23 @@ public:
         //use emplace instead of push so we dont create a copy
         entities.emplace_back(std::make_unique<Entity>());
         return *entities.back();
+    }
+
+    enum class MaterialType {
+        Sand,
+        Water,
+        Smoke,
+    };
+
+    Entity &spawnMaterialAtLocation(float x, float y, MaterialType mat) {
+        auto &entity = createDeferredEntity();
+        Transform &t = entity.addComponent<Transform>(Vector2D(x + 1, y + 1), 0.0f, 0.0f, Vector2D(x, y));
+        entity.addComponent<Velocity>(Vector2D(0, 0), 10.0f);
+        SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
+        SDL_FRect src{0, 0, 64, 64};
+        SDL_FRect dest{t.position.x, t.position.y, 6, 6};
+        entity.addComponent<Sprite>(tex, src, dest);
+        return entity;
     }
 
     Entity &createDeferredEntity() {

@@ -33,6 +33,9 @@ public:
                         case SDLK_D:
                             v.direction.x = 1;
                             break;
+                        case SDLK_SPACE:
+                            v.direction.y = -1.0f;
+                            v.magnitude = 5.0f;
                         default:
                             break;
                     }

@@ -23,7 +23,13 @@ struct Transform {
 
 struct Velocity {
     Vector2D direction{};
-    float speed{};
+    float magnitude{};
+};
+
+struct Acceleration {
+    Vector2D direction{};
+    float magnitude{};
+    bool isGrounded = false;
 };
 
 enum class RenderLayer {
@@ -43,6 +49,7 @@ struct Collider {
     std::string tag;
     SDL_FRect rect{};
     bool enabled = true;
+    Vector2D offset{};
 };
 
 struct Animation {
@@ -72,6 +79,7 @@ struct SceneState {
 };
 
 struct PlayerTag {
+    bool isGrounded = false;
 };
 
 struct ProjectileTag {
