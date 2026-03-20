@@ -5,6 +5,7 @@
 #ifndef INC_8051TUTORIAL_BASEEVENT_H
 #define INC_8051TUTORIAL_BASEEVENT_H
 
+#include "Component.h"
 #include "../Entity.h"
 
 enum class EventType {
@@ -25,6 +26,8 @@ struct CollisionEvent : BaseEvent {
     Entity *entityA = nullptr;
     Entity *entityB = nullptr;
     CollisionState state{};
+    Vector2D collisionNormal{};
+    float penetration;
 
     CollisionEvent(Entity *entityA, Entity *entityB, CollisionState state) : entityA(entityA), entityB(entityB),
                                                                              state(state) {

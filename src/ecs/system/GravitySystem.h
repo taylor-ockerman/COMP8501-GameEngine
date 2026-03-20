@@ -14,7 +14,7 @@
 
 class GravitySystem {
 public:
-    void update(std::vector<std::unique_ptr<Entity> > &entities, float dt) {
+    void update(std::vector<std::unique_ptr<Entity> > &entities, float gravity, float dt) {
         for (auto &e: entities) {
             if (e->hasComponent<Transform>() && e->hasComponent<Velocity>() && e->hasComponent<Acceleration>()) {
                 auto &velocity = e->getComponent<Velocity>();
@@ -22,7 +22,7 @@ public:
                 if (acceleration.isGrounded) {
                     acceleration.magnitude = 0.0f;
                 } else {
-                    acceleration.magnitude = 9.8f;
+                    acceleration.magnitude = gravity;
                 }
                 //create new vector that represents the velocity and direction of the entity
                 Vector2D velVector{

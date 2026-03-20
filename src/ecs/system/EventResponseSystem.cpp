@@ -61,7 +61,6 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
         auto &t = player->getComponent<Transform>();
         auto &a = player->getComponent<Acceleration>();
         a.isGrounded = true;
-        t.position = t.oldPosition;
     } else if (std::string(otherTag) == "projectile") {
         if (e.state != CollisionState::Enter) return;
 

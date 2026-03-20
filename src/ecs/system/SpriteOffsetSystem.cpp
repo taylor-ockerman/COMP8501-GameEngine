@@ -11,7 +11,7 @@ void SpriteOffsetSystem::update(World &world) {
     for (auto e: entities) {
         auto &t = e->getComponent<Transform>();
         auto &c = e->getComponent<Collider>();
-        //applying offset to player collider so it better matches sprite
+        //applying offset to player collider so it better matches the sprite
         c.rect.x = t.position.x + c.offset.x;
         c.rect.y = t.position.y + c.offset.y;
     }

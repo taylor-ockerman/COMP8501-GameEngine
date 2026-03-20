@@ -57,7 +57,7 @@ public:
         } else {
             keyboardInputSystem.update(entities, event);
             movementSystem.update(entities, dt);
-            gravitySystem.update(entities, dt);
+            gravitySystem.update(entities, gravity, dt);
             collisionSystem.update(*this);
             spriteOffsetSystem.update(*this);
             animationSystem.update(entities, dt);
@@ -98,6 +98,7 @@ public:
         auto &entity = createDeferredEntity();
         Transform &t = entity.addComponent<Transform>(Vector2D(x + 1, y + 1), 0.0f, 0.0f, Vector2D(x, y));
         entity.addComponent<Velocity>(Vector2D(0, 0), 10.0f);
+        entity.addComponent<Acceleration>();
         SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
         SDL_FRect src{0, 0, 64, 64};
         SDL_FRect dest{t.position.x, t.position.y, 6, 6};
@@ -134,6 +135,9 @@ public:
     EventManager &getEventManager() { return eventManager; }
 
     Map &getMap() { return map; }
+
+private:
+    float gravity = 9.8f;
 };
 
 void onCollisionEvent(const CollisionEvent &collision);

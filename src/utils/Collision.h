@@ -8,10 +8,18 @@
 
 #include "../ecs/Component.h"
 
+struct CollisionData {
+    bool colliding = false;
+    Vector2D collisionNormal{0.0f, 0.0f};
+    float penetration = 0.0f;
+};
+
 class Collision {
 public:
     //AABB = axis aligned bounding box
     static bool AABB(const SDL_FRect rectA, const SDL_FRect rectB);
+
+    static CollisionData AABBAxis(const SDL_FRect rectA, const SDL_FRect rectB);
 
     static bool AABB(const Collider &colA, const Collider &colB);
 };

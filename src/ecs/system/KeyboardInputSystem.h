@@ -19,44 +19,56 @@ public:
         for (auto &e: entities) {
             if (e->hasComponent<PlayerTag>() && e->hasComponent<Velocity>()) {
                 auto &v = e->getComponent<Velocity>();
+                Vector2D velVec = {v.direction.x * v.magnitude, v.direction.y * v.magnitude};
                 if (event.type == SDL_EVENT_KEY_DOWN) {
                     switch (event.key.key) {
                         case SDLK_W:
-                            v.direction.y = -1;
+                            //velVec.y = -200.0f;
                             break;
                         case SDLK_S:
-                            v.direction.y = 1;
+                            //velVec.y = 200.0f;
                             break;
                         case SDLK_A:
-                            v.direction.x = -1;
+                            velVec.x = -200.0f;
                             break;
                         case SDLK_D:
-                            v.direction.x = 1;
+                            velVec.x = 200.0f;
                             break;
                         case SDLK_SPACE:
-                            v.direction.y = -1.0f;
-                            v.magnitude = 5.0f;
+                            velVec.y = -200.0f;
                         default:
                             break;
+                    }
+                    float mag = std::sqrt(velVec.x * velVec.x + velVec.y * velVec.y);
+                    if (mag > 0.001f) {
+                        //could us Vector2D.normalize here but we already calculated the sqrt soo this is probably faster..
+                        v.direction.x = velVec.x / mag;
+                        v.direction.y = velVec.y / mag;
+                        v.magnitude = mag;
                     }
                 }
 
                 if (event.type == SDL_EVENT_KEY_UP) {
                     switch (event.key.key) {
                         case SDLK_W:
-                            v.direction.y = 0;
+                            //v.direction.y = 0;
                             break;
                         case SDLK_S:
-                            v.direction.y = 0;
+                            //v.direction.y = 0;
                             break;
                         case SDLK_A:
-                            v.direction.x = 0;
+                            velVec.x = 0;
                             break;
                         case SDLK_D:
-                            v.direction.x = 0;
+                            velVec.x = 0;
                             break;
                         default:
                             break;
+                    }
+                    float mag = std::sqrt(velVec.x * velVec.x + velVec.y * velVec.y);
+                    if (mag > 0.001f) {
+                        v.direction = velVec.normalize();
+                        v.magnitude = mag;
                     }
                 }
             }

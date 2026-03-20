@@ -17,6 +17,13 @@ bool Collision::AABB(const SDL_FRect rectA, const SDL_FRect rectB) {
     return false;
 }
 
+CollisionData Collision::AABBAxis(const SDL_FRect rectA, const SDL_FRect rectB) {
+    CollisionData data{};
+
+    return data;
+}
+
+
 bool Collision::AABB(const Collider &colA, const Collider &colB) {
     if (AABB(colA.rect, colB.rect)) {
         return true;

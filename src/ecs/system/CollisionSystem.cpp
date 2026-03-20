@@ -13,6 +13,7 @@ void CollisionSystem::update(World &world) {
     const std::vector<Entity *> collidables = queryCollidables(world.getEntities());
 
     //update all collider positions first
+    //this is removed because it is being done by the sprite collider offset system now
     // for (auto entity: collidables) {
     //     auto &t = entity->getComponent<Transform>();
     //     auto &c = entity->getComponent<Collider>();

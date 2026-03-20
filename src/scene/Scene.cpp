@@ -105,6 +105,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         auto &e(world.createDeferredEntity());
         e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
         e.addComponent<Velocity>(Vector2D(0, -1), 200.0f);
+        //e.addComponent<Acceleration>();
 
         auto &anim = AssetManager::getAnimation("enemy");
         e.addComponent<Animation>(anim);
