@@ -19,8 +19,6 @@ public:
     //AABB = axis aligned bounding box
     static bool AABB(const SDL_FRect rectA, const SDL_FRect rectB);
 
-    static CollisionData AABBAxis(const SDL_FRect rectA, const SDL_FRect rectB);
-
     static bool AABB(const Collider &colA, const Collider &colB);
 };
 #endif //INC_8051TUTORIAL_COLLISION_H

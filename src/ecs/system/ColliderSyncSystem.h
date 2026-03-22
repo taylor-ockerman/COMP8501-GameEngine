@@ -12,7 +12,7 @@
 
 class World;
 
-class SpriteOffsetSystem {
+class ColliderSyncSystem {
 public:
    void update(World &world);
 

@@ -3,6 +3,8 @@
 //
 #include "Collision.h"
 
+#include <iostream>
+
 bool Collision::AABB(const SDL_FRect rectA, const SDL_FRect rectB) {
     //1. is the right edge of rectA >= to the left edge of rectB
     //2. is the right edge of rectB >= to the left edge of rectA
@@ -15,12 +17,6 @@ bool Collision::AABB(const SDL_FRect rectA, const SDL_FRect rectB) {
         return true;
     }
     return false;
-}
-
-CollisionData Collision::AABBAxis(const SDL_FRect rectA, const SDL_FRect rectB) {
-    CollisionData data{};
-
-    return data;
 }
 
 

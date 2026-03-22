@@ -5,6 +5,8 @@
 
 #include <numeric>
 
+#include "Collision.h"
+#include "CollisionResolution.h"
 #include "../World.h"
 #include "../../Game.h"
 
@@ -56,11 +58,18 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
             }
         }
     } else if (std::string(otherTag) == "wall") {
+        if (e.state == CollisionState::Exit) {
+            player->getComponent<Acceleration>().isGrounded = false;
+            return;
+        }
         if (e.state != CollisionState::Stay) return;
-        //stop the player
-        auto &t = player->getComponent<Transform>();
-        auto &a = player->getComponent<Acceleration>();
-        a.isGrounded = true;
+        // //stop the player
+        // auto &t = player->getComponent<Transform>();
+        // auto &a = player->getComponent<Acceleration>();
+        // a.isGrounded = true;
+        // t.position = t.oldPosition;
+        // //std::cout << "Player wall collision!!";
+        CollisionResolution::resolvePlayerWall(*player, *other);
     } else if (std::string(otherTag) == "projectile") {
         if (e.state != CollisionState::Enter) return;
 

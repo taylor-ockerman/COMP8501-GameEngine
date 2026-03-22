@@ -11,7 +11,7 @@
 #include "../Map.h"
 #include "Entity.h"
 #include "GravitySystem.h"
-#include "SpriteOffsetSystem.h"
+#include "ColliderSyncSystem.h"
 #include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
@@ -46,7 +46,7 @@ class World {
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
     GravitySystem gravitySystem;
-    SpriteOffsetSystem spriteOffsetSystem;
+    ColliderSyncSystem colliderSyncSystem;
 
 public:
     World() = default;
@@ -56,10 +56,10 @@ public:
             mainMenuSystem.update(event);
         } else {
             keyboardInputSystem.update(entities, event);
-            movementSystem.update(entities, dt);
             gravitySystem.update(entities, gravity, dt);
+            movementSystem.update(entities, dt);
+            colliderSyncSystem.update(*this);
             collisionSystem.update(*this);
-            spriteOffsetSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
             spawnTimerSystem.update(entities, dt);

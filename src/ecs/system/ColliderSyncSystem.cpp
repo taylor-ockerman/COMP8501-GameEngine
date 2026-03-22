@@ -2,10 +2,10 @@
 // Created by taylo on 3/18/2026.
 //
 
-#include "SpriteOffsetSystem.h"
+#include "ColliderSyncSystem.h"
 #include "World.h"
 
-void SpriteOffsetSystem::update(World &world) {
+void ColliderSyncSystem::update(World &world) {
     const std::vector<Entity *> entities = queryCollidableSprites(world.getEntities());
 
     for (auto e: entities) {
@@ -17,11 +17,11 @@ void SpriteOffsetSystem::update(World &world) {
     }
 }
 
-std::vector<Entity *> SpriteOffsetSystem::
+std::vector<Entity *> ColliderSyncSystem::
 queryCollidableSprites(const std::vector<std::unique_ptr<Entity> > &entities) {
     std::vector<Entity *> collidablesSprites;
     for (auto &entity: entities) {
-        if (entity->hasComponent<Transform>() && entity->hasComponent<Collider>() && entity->hasComponent<Sprite>()) {
+        if (entity->hasComponent<Transform>() && entity->hasComponent<Collider>()) {
             collidablesSprites.push_back(entity.get());
         }
     }

@@ -49,10 +49,10 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         c.rect.w = collider.rect.w;
         c.rect.h = collider.rect.h;
         //uncomment this block to show red boxes on wall colliders
-        // SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
-        // SDL_FRect colSrc{0, 32, 32, 32};
-        // SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
-        // e.addComponent<Sprite>(tex, colSrc, colDst);
+        SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
+        SDL_FRect colSrc{0, 32, 32, 32};
+        SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
+        e.addComponent<Sprite>(tex, colSrc, colDst);
     }
 
     for (auto &sp: world.getMap().coins) {
@@ -61,11 +61,13 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         auto &c = item.addComponent<Collider>("item");
         c.rect.x = sp.rect.x;
         c.rect.y = sp.rect.y;
-
-        SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
-        SDL_FRect itemSrc{0, 0, 32, 32};
+        //SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
+        SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png");
+        SDL_FRect itemSrc{0, 32, 32, 32};
         SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
-        item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
+        auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
+        c.rect.w = s.dst.w;
+        c.rect.h = s.dst.h;
     }
 
     auto &cam = world.createEntity();
@@ -79,22 +81,34 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     auto &playerTrans = player.addComponent<Transform>(Vector2D(5.0f, 5.0f), 0.0f, 1.0f);
     player.addComponent<Velocity>(Vector2D(0.0f, 0.0f), 240.0f);
     player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f), 0.0f, false);
+    //comment this block out to remove player sprite and enable red texture on collider to test collider box
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
-
     SDL_Texture *texture = TextureManager::load("../assets/animations/human_anim.png");
     SDL_FRect playerSrc = anim.clips[anim.currentClip].frameIndices[0];
+
     SDL_FRect playerDest{playerTrans.position.x, playerTrans.position.y, 64, 64};
     player.addComponent<Sprite>(texture, playerSrc, playerDest);
 
 
     auto &playerCollider = player.addComponent<Collider>("player");
-    playerCollider.rect.w = 24; //hard coded values for player collider rect size
-    playerCollider.rect.h = 34;
+    playerCollider.rect.w = 10; //hard coded values for player collider rect size
+    playerCollider.rect.h = 25;
     playerCollider.offset.x = (playerDest.w - playerCollider.rect.w) / 2;
     playerCollider.offset.y = (playerDest.h - playerCollider.rect.h) / 2;
-
+    //playerCollider.offset.x = 0;
+    //playerCollider.offset.y = 0;
+    std::cout << "Collider rect w:" << playerCollider.rect.w << " h:" << playerCollider.rect.h << " offset x:"
+            << playerCollider.offset.x << " offset y:" << playerCollider.offset.y << std::endl;
     player.addComponent<PlayerTag>();
+
+    //uncomment to add red texture to player collision box
+    // SDL_Texture *red = TextureManager::load("../assets/tileset.png");
+    // SDL_FRect redSrc{0, 32, 32, 32};
+    // player.addComponent<Sprite>(red, redSrc,
+    //                             SDL_FRect(playerTrans.position.x + playerCollider.offset.x,
+    //                                       playerTrans.position.y + playerCollider.offset.y, playerCollider.rect.w,
+    //                                       playerCollider.rect.h));
 
     player.addComponent<Health>(Game::gameState.playerHealth);
 

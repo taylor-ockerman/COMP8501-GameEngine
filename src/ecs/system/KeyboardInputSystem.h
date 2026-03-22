@@ -36,12 +36,13 @@ public:
                             break;
                         case SDLK_SPACE:
                             velVec.y = -200.0f;
+                            e->getComponent<Acceleration>().isGrounded = false;
                         default:
                             break;
                     }
                     float mag = std::sqrt(velVec.x * velVec.x + velVec.y * velVec.y);
                     if (mag > 0.001f) {
-                        //could us Vector2D.normalize here but we already calculated the sqrt soo this is probably faster..
+                        //could us Vector2D.normalize here but we already calculated the sqrt, so this is probably faster..
                         v.direction.x = velVec.x / mag;
                         v.direction.y = velVec.y / mag;
                         v.magnitude = mag;

@@ -34,7 +34,6 @@ void CollisionSystem::update(World &world) {
         for (size_t j = i + 1; j < collidables.size(); ++j) {
             auto &entityB = collidables[j];
             auto &colliderB = entityB->getComponent<Collider>();
-
             if (Collision::AABB(colliderA, colliderB)) {
                 CollisionKey key = makeKey(entityA, entityB);
                 currentCollisions.insert(key);
