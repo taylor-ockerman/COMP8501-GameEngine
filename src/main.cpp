@@ -7,6 +7,10 @@ Game *game = nullptr;
 
 
 int main() {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+        return -1;
+    }
     const int FPS = 60;
     const int desiredFrameTime = 1000 / FPS;
     int actualFrameTime;
