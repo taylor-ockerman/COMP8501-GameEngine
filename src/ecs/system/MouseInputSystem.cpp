@@ -2,9 +2,11 @@
 // Created by taylo on 3/11/2026.
 //
 #include "MouseInputSystem.h"
+
+#include "ParticleGrid.h"
 #include "../World.h"
 
-void MouseInputSystem::update(World &world, const SDL_Event &event) {
+void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid &grid) {
     if (event.type != SDL_EVENT_MOUSE_MOTION && event.type != SDL_EVENT_MOUSE_BUTTON_DOWN && event.type !=
         SDL_EVENT_MOUSE_BUTTON_UP) {
         return;
@@ -61,9 +63,19 @@ void MouseInputSystem::update(World &world, const SDL_Event &event) {
             }
         }
     }
+    // if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+    //     event.button.button == SDL_BUTTON_LEFT &&
+    //     !clickedClickable) {
+    //     grid.spawnParticleAtMouse(mx + camOffx, my + camOffy);
+    // }
+
     if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
-        event.button.button == SDL_BUTTON_LEFT &&
-        !clickedClickable) {
-        world.spawnMaterialAtLocation(mx + camOffx, my + camOffy, World::MaterialType::Sand);
+        event.button.button == SDL_BUTTON_LEFT) {
+        grid.spawnParticleAtMouse((int) event.button.x + camOffx, (int) event.button.y + camOffy);
+    }
+    //allows for holding mouse button to spawn sand
+    if (event.type == SDL_EVENT_MOUSE_MOTION &&
+        (event.motion.state & SDL_BUTTON_LMASK)) {
+        grid.spawnParticleAtMouse((int) event.motion.x + camOffx, (int) event.motion.y + camOffy);
     }
 }

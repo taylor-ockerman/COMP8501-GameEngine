@@ -99,7 +99,7 @@ void Game::render() {
     //every frame the renderer is cleared with the draw color;
     SDL_RenderClear(renderer);
 
-    sceneManager.render();
+    sceneManager.render(renderer);
 
     //swaps back buffer to the screen
     SDL_RenderPresent(renderer);;

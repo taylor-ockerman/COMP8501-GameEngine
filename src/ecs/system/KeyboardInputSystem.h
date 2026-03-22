@@ -37,6 +37,7 @@ public:
                         case SDLK_SPACE:
                             velVec.y = -200.0f;
                             e->getComponent<Acceleration>().isGrounded = false;
+                            break;
                         default:
                             break;
                     }

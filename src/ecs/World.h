@@ -12,6 +12,7 @@
 #include "Entity.h"
 #include "GravitySystem.h"
 #include "ColliderSyncSystem.h"
+#include "ParticleGrid.h"
 #include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
@@ -51,13 +52,14 @@ class World {
 public:
     World() = default;
 
-    void update(float dt, const SDL_Event &event, SceneType sceneType) {
+    void update(float dt, const SDL_Event &event, SceneType sceneType, ParticleGrid &grid) {
         if (sceneType == SceneType::MainMenu) {
             mainMenuSystem.update(event);
         } else {
             keyboardInputSystem.update(entities, event);
             gravitySystem.update(entities, gravity, dt);
             movementSystem.update(entities, dt);
+            grid.update();
             colliderSyncSystem.update(*this);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
@@ -66,12 +68,12 @@ public:
             destructionSystem.update(entities);
         }
 
-        mouseInputSystem.update(*this, event);
+        mouseInputSystem.update(*this, event, grid);
         synchronizeEntities();
         cleanup();
     }
 
-    void render() {
+    void render(SDL_Renderer *renderer) {
         for (auto &entity: entities) {
             if (entity->hasComponent<Camera>()) {
                 map.draw(entity->getComponent<Camera>());

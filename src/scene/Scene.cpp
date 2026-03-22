@@ -3,12 +3,13 @@
 //
 
 #include "Scene.h"
-#include "../Game.h"
-#include "../manager/AssetManager.h"
+#include "Game.h"
+#include "AssetManager.h"
 
 Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, const int windowWidth,
              const int windowHeight) : name(
-                                           sceneName), sceneType(sceneType) {
+                                           sceneName), sceneType(sceneType),
+                                       grid(new ParticleGrid(windowWidth, windowHeight, 4)) {
     if (sceneType == SceneType::MainMenu) {
         initMainMenu(windowWidth, windowHeight);
         return;
@@ -40,6 +41,7 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
+    //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
         e.addComponent<Transform>(Vector2D(collider.rect.x, collider.rect.y), 0.0f, 1.0f);
@@ -232,3 +234,4 @@ void Scene::toggleSettingsOverlayVisibility(Entity &overlay) {
         }
     }
 }
+
