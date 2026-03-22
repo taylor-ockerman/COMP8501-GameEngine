@@ -46,6 +46,10 @@ public:
                         v.direction.x = velVec.x / mag;
                         v.direction.y = velVec.y / mag;
                         v.magnitude = mag;
+                    } else {
+                        v.direction.x = 0.0f;
+                        v.direction.y = 0.0f;
+                        v.magnitude = 0.0f;
                     }
                 }
 
@@ -70,6 +74,10 @@ public:
                     if (mag > 0.001f) {
                         v.direction = velVec.normalize();
                         v.magnitude = mag;
+                    } else {
+                        v.direction.x = 0.0f;
+                        v.direction.y = 0.0f;
+                        v.magnitude = 0.0f;
                     }
                 }
             }

@@ -26,7 +26,7 @@ void CollisionResolution::resolvePlayerWall(Entity &player, Entity &wall) {
 
     SDL_FRect &p = cPlayer.rect;
     SDL_FRect &w = cWall.rect;
-
+    // calculate overlaps so we know how far to move the player after the wall collision
     float overlapLeft = (p.x + p.w) - w.x;
     float overlapRight = (w.x + w.w) - p.x;
     float overlapTop = (p.y + p.h) - w.y;
@@ -34,21 +34,13 @@ void CollisionResolution::resolvePlayerWall(Entity &player, Entity &wall) {
 
     float minX = std::min(overlapLeft, overlapRight);
     float minY = std::min(overlapTop, overlapBottom);
-
+    //do smallest move needed to prevent overlap
     if (minX < minY) {
-        // std::cout << "Before resolve: p=(" << p.x << "," << p.y << "," << p.w << "," << p.h
-        //         << ") w=(" << w.x << "," << w.y << "," << w.w << "," << w.h << ")\n";
-        // std::cout << "overlapLeft=" << overlapLeft
-        //         << " overlapRight=" << overlapRight
-        //         << " overlapTop=" << overlapTop
-        //         << " overlapBottom=" << overlapBottom << "\n";
         if (overlapLeft < overlapRight) {
             t.position.x -= overlapLeft;
         } else {
             t.position.x += overlapRight;
         }
-        // std::cout << "After resolve transform=(" << t.position.x << "," << t.position.y << ") "
-        //         << " collider=(" << cPlayer.rect.x << "," << cPlayer.rect.y << ")\n";
         v.direction.x = 0;
     } else {
         if (overlapTop < overlapBottom) {

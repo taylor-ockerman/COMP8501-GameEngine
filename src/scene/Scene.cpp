@@ -61,9 +61,9 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         auto &c = item.addComponent<Collider>("item");
         c.rect.x = sp.rect.x;
         c.rect.y = sp.rect.y;
-        //SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
-        SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png");
-        SDL_FRect itemSrc{0, 32, 32, 32};
+        SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
+        // SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png"); //uncomment for red box on collider
+        SDL_FRect itemSrc{0, 0, 32, 32};
         SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
         auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
         c.rect.w = s.dst.w;
