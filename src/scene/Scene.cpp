@@ -8,13 +8,32 @@
 
 Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, const int windowWidth,
              const int windowHeight) : name(
-                                           sceneName), sceneType(sceneType),
-                                       grid(new ParticleGrid(windowWidth, windowHeight, 4)) {
+                                           sceneName), sceneType(sceneType)
+                                            // ,grid(new ParticleGrid(windowWidth, windowHeight, 4))
+{
     if (sceneType == SceneType::MainMenu) {
         initMainMenu(windowWidth, windowHeight);
         return;
     }
+    grid = nullptr;
     initGameplay(mapPath, windowWidth, windowHeight);
+}
+
+Scene::~Scene() {
+    if (grid != nullptr) {
+        delete grid;
+        grid = nullptr;
+    }
+}
+
+void Scene::resetScene() {
+    world.destroyAllParticles(grid);
+
+    if (grid != nullptr) {
+        delete grid;
+        grid = nullptr;
+    }
+    world.clearAllEntities();
 }
 
 void Scene::createProjectile(Vector2D pos, Vector2D dir, int speed) {
@@ -41,6 +60,9 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
+    delete grid;
+    grid = nullptr;
+    grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(), world.getMap().height * world.getMap().getTileSize(), 4);
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();

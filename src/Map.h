@@ -24,15 +24,14 @@ public:
     std::vector<std::vector<int> > tileData;
     std::vector<Collider> colliders;
     std::vector<Collider> coins;
-
+    int getTileSize() const { return tileSize; }
 private:
     //brace initialization
     SDL_FRect src{}, dst{};
     SDL_Texture *water = nullptr;
     SDL_Texture *dirt = nullptr;
     SDL_Texture *grass = nullptr;
-
-    //int map[10][15]{};
+    int tileSize = 32;
 };
 
 #endif //INC_8051TUTORIAL_MAP_H

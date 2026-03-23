@@ -16,6 +16,7 @@ class GravitySystem {
 public:
     void update(std::vector<std::unique_ptr<Entity> > &entities, float gravity, float dt) {
         for (auto &e: entities) {
+            if (e->hasComponent<Particle>()) continue;
             if (e->hasComponent<Transform>() && e->hasComponent<Velocity>() && e->hasComponent<Acceleration>()) {
                 auto &velocity = e->getComponent<Velocity>();
                 auto &acceleration = e->getComponent<Acceleration>();

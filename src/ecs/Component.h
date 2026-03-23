@@ -103,4 +103,21 @@ struct Parent {
 struct Children {
     std::vector<Entity *> children{};
 };
+
+enum class ParticleType {
+    Sand,
+    Stone,
+    Smoke,
+    Water,
+    Gunpowder,
+    Fire,
+    //TODO more to come...
+};
+
+struct Particle {
+    ParticleType type = ParticleType::Sand;
+    int gridX{};
+    int gridY{};
+};
+
 #endif //INC_8051TUTORIAL_COMPONENT_H

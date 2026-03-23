@@ -11,7 +11,7 @@ class World;
 
 class MouseInputSystem {
 public:
-    void update(World &world, const SDL_Event &event, ParticleGrid &grid);
+    void update(World &world, const SDL_Event &event, ParticleGrid *grid);
 };
 
 #endif //INC_8051TUTORIAL_MOUSEINPUTSYSTEM_H

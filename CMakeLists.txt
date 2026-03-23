@@ -14,6 +14,7 @@ if (WIN32)
             ${PROJECT_SOURCE_DIR}/src/utils
             ${PROJECT_SOURCE_DIR}/src/ecs
             ${PROJECT_SOURCE_DIR}/src/ecs/system
+            ${PROJECT_SOURCE_DIR}/src/ecs/event
             ${PROJECT_SOURCE_DIR}/src/vendor
             ${PROJECT_SOURCE_DIR}/src/manager
             ${PROJECT_SOURCE_DIR}/src/scene

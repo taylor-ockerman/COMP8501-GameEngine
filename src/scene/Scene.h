@@ -13,9 +13,9 @@
 class Scene {
 public:
     Scene(SceneType sceneType, const char *sceneName, const char *mapPath, int windowWidth, int windowHeight);
-
+    ~Scene();
     void update(const float dt, const SDL_Event &e) {
-        world.update(dt, e, sceneType, *grid);
+        world.update(dt, e, sceneType, grid);
     }
 
     void render(SDL_Renderer *renderer) {
@@ -32,8 +32,6 @@ public:
                     break;
                 }
             }
-
-            grid->render(renderer, camOffx, camOffy);
         }
     }
 
@@ -46,7 +44,7 @@ public:
     void setUpParticleGrid(int windowWidth, int windowHeight, int cellSize) {
         grid = new ParticleGrid(windowWidth, windowHeight, cellSize);
     };
-
+    void resetScene();
 private:
     std::string name;
     SceneType sceneType;
