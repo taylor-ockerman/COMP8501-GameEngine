@@ -68,7 +68,8 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         event.button.button == SDL_BUTTON_LEFT && !clickedClickable) {
         if (grid != nullptr) {
             auto& e = world.createDeferredEntity();
-            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, ParticleType::Sand);
+            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, world.getSelectedParticle());
+            //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
         }
     }
     //allows for holding mouse button to spawn particles
@@ -76,7 +77,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         (event.motion.state & SDL_BUTTON_LMASK) && !clickedClickable) {
         if (grid != nullptr) {
             auto& e = world.createDeferredEntity();
-            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, ParticleType::Sand);
+            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, world.getSelectedParticle());
         }
     }
 }

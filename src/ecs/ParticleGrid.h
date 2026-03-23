@@ -7,16 +7,13 @@
 #include <cstdlib>
 #include <vector>
 #include <SDL3/SDL_render.h>
+#include <iostream>
+#include "Component.h"
 #include "Entity.h"
 
-enum class CellType {
-    Empty,
-    Sand,
-    Stone
-};
 
 struct Cell {
-    CellType type = CellType::Empty;
+    ParticleType type = ParticleType::Empty;
     //this entity bridges ECS and cellular automata grid
     Entity* entity = nullptr;
 };
@@ -41,7 +38,7 @@ public:
     };
 
     bool isEmpty(int x, int y) const {
-        return inBounds(x, y) && cells[y * width + x].type == CellType::Empty;
+        return inBounds(x, y) && cells[y * width + x].type == ParticleType::Empty;
     };
 
     void swapCells(int x1, int y1, int x2, int y2) {
@@ -51,13 +48,14 @@ public:
     void clearCell(int gx, int gy) {
         if (!inBounds(gx, gy)) return;
         Cell& cell = at(gx, gy);
-        cell.type = CellType::Empty;
+        cell.type = ParticleType::Empty;
+        cell.entity->destroy();
         cell.entity = nullptr;
     }
 
     void clearGrid() {
         for (auto& cell : cells) {
-            cell.type = CellType::Empty;
+            cell.type = ParticleType::Empty;
             cell.entity = nullptr;
         }
     }
@@ -65,15 +63,29 @@ public:
         for (int y = height - 1; y >= 0; y--) {
             for (int x = 0; x < width; x++) {
                 {
-                    if (at(x, y).type == CellType::Sand) {
-                        updateParticle(x, y);
+                    switch (at(x, y).type) {
+                        case ParticleType::Sand:
+                            updateSand(x, y);
+                            //std::cout << "updating sand"<< std::endl;
+                            break;
+                        case ParticleType::Water:
+                            updateWater(x, y);
+                            std::cout << "updating water"<< std::endl;
+                            break;
+                        case ParticleType::Stone:
+                            updateStone(x, y);
+                            //std::cout << "updating stone"<< std::endl;
+                            break;
+                        case ParticleType::Empty:
+                        default:
+                            break;
                     }
                 }
             }
         }
     }
 
-    void updateParticle(int x, int y) {
+    void updateSand(int x, int y) {
         //check directly below
         if (isEmpty(x, y + 1)) {
             swapCells(x, y, x, y + 1);
@@ -104,13 +116,72 @@ public:
         }
     }
 
-    bool spawnParticleAtCell(int gx, int gy, CellType type, Entity& entity) {
+    void updateWater(int x, int y) {
+        //check directly below
+        if (isEmpty(x, y + 1)) {
+            swapCells(x, y, x, y + 1);
+            return;
+        }
+
+        //randomize checking left or right first to add some variance to particle movements
+        bool leftFirst = rand() % 2 == 0;
+
+        if (leftFirst) {
+            if (isEmpty(x - 1, y + 1)) {
+                swapCells(x - 1, y + 1, x, y);
+                return;
+            }
+            if (isEmpty(x + 1, y + 1)) {
+                swapCells(x + 1, y + 1, x, y);
+                return;
+            }
+        } else {
+            if (isEmpty(x + 1, y + 1)) {
+                swapCells(x + 1, y + 1, x, y);
+                return;
+            }
+            if (isEmpty(x - 1, y + 1)) {
+                swapCells(x - 1, y + 1, x, y);
+                return;
+            }
+        }
+        //if diagonals dont work, move sideways
+        if (leftFirst) {
+            if (isEmpty(x - 1, y)) {
+                swapCells(x - 1, y, x, y);
+                return;
+            }
+            if (isEmpty(x + 1, y)) {
+                swapCells(x + 1, y, x, y);
+                return;
+            }
+        } else {
+            if (isEmpty(x + 1, y)) {
+                swapCells(x + 1, y, x, y);
+                return;
+            }
+            if (isEmpty(x - 1, y)) {
+                swapCells(x - 1, y, x, y);
+                return;
+            }
+        }
+    }
+
+    void updateStone(int x, int y) {
+        //shouldnt move so nothing
+    }
+
+    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity& entity) {
         //int gx = x / cellSize;
         //int gy = y / cellSize;
         if (!inBounds(gx, gy) || !isEmpty(gx, gy)) return false;
         Cell& cell = at(gx, gy);
         cell.type = type;
         cell.entity = &entity;
+        std::cout << "spawnParticleAtCell: gx=" << gx
+          << " gy=" << gy
+          << " type=" << static_cast<int>(type)
+          << std::endl;
         return true;
     };
 

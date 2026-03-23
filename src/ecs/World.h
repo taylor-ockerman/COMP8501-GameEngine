@@ -55,7 +55,7 @@ public:
         if (sceneType == SceneType::MainMenu) {
             mainMenuSystem.update(event);
         } else {
-            keyboardInputSystem.update(entities, event);
+            keyboardInputSystem.update(*this, entities, event);
             gravitySystem.update(entities, gravity, dt);
             movementSystem.update(entities, dt);
 
@@ -110,27 +110,57 @@ public:
         e.addComponent<Collider>("particle", SDL_FRect{x,y,(float)cellSize,(float)cellSize}, true, Vector2D(0,0));
 
         SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
-        SDL_FRect src{0, 0, 64, 64};
+        SDL_FRect src{0,0,64,64};
+        switch (type) {
+            case ParticleType::Sand:
+                src.x = 0;
+                src.y = 0;
+                //src.w = 64;
+                //src.h = 64;
+                break;
+            case ParticleType::Water:
+                src.x = 64;
+                src.y = 0;
+                //src.w = 64;
+                //src.h = 64;
+                break;
+            case ParticleType::Stone:
+                src.x = 192;
+                src.y = 192;
+                //src.w = 64;
+                //src.h = 64;
+                break;
+            default:
+                break;
+        }
+        //SDL_FRect src{0, 0, 64, 64};
         SDL_FRect dest{x, y, (float)cellSize, (float)cellSize};
         e.addComponent<Sprite>(tex,src,dest,RenderLayer::World, true);
 
-        CellType cellType = CellType::Empty;
+        ParticleType particleType = ParticleType::Empty;
         switch (type) {
             case ParticleType::Sand:
-                cellType = CellType::Sand;
+                particleType = ParticleType::Sand;
+                break;
+            case ParticleType::Water:
+                particleType = ParticleType::Water;
+                break;
+            case ParticleType::Stone:
+                particleType = ParticleType::Stone;
                 break;
             default:
-                cellType = CellType::Stone;
+                particleType = ParticleType::Empty;
                 break;
         }
 
-        if (!grid.spawnParticleAtCell(gx,gy,cellType,e)) {
+        if (!grid.spawnParticleAtCell(gx,gy,particleType,e)) {
             e.destroy();
             return false;
         }
 
         return true;
     }
+
     void destroyAllParticles(ParticleGrid* grid) {
         if (grid != nullptr) {
             grid->clearGrid();
@@ -150,13 +180,14 @@ public:
 
         cleanup();
     }
+
     void syncParticlesFromGrid(ParticleGrid& grid) {
         int cellSize = grid.getCellSize();
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
                 Cell& cell = grid.at(x,y);
 
-                if (cell.type == CellType::Empty || cell.entity == nullptr)continue;
+                if (cell.type == ParticleType::Empty || cell.entity == nullptr)continue;
                 if (!cell.entity->hasComponent<Particle>() || !cell.entity->hasComponent<Transform>()) continue;
 
                 auto& particle = cell.entity->getComponent<Particle>();
@@ -222,9 +253,13 @@ public:
     EventManager &getEventManager() { return eventManager; }
 
     Map &getMap() { return map; }
-
+    void setSelectedParticle(ParticleType particleType) {
+        selectedParticleType = particleType;
+    }
+    ParticleType getSelectedParticle() const { return selectedParticleType; };
 private:
     float gravity = 9.8f;
+    ParticleType selectedParticleType = ParticleType::Sand;
 };
 
 void onCollisionEvent(const CollisionEvent &collision);

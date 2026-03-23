@@ -8,14 +8,13 @@
 
 Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, const int windowWidth,
              const int windowHeight) : name(
-                                           sceneName), sceneType(sceneType)
-                                            // ,grid(new ParticleGrid(windowWidth, windowHeight, 4))
+                                           sceneName), sceneType(sceneType), grid(nullptr)
 {
     if (sceneType == SceneType::MainMenu) {
         initMainMenu(windowWidth, windowHeight);
         return;
     }
-    grid = nullptr;
+    //grid = nullptr;
     initGameplay(mapPath, windowWidth, windowHeight);
 }
 
@@ -26,6 +25,8 @@ Scene::~Scene() {
     }
 }
 
+//not used right now
+//keeping this incase i want to reload a level later on
 void Scene::resetScene() {
     world.destroyAllParticles(grid);
 
@@ -122,8 +123,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     playerCollider.offset.y = (playerDest.h - playerCollider.rect.h) / 2;
     //playerCollider.offset.x = 0;
     //playerCollider.offset.y = 0;
-    std::cout << "Collider rect w:" << playerCollider.rect.w << " h:" << playerCollider.rect.h << " offset x:"
-            << playerCollider.offset.x << " offset y:" << playerCollider.offset.y << std::endl;
+    // std::cout << "Collider rect w:" << playerCollider.rect.w << " h:" << playerCollider.rect.h << " offset x:"
+    //         << playerCollider.offset.x << " offset y:" << playerCollider.offset.y << std::endl;
     player.addComponent<PlayerTag>();
 
     //uncomment to add red texture to player collision box

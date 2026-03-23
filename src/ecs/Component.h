@@ -105,6 +105,7 @@ struct Children {
 };
 
 enum class ParticleType {
+    Empty,
     Sand,
     Stone,
     Smoke,

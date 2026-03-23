@@ -40,7 +40,8 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/ecs/system/MainMenuSystem.cpp
         src/ecs/system/MouseInputSystem.cpp
         src/ecs/system/ColliderSyncSystem.cpp
-        src/utils/CollisionResolution.cpp)
+        src/utils/CollisionResolution.cpp
+        src/ecs/system/KeyboardInputSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3

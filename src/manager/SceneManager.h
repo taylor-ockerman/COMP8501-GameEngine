@@ -28,6 +28,8 @@ class SceneManager {
         auto it = scenes.find(name);
         if (it != scenes.end()) {
             const auto &params = it->second;
+            //reset scene
+            currentScene.reset();
             //create Scene object
             //build scene
             currentScene = std::make_unique<Scene>(
