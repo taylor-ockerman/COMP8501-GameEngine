@@ -34,6 +34,7 @@ public:
         return isRunning;
     }
 
+    SDL_Window *getWindow() { return window; }
     SDL_Renderer *renderer = nullptr;
 
     SceneManager sceneManager;

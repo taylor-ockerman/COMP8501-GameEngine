@@ -15,7 +15,7 @@
 struct Cell {
     ParticleType type = ParticleType::Empty;
     //this entity bridges ECS and cellular automata grid
-    Entity* entity = nullptr;
+    Entity *entity = nullptr;
 };
 
 class ParticleGrid {
@@ -26,9 +26,10 @@ public:
         cells.resize(height * width);
     };
 
-    int getCellSize() const {return cellSize;};
-    int getHeight() const {return height;};
-    int getWidth() const {return width;};
+    int getCellSize() const { return cellSize; };
+    int getHeight() const { return height; };
+    int getWidth() const { return width; };
+
     bool inBounds(int x, int y) const {
         return x >= 0 && x < width && y >= 0 && y < height;
     };
@@ -47,18 +48,19 @@ public:
 
     void clearCell(int gx, int gy) {
         if (!inBounds(gx, gy)) return;
-        Cell& cell = at(gx, gy);
+        Cell &cell = at(gx, gy);
         cell.type = ParticleType::Empty;
         cell.entity->destroy();
         cell.entity = nullptr;
     }
 
     void clearGrid() {
-        for (auto& cell : cells) {
+        for (auto &cell: cells) {
             cell.type = ParticleType::Empty;
             cell.entity = nullptr;
         }
     }
+
     void update() {
         for (int y = height - 1; y >= 0; y--) {
             for (int x = 0; x < width; x++) {
@@ -70,7 +72,7 @@ public:
                             break;
                         case ParticleType::Water:
                             updateWater(x, y);
-                            std::cout << "updating water"<< std::endl;
+                            //std::cout << "updating water"<< std::endl;
                             break;
                         case ParticleType::Stone:
                             updateStone(x, y);
@@ -171,17 +173,17 @@ public:
         //shouldnt move so nothing
     }
 
-    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity& entity) {
+    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity &entity) {
         //int gx = x / cellSize;
         //int gy = y / cellSize;
         if (!inBounds(gx, gy) || !isEmpty(gx, gy)) return false;
-        Cell& cell = at(gx, gy);
+        Cell &cell = at(gx, gy);
         cell.type = type;
         cell.entity = &entity;
-        std::cout << "spawnParticleAtCell: gx=" << gx
-          << " gy=" << gy
-          << " type=" << static_cast<int>(type)
-          << std::endl;
+        // std::cout << "spawnParticleAtCell: gx=" << gx
+        //   << " gy=" << gy
+        //   << " type=" << static_cast<int>(type)
+        //   << std::endl;
         return true;
     };
 
