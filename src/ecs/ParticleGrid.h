@@ -239,7 +239,7 @@ public:
         //shouldnt move, so nothing
     }
 
-    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity &entity, int brushSize) {
+    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity &entity) {
         if (!inBounds(gx, gy) || !isEmpty(gx, gy)) return false;
         Cell &cell = at(gx, gy);
         cell.type = type;

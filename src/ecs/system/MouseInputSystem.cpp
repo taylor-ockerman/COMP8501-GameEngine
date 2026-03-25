@@ -8,7 +8,7 @@
 
 void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid *grid) {
     if (event.type != SDL_EVENT_MOUSE_MOTION && event.type != SDL_EVENT_MOUSE_BUTTON_DOWN && event.type !=
-        SDL_EVENT_MOUSE_BUTTON_UP) {
+        SDL_EVENT_MOUSE_BUTTON_UP && event.type != SDL_EVENT_MOUSE_WHEEL) {
         return;
     }
 
@@ -71,7 +71,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
             // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
             //                            world.getSelectedParticle());
             world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                    world.getSelectedParticle(), 4
+                                    world.getSelectedParticle()
             );
             //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
         }
@@ -84,8 +84,18 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
             // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
             //                            world.getSelectedParticle());
             world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                    world.getSelectedParticle(), 4
+                                    world.getSelectedParticle()
             );
         }
+    }
+    if (event.type == SDL_EVENT_MOUSE_WHEEL) {
+        if (event.wheel.y > 0) {
+            world.incrementBrushSize();
+        } else if (event.wheel.y < 0) {
+            world.decrementBrushSize();
+        }
+
+        std::cout << "Brush radius: " << world.getBrushSize() << std::endl;
+        return;
     }
 }

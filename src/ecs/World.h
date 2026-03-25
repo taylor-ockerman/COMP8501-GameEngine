@@ -93,21 +93,37 @@ public:
     }
 
     bool spawnParticleAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type) {
+        //checks if spawning is valid
         int cellSize = grid.getCellSize();
 
         int gx = worldX / cellSize;
         int gy = worldY / cellSize;
 
         if (!grid.inBounds(gx, gy) || !grid.isEmpty(gx, gy)) return false;
+        //TODO change is empty check so particles can overwrite each other under certain conditions
+        return spawnParticleAtCell(gx, gy, grid, type);
+    }
 
-        float x = static_cast<float>(gx * cellSize);
-        float y = static_cast<float>(gy * cellSize);
+    void spawnBrushAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type) {
+        int cellSize = grid.getCellSize();
+        for (int dy = -brushSize; dy <= brushSize; dy++) {
+            for (int dx = -brushSize; dx <= brushSize; dx++) {
+                if (dx * dx + dy * dy > brushSize * brushSize) continue;
+                spawnParticleAtWorld(worldX + dx * cellSize, worldY + dy * cellSize, grid, type);
+            }
+        }
+    }
 
+    bool spawnParticleAtCell(int gx, int gy, ParticleGrid &grid, ParticleType type) {
+        int cellSize = grid.getCellSize();
         auto &e = createDeferredEntity();
-
-        e.addComponent<Transform>(Vector2D(x, y), 0.0f, 1.0f, Vector2D(x, y));
-        e.addComponent<Particle>(type, gy, gy);
-        e.addComponent<Collider>("particle", SDL_FRect{x, y, (float) cellSize, (float) cellSize}, true, Vector2D(0, 0));
+        float worldX = static_cast<float>(gx * cellSize);
+        float worldY = static_cast<float>(gy * cellSize);
+        e.addComponent<Transform>(Vector2D(worldX, worldY), 0.0f, 1.0f, Vector2D(gx, gy));
+        e.addComponent<Particle>(type, gx, gy);
+        e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
+                                 true,
+                                 Vector2D(0, 0));
 
         SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
         SDL_FRect src{0, 0, 64, 64};
@@ -137,7 +153,7 @@ public:
                 break;
         }
         //SDL_FRect src{0, 0, 64, 64};
-        SDL_FRect dest{x, y, (float) cellSize, (float) cellSize};
+        SDL_FRect dest{worldX, worldY, (float) cellSize, (float) cellSize};
         e.addComponent<Sprite>(tex, src, dest, RenderLayer::World, true);
 
         ParticleType particleType = ParticleType::Empty;
@@ -163,21 +179,12 @@ public:
                 break;
         }
 
-        if (!grid.spawnParticleAtCell(gx, gy, particleType, e, 1)) {
+        if (!grid.spawnParticleAtCell(gx, gy, particleType, e)) {
             e.destroy();
             return false;
         }
 
         return true;
-    }
-
-    void spawnBrushAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type, int radius) {
-        for (int dy = -radius; dy <= radius; dy++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                if (dx * dx + dy * dy > radius * radius) continue;
-                spawnParticleAtWorld(worldX + dx, worldY + dy, grid, type);
-            }
-        }
     }
 
     void destroyAllParticles(ParticleGrid *grid) {
@@ -231,8 +238,8 @@ public:
                     auto &sprite = cell.entity->getComponent<Sprite>();
                     sprite.dst.x = transform.position.x;
                     sprite.dst.y = transform.position.y;
-                    sprite.dst.w = (float) sprite.dst.w;
-                    sprite.dst.h = (float) sprite.dst.h;
+                    sprite.dst.w = (float) cellSize;
+                    sprite.dst.h = (float) cellSize;
                 }
             }
         }
@@ -279,9 +286,27 @@ public:
 
     ParticleType getSelectedParticle() const { return selectedParticleType; };
 
+    int getBrushSize() { return brushSize; }
+
+    void incrementBrushSize() {
+        brushSize++;
+        if (brushSize > maxBrushSize) {
+            brushSize = maxBrushSize;
+        }
+    }
+
+    void decrementBrushSize() {
+        brushSize--;
+        if (brushSize <= 0) {
+            brushSize = 0;
+        }
+    }
+
 private:
     float gravity = 9.8f;
     ParticleType selectedParticleType = ParticleType::Sand;
+    int brushSize = 1;
+    int maxBrushSize = 8;
 };
 
 void onCollisionEvent(const CollisionEvent &collision);

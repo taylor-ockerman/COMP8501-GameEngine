@@ -64,7 +64,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     delete grid;
     grid = nullptr;
     grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),
-                            world.getMap().height * world.getMap().getTileSize(), 4);
+                            world.getMap().height * world.getMap().getTileSize(), 16);
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
