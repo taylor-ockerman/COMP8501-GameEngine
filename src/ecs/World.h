@@ -92,25 +92,25 @@ public:
         return *entities.back();
     }
 
-    bool spawnParticleAtWorld(int worldX, int worldY, ParticleGrid& grid, ParticleType type) {
+    bool spawnParticleAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type) {
         int cellSize = grid.getCellSize();
 
         int gx = worldX / cellSize;
         int gy = worldY / cellSize;
 
-        if (!grid.inBounds(gx,gy) || !grid.isEmpty(gx,gy)) return false;
+        if (!grid.inBounds(gx, gy) || !grid.isEmpty(gx, gy)) return false;
 
         float x = static_cast<float>(gx * cellSize);
         float y = static_cast<float>(gy * cellSize);
 
-        auto& e = createDeferredEntity();
+        auto &e = createDeferredEntity();
 
-        e.addComponent<Transform>(Vector2D(x,y), 0.0f, 1.0f, Vector2D(x,y));
-        e.addComponent<Particle>(type,gy,gy);
-        e.addComponent<Collider>("particle", SDL_FRect{x,y,(float)cellSize,(float)cellSize}, true, Vector2D(0,0));
+        e.addComponent<Transform>(Vector2D(x, y), 0.0f, 1.0f, Vector2D(x, y));
+        e.addComponent<Particle>(type, gy, gy);
+        e.addComponent<Collider>("particle", SDL_FRect{x, y, (float) cellSize, (float) cellSize}, true, Vector2D(0, 0));
 
         SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
-        SDL_FRect src{0,0,64,64};
+        SDL_FRect src{0, 0, 64, 64};
         switch (type) {
             case ParticleType::Sand:
                 src.x = 0;
@@ -119,8 +119,8 @@ public:
                 //src.h = 64;
                 break;
             case ParticleType::Water:
-                src.x = 64;
-                src.y = 0;
+                src.x = 0;
+                src.y = 128;
                 //src.w = 64;
                 //src.h = 64;
                 break;
@@ -130,30 +130,40 @@ public:
                 //src.w = 64;
                 //src.h = 64;
                 break;
+            case ParticleType::Smoke:
+                src.x = 192;
+                src.y = 128;
             default:
                 break;
         }
         //SDL_FRect src{0, 0, 64, 64};
-        SDL_FRect dest{x, y, (float)cellSize, (float)cellSize};
-        e.addComponent<Sprite>(tex,src,dest,RenderLayer::World, true);
+        SDL_FRect dest{x, y, (float) cellSize, (float) cellSize};
+        e.addComponent<Sprite>(tex, src, dest, RenderLayer::World, true);
 
         ParticleType particleType = ParticleType::Empty;
         switch (type) {
             case ParticleType::Sand:
                 particleType = ParticleType::Sand;
+                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Sand));
                 break;
             case ParticleType::Water:
                 particleType = ParticleType::Water;
+                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Water));
                 break;
             case ParticleType::Stone:
                 particleType = ParticleType::Stone;
+                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Stone));
+                break;
+            case ParticleType::Smoke:
+                particleType = ParticleType::Smoke;
+                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Smoke));
                 break;
             default:
                 particleType = ParticleType::Empty;
                 break;
         }
 
-        if (!grid.spawnParticleAtCell(gx,gy,particleType,e)) {
+        if (!grid.spawnParticleAtCell(gx, gy, particleType, e, 1)) {
             e.destroy();
             return false;
         }
@@ -161,18 +171,18 @@ public:
         return true;
     }
 
-    void destroyAllParticles(ParticleGrid* grid) {
+    void destroyAllParticles(ParticleGrid *grid) {
         if (grid != nullptr) {
             grid->clearGrid();
         }
 
-        for (auto& entity : entities) {
+        for (auto &entity: entities) {
             if (entity->hasComponent<Particle>()) {
                 entity->destroy();
             }
         }
 
-        for (auto& entity : deferredEntities) {
+        for (auto &entity: deferredEntities) {
             if (entity->hasComponent<Particle>()) {
                 entity->destroy();
             }
@@ -181,17 +191,17 @@ public:
         cleanup();
     }
 
-    void syncParticlesFromGrid(ParticleGrid& grid) {
+    void syncParticlesFromGrid(ParticleGrid &grid) {
         int cellSize = grid.getCellSize();
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
-                Cell& cell = grid.at(x,y);
+                Cell &cell = grid.at(x, y);
 
                 if (cell.type == ParticleType::Empty || cell.entity == nullptr)continue;
                 if (!cell.entity->hasComponent<Particle>() || !cell.entity->hasComponent<Transform>()) continue;
 
-                auto& particle = cell.entity->getComponent<Particle>();
-                auto& transform = cell.entity->getComponent<Transform>();
+                auto &particle = cell.entity->getComponent<Particle>();
+                auto &transform = cell.entity->getComponent<Transform>();
 
                 particle.gridX = x;
                 particle.gridY = y;
@@ -201,19 +211,19 @@ public:
                 transform.position.y = static_cast<float>(y * cellSize);
 
                 if (cell.entity->hasComponent<Collider>()) {
-                    auto& collider = cell.entity->getComponent<Collider>();
+                    auto &collider = cell.entity->getComponent<Collider>();
                     collider.rect.x = transform.position.x + collider.offset.x;
                     collider.rect.y = transform.position.y + collider.offset.y;
-                    collider.rect.w = (float)cellSize;
-                    collider.rect.h = (float)cellSize;
+                    collider.rect.w = (float) cellSize;
+                    collider.rect.h = (float) cellSize;
                 }
 
                 if (cell.entity->hasComponent<Sprite>()) {
-                    auto& sprite = cell.entity->getComponent<Sprite>();
+                    auto &sprite = cell.entity->getComponent<Sprite>();
                     sprite.dst.x = transform.position.x;
                     sprite.dst.y = transform.position.y;
-                    sprite.dst.w = (float)sprite.dst.w;
-                    sprite.dst.h = (float)sprite.dst.h;
+                    sprite.dst.w = (float) sprite.dst.w;
+                    sprite.dst.h = (float) sprite.dst.h;
                 }
             }
         }
@@ -253,10 +263,13 @@ public:
     EventManager &getEventManager() { return eventManager; }
 
     Map &getMap() { return map; }
+
     void setSelectedParticle(ParticleType particleType) {
         selectedParticleType = particleType;
     }
+
     ParticleType getSelectedParticle() const { return selectedParticleType; };
+
 private:
     float gravity = 9.8f;
     ParticleType selectedParticleType = ParticleType::Sand;

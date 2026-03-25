@@ -115,6 +115,18 @@ enum class ParticleType {
     //TODO more to come...
 };
 
+enum class ParticleBehaviour {
+    Static,
+    Powder,
+    Liquid,
+    Gas
+};
+
+struct ParticleProperties {
+    int density;
+    ParticleBehaviour behaviour;
+};
+
 struct Particle {
     ParticleType type = ParticleType::Sand;
     int gridX{};

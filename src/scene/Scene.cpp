@@ -8,8 +8,7 @@
 
 Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, const int windowWidth,
              const int windowHeight) : name(
-                                           sceneName), sceneType(sceneType), grid(nullptr)
-{
+                                           sceneName), sceneType(sceneType), grid(nullptr) {
     if (sceneType == SceneType::MainMenu) {
         initMainMenu(windowWidth, windowHeight);
         return;
@@ -63,7 +62,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
     delete grid;
     grid = nullptr;
-    grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(), world.getMap().height * world.getMap().getTileSize(), 4);
+    grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),
+                            world.getMap().height * world.getMap().getTileSize(), 4);
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
