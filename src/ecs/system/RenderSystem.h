@@ -48,7 +48,7 @@ public:
                     sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
                 }
 
-                TextureManager::draw(sprite.texture, sprite.src, sprite.dst);
+                TextureManager::draw(sprite.texture, &sprite.src, &sprite.dst);
             }
         }
     }

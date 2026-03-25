@@ -38,10 +38,17 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
             std::cout << "Renderer could not be created!" << std::endl;
             return;
         }
+
+        if (TTF_Init() != 1) {
+            std::cout << "TTF could not be initialized!" << std::endl;
+        }
         isRunning = true;
     } else {
         isRunning = false;
     }
+    //load fonts
+    AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
+
     //load assets
     AssetManager::loadAnimation("player", "../assets/animations/human_animations.xml");
     AssetManager::loadAnimation("enemy", "../assets/animations/bird_animations.xml");

@@ -7,9 +7,11 @@ set(CMAKE_CXX_STANDARD 20)
 if (WIN32)
     set(SDL3_PATH "C:/Dev/SDL3")
     set(SDL3_IMAGE_PATH "C:/Dev/SDL3_image")
+    set(SDL3_TTF_PATH "C:/Dev/SDL3_ttf")
     include_directories(
             ${SDL3_PATH}/include
             ${SDL3_IMAGE_PATH}/include
+            ${SDL3_TTF_PATH}/include
             ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_SOURCE_DIR}/src/utils
             ${PROJECT_SOURCE_DIR}/src/ecs
@@ -19,6 +21,7 @@ if (WIN32)
     link_directories(
             ${SDL3_PATH}/lib
             ${SDL3_IMAGE_PATH}/lib
+            ${SDL3_TTF_PATH}/lib
     )
 endif ()
 
@@ -40,5 +43,5 @@ add_executable(COMP8051_Tutorial src/main.cpp
 target_link_libraries(COMP8051_Tutorial
         SDL3
         SDL3_image
+        SDL3_ttf
 )
-

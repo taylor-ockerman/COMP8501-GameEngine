@@ -44,5 +44,7 @@ private:
     void createSettingsUIComponents(Entity &overlay);
 
     void toggleSettingsOverlayVisibility(Entity &overlay);
+
+    Entity& createPlayerPositionLabel();
 };
 #endif //INC_8051TUTORIAL_SCENE_H

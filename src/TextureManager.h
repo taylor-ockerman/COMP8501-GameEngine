@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "Component.h"
 #include "SDL3_image/SDL_image.h"
 
 class TextureManager {
@@ -19,8 +20,9 @@ public:
     static SDL_Texture *load(const char *path);
 
     //floating point Rect = FRect
-    static void draw(SDL_Texture *tex, SDL_FRect src, SDL_FRect dest);
-
+    static void draw(SDL_Texture *tex, const SDL_FRect* src,const SDL_FRect* dest);
+    static void loadLabel(Label& label);
+    static void updateLabel(Label& label);
     static void clean();
 };
 

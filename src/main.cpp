@@ -7,8 +7,19 @@ Game *game = nullptr;
 
 
 int main() {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+    // if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
+    //     SDL_Log("SDL_Init failed: %s", SDL_GetError());
+    //     return -1;
+    // }
+    //SDL_Log("Trying video init...");
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL video init failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    //SDL_Log("Trying audio init...");
+    if (!SDL_Init(SDL_INIT_AUDIO)) {
+        SDL_Log("SDL audio init failed: %s", SDL_GetError());
         return -1;
     }
     const int FPS = 60;

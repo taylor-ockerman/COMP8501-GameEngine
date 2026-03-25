@@ -10,6 +10,8 @@
 #include "Component.h"
 #include "../Map.h"
 #include "Entity.h"
+#include "HUDSystem.h"
+#include "PreRenderSystem.h"
 #include "event/EventManager.h"
 #include "system/AnimationSystem.h"
 #include "system/KeyboardInputSystem.h"
@@ -43,7 +45,8 @@ class World {
     MainMenuSystem mainMenuSystem;
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
-
+    HUDSystem hudSystem;
+    PreRenderSystem preRenderSystem;
 public:
     World() = default;
 
@@ -58,9 +61,12 @@ public:
             cameraSystem.update(entities);
             spawnTimerSystem.update(entities, dt);
             destructionSystem.update(entities);
+            hudSystem.update(entities);
+
         }
 
         mouseInputSystem.update(*this, event);
+        preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
     }
