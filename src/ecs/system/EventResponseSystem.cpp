@@ -86,7 +86,15 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
             Game::onSceneChangeRequest("gameover");
         }
         //change scenes defer
-    }
+    } // else if (std::string(otherTag) == "particle") {
+    //     std::cout << "in particle collision" << std::endl;
+    //     if (e.state == CollisionState::Exit) {
+    //         player->getComponent<Acceleration>().isGrounded = false;
+    //         return;
+    //     }
+    //     if (e.state != CollisionState::Stay) return;
+    //     CollisionResolution::resolvePlayerWall(*player, *other);
+    // }
 }
 
 bool EventResponseSystem::getCollisionEntities(const CollisionEvent &e, const char *otherTag, Entity *&player,

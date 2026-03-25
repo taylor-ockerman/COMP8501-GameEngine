@@ -60,6 +60,7 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
     world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
+    //remove old grid before creating new one
     delete grid;
     grid = nullptr;
     grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),

@@ -171,6 +171,15 @@ public:
         return true;
     }
 
+    void spawnBrushAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type, int radius) {
+        for (int dy = -radius; dy <= radius; dy++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                if (dx * dx + dy * dy > radius * radius) continue;
+                spawnParticleAtWorld(worldX + dx, worldY + dy, grid, type);
+            }
+        }
+    }
+
     void destroyAllParticles(ParticleGrid *grid) {
         if (grid != nullptr) {
             grid->clearGrid();

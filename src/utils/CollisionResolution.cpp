@@ -4,9 +4,10 @@
 #include "CollisionResolution.h"
 
 #include <SDL3/SDL_rect.h>
-
+#include <iostream>
 #include "Component.h"
 #include "Entity.h"
+
 
 void CollisionResolution::resolvePlayerWall(Entity &player, Entity &wall) {
     if (!player.hasComponent<Transform>() || !player.hasComponent<Collider>() ||
@@ -15,6 +16,7 @@ void CollisionResolution::resolvePlayerWall(Entity &player, Entity &wall) {
     }
 
     if (!wall.hasComponent<Collider>()) {
+        std::cout << "no collider on wall" << std::endl;
         return;
     }
 

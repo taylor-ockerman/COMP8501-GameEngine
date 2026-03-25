@@ -67,8 +67,12 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
         event.button.button == SDL_BUTTON_LEFT && !clickedClickable) {
         if (grid != nullptr) {
-            auto& e = world.createDeferredEntity();
-            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, world.getSelectedParticle());
+            auto &e = world.createDeferredEntity();
+            // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+            //                            world.getSelectedParticle());
+            world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                    world.getSelectedParticle(), 4
+            );
             //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
         }
     }
@@ -76,8 +80,12 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     if (event.type == SDL_EVENT_MOUSE_MOTION &&
         (event.motion.state & SDL_BUTTON_LMASK) && !clickedClickable) {
         if (grid != nullptr) {
-            auto& e = world.createDeferredEntity();
-            world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid, world.getSelectedParticle());
+            auto &e = world.createDeferredEntity();
+            // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+            //                            world.getSelectedParticle());
+            world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                    world.getSelectedParticle(), 4
+            );
         }
     }
 }
