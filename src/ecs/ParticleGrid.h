@@ -20,21 +20,79 @@ struct Cell {
     Entity *entity = nullptr;
 };
 
+struct Chunk {
+    bool active = true;
+    bool movedThisFrame = false;
+    int idleFrames = 0;
+};
+
 class ParticleGrid {
 public:
     ParticleGrid(int worldWidth, int worldHeight, int cellSize) : cellSize(cellSize) {
         width = worldWidth / cellSize;
         height = worldHeight / cellSize;
         cells.resize(height * width);
+
+        chunkWidth = (width + chunkSize - 1) / chunkSize;
+        chunkHeight = (height + chunkSize - 1) / chunkSize;
+        chunks.resize(chunkWidth * chunkHeight);
     };
 
     int getCellSize() const { return cellSize; };
     int getHeight() const { return height; };
     int getWidth() const { return width; };
+    std::vector<Chunk> &getChunks() { return chunks; };
+    int getChunkSize() const { return chunkSize; };
+    int getChunkWidth() const { return chunkWidth; };
+    int getChunkHeight() const { return chunkHeight; };
 
     bool inBounds(int x, int y) const {
         return x >= 0 && x < width && y >= 0 && y < height;
     };
+
+    bool inBoundsChunk(int cx, int cy) const {
+        return cx >= 0 && cx < chunkWidth && cy >= 0 && cy < chunkHeight;
+    }
+
+    Chunk &chunkAt(int cx, int cy) {
+        return chunks[cy * chunkWidth + cx];
+    }
+
+    int getChunkX(int gx) {
+        return gx / chunkSize;
+    }
+
+    int getChunkY(int gy) {
+        return gy / chunkSize;
+    }
+
+    Chunk &getChunkFromCell(int gx, int gy) {
+        return chunkAt(getChunkX(gx), getChunkY(gy));
+    }
+
+    void wakeChunk(int cx, int cy) {
+        if (!inBoundsChunk(cx, cy)) return;
+
+        Chunk &chunk = chunkAt(cx, cy);
+        chunk.active = true;
+        chunk.idleFrames = 0;
+    }
+
+    void wakeChunkForCell(int gx, int gy) {
+        if (!inBounds(gx, gy)) return;
+        wakeChunk(getChunkX(gx), getChunkY(gy));
+    }
+
+    void wakeChunkAndNeighborsForCell(int gx, int gy) {
+        if (!inBounds(gx, gy)) return;
+        int cx = getChunkX(gx);
+        int cy = getChunkY(gy);
+        for (int y = cy - 1; y <= cy + 1; y++) {
+            for (int x = cx - 1; x <= cx + 1; x++) {
+                wakeChunk(x, y);
+            }
+        }
+    }
 
     Cell &at(int x, int y) {
         return cells[y * width + x];
@@ -46,6 +104,13 @@ public:
 
     void swapCells(int x1, int y1, int x2, int y2) {
         std::swap(at(x1, y1), at(x2, y2));
+        getChunkFromCell(x1, y1).movedThisFrame = true;
+        getChunkFromCell(x2, y1).movedThisFrame = true;
+        wakeChunkAndNeighborsForCell(x1, y1);
+        wakeChunkAndNeighborsForCell(x2, y2);
+
+        getChunkFromCell(x1, y1).movedThisFrame = true;
+        getChunkFromCell(x2, y2).movedThisFrame = true;
     }
 
     void clearCell(int gx, int gy) {
@@ -88,7 +153,11 @@ private
     int width;
     int height;
     int cellSize;
+    int chunkSize = 16;
+    int chunkWidth;
+    int chunkHeight;
     std::vector<Cell> cells;
+    std::vector<Chunk> chunks;
 };
 
 #endif //INC_8051TUTORIAL_PARTICLEGRIDSYSTEM_H

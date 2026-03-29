@@ -63,8 +63,10 @@ public:
             keyboardInputSystem.update(*this, entities, event);
             gravitySystem.update(entities, gravity, dt);
             movementSystem.update(entities, dt);
+            particleSimulationSystem.beginChunkFrame(*grid);
             particleSimulationSystem.update(*grid);
             particleSyncSystem.update(*grid);
+            particleSimulationSystem.endChunkFrame(*grid);
             colliderSyncSystem.update(*this);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);

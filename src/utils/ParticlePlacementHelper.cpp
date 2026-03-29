@@ -12,6 +12,9 @@ spawnParticleAtCell(ParticleGrid &grid, int gx, int gy, ParticleType type, Entit
     cell.type = type;
     cell.entity = &entity;
     cell.behaviour = entity.getComponent<ParticleProperties>().behaviour;
+
+    grid.wakeChunkAndNeighborsForCell(gx, gy);
+    grid.getChunkFromCell(gx, gy).movedThisFrame = true;
     // std::cout << "spawnParticleAtCell: gx=" << gx
     //   << " gy=" << gy
     //   << " type=" << static_cast<int>(type)
@@ -36,6 +39,7 @@ void ParticlePlacementHelper::addWallRect(ParticleGrid &grid, const SDL_FRect &w
             cell.entity = nullptr;
         }
     }
+    //maybe add chunk wake??
 }
 
 void ParticlePlacementHelper::spawnBrushAtWorld(World &world, int worldX, int worldY, ParticleGrid &grid,
