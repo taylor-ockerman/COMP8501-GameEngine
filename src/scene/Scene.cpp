@@ -64,7 +64,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     delete grid;
     grid = nullptr;
     grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),
-                            world.getMap().height * world.getMap().getTileSize(), 16);
+                            world.getMap().height * world.getMap().getTileSize(), 4);
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
@@ -74,6 +74,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         c.rect.y = collider.rect.y;
         c.rect.w = collider.rect.w;
         c.rect.h = collider.rect.h;
+        //adding wall colliders to grid system.
+        grid->addWallRect(c.rect);
         //uncomment this block to show red boxes on wall colliders
         SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
         SDL_FRect colSrc{0, 32, 32, 32};

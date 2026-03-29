@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    //each event type essentialy has its own std::vector of listeneers without you having to manage it explicitly. this is done using the static local
+    //each event type essentially has its own std::vector of listeners without you having to manage it explicitly. this is done using the static local
     //std::function<void(const EventType&)> is the callable wrapper: can hold anything that can be called like a function (lambda, free function, functor etc)
     // template<typename EventType>
     // std::vector<std::function<void(const EventType &)> > &getListeners() {
