@@ -24,6 +24,8 @@ public:
                 return {15, ParticleBehaviour::Powder};
             case ParticleType::Smoke:
                 return {5, ParticleBehaviour::Gas};
+            case ParticleType::Wall:
+                return {999, ParticleBehaviour::Static};
             default:
                 return {0, ParticleBehaviour::Static};
         }

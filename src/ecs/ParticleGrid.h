@@ -45,7 +45,6 @@ public:
     };
 
     void swapCells(int x1, int y1, int x2, int y2) {
-        //if (!canDisplace(x1, y1, x2, y2)) return;
         std::swap(at(x1, y1), at(x2, y2));
     }
 
@@ -66,200 +65,22 @@ public:
         }
     }
 
-    void update() {
-        for (int y = height - 1; y >= 0; y--) {
-            for (int x = 0; x < width; x++) {
-                {
-                    ParticleBehaviour bh = at(x, y).behaviour;
-                    if (bh == ParticleBehaviour::Gas) continue;
-                    switch (bh) {
-                        case ParticleBehaviour::Powder:
-                            updatePowder(x, y);
-                            //std::cout << "updating sand" << std::endl;
-                            break;
-                        case ParticleBehaviour::Liquid:
-                            updateLiquid(x, y);
-                            //std::cout << "updating water"<< std::endl;
-                            break;
-                        case ParticleBehaviour::Static:
-                            updateStatic(x, y);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    //fills cells in the grid based on wall collider rect geometry, so we can avoid tons of collision events between particles and walls.
+    void addWallRect(const SDL_FRect &wallRect) {
+        int startGX = static_cast<int>(wallRect.x) / cellSize;
+        int endGX = static_cast<int>(wallRect.x + wallRect.w - 1) / cellSize;
+        int startGY = static_cast<int>(wallRect.y) / cellSize;
+        int endGY = static_cast<int>(wallRect.y + wallRect.h - 1) / cellSize;
+
+        for (int gy = startGY; gy <= endGY; gy++) {
+            for (int gx = startGX; gx <= endGX; gx++) {
+                if (!inBounds(gx, gy)) continue;
+                Cell &cell = at(gx, gy);
+                cell.type = ParticleType::Wall;
+                cell.behaviour = ParticleBehaviour::Static;
+                cell.entity = nullptr;
             }
         }
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (at(x, y).behaviour != ParticleBehaviour::Gas
-                ) {
-                    continue;
-                } else {
-                    updateGas(x, y);
-                }
-            }
-        }
-    }
-
-    void updatePowder(int x, int y) {
-        //check directly below
-        if (canDisplace(x, y, x, y + 1)) {
-            swapCells(x, y, x, y + 1);
-            return;
-        }
-
-        //randomize checking left or right first to add some variance to powder movements
-        bool leftFirst = rand() % 2 == 0;
-
-        if (leftFirst) {
-            if (canDisplace(x, y, x - 1, y + 1)) {
-                swapCells(x - 1, y + 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x + 1, y + 1)) {
-                swapCells(x + 1, y + 1, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(x, y, x + 1, y + 1)) {
-                swapCells(x + 1, y + 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x - 1, y + 1)) {
-                swapCells(x - 1, y + 1, x, y);
-                return;
-            }
-        }
-    }
-
-    void updateLiquid(int x, int y) {
-        //check directly below
-        if (canDisplace(x, y, x, y + 1)) {
-            swapCells(x, y, x, y + 1);
-            return;
-        }
-
-        //randomize checking left or right first to add some variance to liquid movements
-        bool leftFirst = rand() % 2 == 0;
-
-        if (leftFirst) {
-            if (canDisplace(x, y, x - 1, y + 1)) {
-                swapCells(x - 1, y + 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x + 1, y + 1)) {
-                swapCells(x + 1, y + 1, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(x, y, x + 1, y + 1)) {
-                swapCells(x + 1, y + 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x - 1, y + 1)) {
-                swapCells(x - 1, y + 1, x, y);
-                return;
-            }
-        }
-        //if diagonals dont work, move sideways
-        if (leftFirst) {
-            if (canDisplace(x, y, x - 1, y)) {
-                swapCells(x - 1, y, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x + 1, y)) {
-                swapCells(x + 1, y, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(x, y, x + 1, y)) {
-                swapCells(x + 1, y, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x - 1, y)) {
-                swapCells(x - 1, y, x, y);
-                return;
-            }
-        }
-    }
-
-    void updateGas(int x, int y) {
-        //check directly below
-        if (canDisplace(x, y, x, y - 1)) {
-            swapCells(x, y, x, y - 1);
-            return;
-        }
-
-        //randomize checking left or right first to add some variance to gas movements
-        bool leftFirst = rand() % 2 == 0;
-
-        if (leftFirst) {
-            if (canDisplace(x, y, x - 1, y - 1)) {
-                swapCells(x - 1, y - 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x + 1, y - 1)) {
-                swapCells(x + 1, y - 1, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(x, y, x + 1, y - 1)) {
-                swapCells(x + 1, y - 1, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x - 1, y - 1)) {
-                swapCells(x - 1, y - 1, x, y);
-                return;
-            }
-        }
-        //if diagonals dont work, move sideways
-        if (leftFirst) {
-            if (canDisplace(x, y, x - 1, y)) {
-                swapCells(x - 1, y, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x + 1, y)) {
-                swapCells(x + 1, y, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(x, y, x + 1, y)) {
-                swapCells(x + 1, y, x, y);
-                return;
-            }
-            if (canDisplace(x, y, x - 1, y)) {
-                swapCells(x - 1, y, x, y);
-                return;
-            }
-        }
-    }
-
-    void updateStatic(int x, int y) {
-        //shouldnt move, so nothing
-    }
-
-    bool spawnParticleAtCell(int gx, int gy, ParticleType type, Entity &entity) {
-        if (!inBounds(gx, gy) || !isEmpty(gx, gy)) return false;
-        Cell &cell = at(gx, gy);
-        cell.type = type;
-        cell.entity = &entity;
-        cell.behaviour = entity.getComponent<ParticleProperties>().behaviour;
-        // std::cout << "spawnParticleAtCell: gx=" << gx
-        //   << " gy=" << gy
-        //   << " type=" << static_cast<int>(type)
-        //   << std::endl;
-        return true;
-    };
-
-    bool canDisplace(int fromX, int fromY, int toX, int toY) {
-        if (!inBounds(toX, toY)) return false;
-        ParticleType mover = at(fromX, fromY).type;
-        ParticleType target = at(toX, toY).type;
-
-        if (ParticleType::Empty == target) return true;
-
-        return ParticleHelpers::getProperties(mover).density > ParticleHelpers::getProperties(target).density;
     }
 
 private

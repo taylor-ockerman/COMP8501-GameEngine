@@ -112,6 +112,7 @@ enum class ParticleType {
     Water,
     Gunpowder,
     Fire,
+    Wall,
     //TODO more to come...
 };
 

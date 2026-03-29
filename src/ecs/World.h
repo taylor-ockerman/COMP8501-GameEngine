@@ -26,7 +26,10 @@
 #include "SceneType.h"
 #include "MainMenuSystem.h"
 #include "MouseInputSystem.h"
+#include "ParticleSimulationSystem.h"
 #include "UIRenderSystem.h"
+#include "ParticlePlacementHelper.h"
+#include "ParticleSyncSystem.h"
 
 class World {
     Map map;
@@ -47,6 +50,8 @@ class World {
     MouseInputSystem mouseInputSystem;
     GravitySystem gravitySystem;
     ColliderSyncSystem colliderSyncSystem;
+    ParticleSimulationSystem particleSimulationSystem;
+    ParticleSyncSystem particleSyncSystem;
 
 public:
     World() = default;
@@ -58,10 +63,8 @@ public:
             keyboardInputSystem.update(*this, entities, event);
             gravitySystem.update(entities, gravity, dt);
             movementSystem.update(entities, dt);
-
-            grid->update();
-            syncParticlesFromGrid(*grid);
-
+            particleSimulationSystem.update(*grid);
+            particleSyncSystem.update(*grid);
             colliderSyncSystem.update(*this);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
@@ -87,7 +90,7 @@ public:
     }
 
     Entity &createEntity() {
-        //use emplace instead of push so we dont create a copy
+        //use emplace instead of push so we don't create a copy
         entities.emplace_back(std::make_unique<Entity>());
         return *entities.back();
     }
@@ -179,7 +182,7 @@ public:
                 break;
         }
 
-        if (!grid.spawnParticleAtCell(gx, gy, particleType, e)) {
+        if (!ParticlePlacementHelper::spawnParticleAtCell(grid, gx, gy, particleType, e)) {
             e.destroy();
             return false;
         }
@@ -207,43 +210,43 @@ public:
         cleanup();
     }
 
-    void syncParticlesFromGrid(ParticleGrid &grid) {
-        int cellSize = grid.getCellSize();
-        for (int y = 0; y < grid.getHeight(); y++) {
-            for (int x = 0; x < grid.getWidth(); x++) {
-                Cell &cell = grid.at(x, y);
-
-                if (cell.type == ParticleType::Empty || cell.entity == nullptr)continue;
-                if (!cell.entity->hasComponent<Particle>() || !cell.entity->hasComponent<Transform>()) continue;
-
-                auto &particle = cell.entity->getComponent<Particle>();
-                auto &transform = cell.entity->getComponent<Transform>();
-
-                particle.gridX = x;
-                particle.gridY = y;
-
-                transform.oldPosition = transform.position;
-                transform.position.x = static_cast<float>(x * cellSize);
-                transform.position.y = static_cast<float>(y * cellSize);
-
-                if (cell.entity->hasComponent<Collider>()) {
-                    auto &collider = cell.entity->getComponent<Collider>();
-                    collider.rect.x = transform.position.x + collider.offset.x;
-                    collider.rect.y = transform.position.y + collider.offset.y;
-                    collider.rect.w = (float) cellSize;
-                    collider.rect.h = (float) cellSize;
-                }
-
-                if (cell.entity->hasComponent<Sprite>()) {
-                    auto &sprite = cell.entity->getComponent<Sprite>();
-                    sprite.dst.x = transform.position.x;
-                    sprite.dst.y = transform.position.y;
-                    sprite.dst.w = (float) cellSize;
-                    sprite.dst.h = (float) cellSize;
-                }
-            }
-        }
-    }
+    // void syncParticlesFromGrid(ParticleGrid &grid) {
+    //     int cellSize = grid.getCellSize();
+    //     for (int y = 0; y < grid.getHeight(); y++) {
+    //         for (int x = 0; x < grid.getWidth(); x++) {
+    //             Cell &cell = grid.at(x, y);
+    //
+    //             if (cell.type == ParticleType::Empty || cell.entity == nullptr)continue;
+    //             if (!cell.entity->hasComponent<Particle>() || !cell.entity->hasComponent<Transform>()) continue;
+    //
+    //             auto &particle = cell.entity->getComponent<Particle>();
+    //             auto &transform = cell.entity->getComponent<Transform>();
+    //
+    //             particle.gridX = x;
+    //             particle.gridY = y;
+    //
+    //             transform.oldPosition = transform.position;
+    //             transform.position.x = static_cast<float>(x * cellSize);
+    //             transform.position.y = static_cast<float>(y * cellSize);
+    //
+    //             if (cell.entity->hasComponent<Collider>()) {
+    //                 auto &collider = cell.entity->getComponent<Collider>();
+    //                 collider.rect.x = transform.position.x + collider.offset.x;
+    //                 collider.rect.y = transform.position.y + collider.offset.y;
+    //                 collider.rect.w = (float) cellSize;
+    //                 collider.rect.h = (float) cellSize;
+    //             }
+    //
+    //             if (cell.entity->hasComponent<Sprite>()) {
+    //                 auto &sprite = cell.entity->getComponent<Sprite>();
+    //                 sprite.dst.x = transform.position.x;
+    //                 sprite.dst.y = transform.position.y;
+    //                 sprite.dst.w = (float) cellSize;
+    //                 sprite.dst.h = (float) cellSize;
+    //             }
+    //         }
+    //     }
+    // }
 
     Entity &createDeferredEntity() {
         deferredEntities.emplace_back(std::make_unique<Entity>());
@@ -264,7 +267,7 @@ public:
     void synchronizeEntities() {
         if (!deferredEntities.empty()) {
             //push back all deferred entities to the entities vector
-            //using move so we dont create a copy
+            //using move so we don't create a copy
             std::move(deferredEntities.begin(), deferredEntities.end(), std::back_inserter(entities));
             //clear creation buffer
             deferredEntities.clear();
@@ -287,6 +290,7 @@ public:
     ParticleType getSelectedParticle() const { return selectedParticleType; };
 
     int getBrushSize() { return brushSize; }
+    int getMaxBrushSize() { return maxBrushSize; }
 
     void incrementBrushSize() {
         brushSize++;
