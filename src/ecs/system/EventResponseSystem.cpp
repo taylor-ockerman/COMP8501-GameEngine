@@ -2,8 +2,8 @@
 // Created by taylo on 3/11/2026.
 //
 #include "EventResponseSystem.h"
-#include "../World.h"
-#include "../../Game.h"
+#include "World.h"
+#include "Game.h"
 
 EventResponseSystem::EventResponseSystem(World &world) {
     //subscriptions
@@ -39,6 +39,7 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
 
     if (std::string(otherTag) == "item") {
         if (e.state != CollisionState::Enter) return;
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("collect"));
         other->destroy();
         //scene state
         for (auto &entity: world.getEntities()) {

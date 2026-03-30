@@ -5,13 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 #Set SDL3 include and lib paths
 if (WIN32)
-    set(SDL3_PATH "C:/Dev/SDL3")
+    set(SDL3_PATH "C:/Dev/SDL3_3_4_2")
     set(SDL3_IMAGE_PATH "C:/Dev/SDL3_image")
     set(SDL3_TTF_PATH "C:/Dev/SDL3_ttf")
+    set(SDL3_MIXER_PATH "C:/Dev/SDL3_mixer")
     include_directories(
             ${SDL3_PATH}/include
             ${SDL3_IMAGE_PATH}/include
             ${SDL3_TTF_PATH}/include
+            ${SDL3_MIXER_PATH}/include
             ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_SOURCE_DIR}/src/utils
             ${PROJECT_SOURCE_DIR}/src/ecs
@@ -22,6 +24,7 @@ if (WIN32)
             ${SDL3_PATH}/lib
             ${SDL3_IMAGE_PATH}/lib
             ${SDL3_TTF_PATH}/lib
+            ${SDL3_MIXER_PATH}/lib
     )
 endif ()
 
@@ -38,10 +41,14 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/scene/Scene.cpp
         src/ecs/system/EventResponseSystem.cpp
         src/ecs/system/MainMenuSystem.cpp
-        src/ecs/system/MouseInputSystem.cpp)
+        src/ecs/system/MouseInputSystem.cpp
+        src/manager/AudioManager.h
+        src/manager/AudioManager.cpp
+        src/ecs/event/AudioEventQueue.h)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3
         SDL3_image
         SDL3_ttf
+        SDL3_mixer
 )

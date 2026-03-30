@@ -46,6 +46,10 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
     } else {
         isRunning = false;
     }
+    //load audio
+    audioManager.loadAudio("theme", "../assets/audio/switch_with_me.ogg");
+    audioManager.loadAudio("collect", "../assets/audio/coin.ogg");
+
     //load fonts
     AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
 
@@ -60,6 +64,9 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
 
     //init game data/state
     gameState.playerHealth = 5;
+
+    //start music
+    audioManager.playMusic("theme");
 
     //start level 1
     sceneManager.changeSceneDeferred("mainmenu");

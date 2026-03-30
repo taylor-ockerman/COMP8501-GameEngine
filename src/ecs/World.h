@@ -24,6 +24,7 @@
 #include "system/SpawnTimerSystem.h"
 #include "system/EventResponseSystem.h"
 #include "../scene/SceneType.h"
+#include "event/AudioEventQueue.h"
 #include "system/MainMenuSystem.h"
 #include "system/MouseInputSystem.h"
 #include "system/UIRenderSystem.h"
@@ -47,6 +48,8 @@ class World {
     MouseInputSystem mouseInputSystem;
     HUDSystem hudSystem;
     PreRenderSystem preRenderSystem;
+    AudioEventQueue audioEventQueue;
+
 public:
     World() = default;
 
@@ -62,10 +65,10 @@ public:
             spawnTimerSystem.update(entities, dt);
             destructionSystem.update(entities);
             hudSystem.update(entities);
-
         }
 
         mouseInputSystem.update(*this, event);
+        audioEventQueue.process(); //process all audio events
         preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
@@ -115,7 +118,7 @@ public:
     }
 
     EventManager &getEventManager() { return eventManager; }
-
+    AudioEventQueue &getAudioEventQueue() { return audioEventQueue; }
     Map &getMap() { return map; }
 };
 
