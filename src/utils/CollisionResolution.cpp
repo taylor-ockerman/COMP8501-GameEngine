@@ -58,3 +58,50 @@ void CollisionResolution::resolvePlayerWall(Entity &player, Entity &wall) {
     cPlayer.rect.x = t.position.x + cPlayer.offset.x;
     cPlayer.rect.y = t.position.y + cPlayer.offset.y;
 }
+
+void CollisionResolution::resolvePlayerSolidParticle(Entity &player, const SDL_FRect &cellRect) {
+    if (!player.hasComponent<Transform>() || !player.hasComponent<Collider>() ||
+        !player.hasComponent<Velocity>() || !player.hasComponent<Acceleration>()) {
+        return;
+    }
+
+    auto &t = player.getComponent<Transform>();
+    auto &cPlayer = player.getComponent<Collider>();
+    auto &v = player.getComponent<Velocity>();
+    auto &a = player.getComponent<Acceleration>();
+
+    SDL_FRect &p = cPlayer.rect;
+    const SDL_FRect &w = cellRect;
+
+    float overlapLeft = (p.x + p.w) - w.x;
+    float overlapRight = (w.x + w.w) - p.x;
+    float overlapTop = (p.y + p.h) - w.y;
+    float overlapBottom = (w.y + w.h) - p.y;
+
+    if (overlapLeft <= 0 || overlapRight <= 0 || overlapTop <= 0 || overlapBottom <= 0) {
+        return;
+    }
+
+    float minX = std::min(overlapLeft, overlapRight);
+    float minY = std::min(overlapTop, overlapBottom);
+
+    if (minX < minY) {
+        if (overlapLeft < overlapRight) {
+            t.position.x -= overlapLeft;
+        } else {
+            t.position.x += overlapRight;
+        }
+        v.direction.x = 0;
+    } else {
+        if (overlapTop < overlapBottom) {
+            t.position.y -= overlapTop;
+            a.isGrounded = true;
+        } else {
+            t.position.y += overlapBottom;
+        }
+        v.direction.y = 0;
+    }
+
+    cPlayer.rect.x = t.position.x + cPlayer.offset.x;
+    cPlayer.rect.y = t.position.y + cPlayer.offset.y;
+}

@@ -30,6 +30,7 @@
 #include "UIRenderSystem.h"
 #include "ParticlePlacementHelper.h"
 #include "ParticleSyncSystem.h"
+#include "ParticleInteractionSystem.h"
 
 class World {
     Map map;
@@ -52,6 +53,7 @@ class World {
     ColliderSyncSystem colliderSyncSystem;
     ParticleSimulationSystem particleSimulationSystem;
     ParticleSyncSystem particleSyncSystem;
+    ParticleInteractionSystem particleInteractionSystem;
 
 public:
     World() = default;
@@ -68,6 +70,7 @@ public:
             particleSyncSystem.update(*grid);
             particleSimulationSystem.endChunkFrame(*grid);
             colliderSyncSystem.update(*this);
+            particleInteractionSystem.update(entities, *grid);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
@@ -126,9 +129,10 @@ public:
         float worldY = static_cast<float>(gy * cellSize);
         e.addComponent<Transform>(Vector2D(worldX, worldY), 0.0f, 1.0f, Vector2D(gx, gy));
         e.addComponent<Particle>(type, gx, gy);
-        e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
-                                 true,
-                                 Vector2D(0, 0));
+        // colliders are a huge performance hit, disabling for now
+        // e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
+        //                          true,
+        //                          Vector2D(0, 0));
 
         SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
         SDL_FRect src{0, 0, 64, 64};
@@ -211,44 +215,6 @@ public:
 
         cleanup();
     }
-
-    // void syncParticlesFromGrid(ParticleGrid &grid) {
-    //     int cellSize = grid.getCellSize();
-    //     for (int y = 0; y < grid.getHeight(); y++) {
-    //         for (int x = 0; x < grid.getWidth(); x++) {
-    //             Cell &cell = grid.at(x, y);
-    //
-    //             if (cell.type == ParticleType::Empty || cell.entity == nullptr)continue;
-    //             if (!cell.entity->hasComponent<Particle>() || !cell.entity->hasComponent<Transform>()) continue;
-    //
-    //             auto &particle = cell.entity->getComponent<Particle>();
-    //             auto &transform = cell.entity->getComponent<Transform>();
-    //
-    //             particle.gridX = x;
-    //             particle.gridY = y;
-    //
-    //             transform.oldPosition = transform.position;
-    //             transform.position.x = static_cast<float>(x * cellSize);
-    //             transform.position.y = static_cast<float>(y * cellSize);
-    //
-    //             if (cell.entity->hasComponent<Collider>()) {
-    //                 auto &collider = cell.entity->getComponent<Collider>();
-    //                 collider.rect.x = transform.position.x + collider.offset.x;
-    //                 collider.rect.y = transform.position.y + collider.offset.y;
-    //                 collider.rect.w = (float) cellSize;
-    //                 collider.rect.h = (float) cellSize;
-    //             }
-    //
-    //             if (cell.entity->hasComponent<Sprite>()) {
-    //                 auto &sprite = cell.entity->getComponent<Sprite>();
-    //                 sprite.dst.x = transform.position.x;
-    //                 sprite.dst.y = transform.position.y;
-    //                 sprite.dst.w = (float) cellSize;
-    //                 sprite.dst.h = (float) cellSize;
-    //             }
-    //         }
-    //     }
-    // }
 
     Entity &createDeferredEntity() {
         deferredEntities.emplace_back(std::make_unique<Entity>());

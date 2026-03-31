@@ -38,6 +38,22 @@ public:
         chunks.resize(chunkWidth * chunkHeight);
     };
 
+    int worldToGridX(float worldX) const {
+        return static_cast<int>(worldX) / cellSize;
+    }
+
+    int worldToGridY(float worldY) const {
+        return static_cast<int>(worldY) / cellSize;
+    }
+
+    int gridToWorldX(int gx) const {
+        return gx * cellSize;
+    }
+
+    int gridToWorldY(int gy) const {
+        return gy * cellSize;
+    }
+
     int getCellSize() const { return cellSize; };
     int getHeight() const { return height; };
     int getWidth() const { return width; };
