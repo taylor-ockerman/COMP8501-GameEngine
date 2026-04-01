@@ -102,23 +102,23 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
             auto &e = world.createDeferredEntity();
             switch (world.getSelectedBrushTool()) {
                 case BrushTool::Sand:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
                                             ParticleType::Sand);
                     break;
                 case BrushTool::Stone:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
                                             ParticleType::Stone);
                     break;
                 case BrushTool::Water:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
                                             ParticleType::Water);
                     break;
                 case BrushTool::Smoke:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
                                             ParticleType::Smoke);
                     break;
                 case BrushTool::Erase:
-                    world.eraseBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid);
+                    world.eraseBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid);
                     break;
             }
         }
