@@ -15,6 +15,7 @@
 #include "ParticleGrid.h"
 #include "EventManager.h"
 #include "AnimationSystem.h"
+#include "BrushHUDRenderSystem.h"
 #include "KeyboardInputSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
@@ -54,6 +55,7 @@ class World {
     ParticleSimulationSystem particleSimulationSystem;
     ParticleSyncSystem particleSyncSystem;
     ParticleInteractionSystem particleInteractionSystem;
+    BrushHUDRenderSystem brushHUDRenderSystem;
 
 public:
     World() = default;
@@ -69,7 +71,6 @@ public:
             particleSimulationSystem.update(*grid, entities);
             particleSyncSystem.update(*grid);
             //particleInteractionSystem.update(entities, *grid);
-
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
@@ -90,6 +91,7 @@ public:
             }
         }
         renderSystem.render(entities);
+        brushHUDRenderSystem.render(*this, renderer);
         uiRenderSystem.render(entities);
     }
 
@@ -300,12 +302,22 @@ public:
         }
     }
 
+    void setMouseScreenPosition(int x, int y) {
+        mouseScreenX = x;
+        mouseScreenY = y;
+    }
+
+    int getMouseScreenX() const { return mouseScreenX; }
+    int getMouseScreenY() const { return mouseScreenY; }
+
 private:
     float gravity = 9.8f;
     //ParticleType selectedParticleType = ParticleType::Sand;
     BrushTool selectedBrushTool = BrushTool::Sand;
     int brushSize = 1;
-    int maxBrushSize = 8;
+    int maxBrushSize = 20;
+    int mouseScreenX = 0;
+    int mouseScreenY = 0;
 };
 
 void onCollisionEvent(const CollisionEvent &collision);
