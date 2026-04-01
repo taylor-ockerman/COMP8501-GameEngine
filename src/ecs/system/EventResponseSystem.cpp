@@ -42,9 +42,9 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
     Entity *player = nullptr;
     Entity *other = nullptr;
     if (!getCollisionEntities(e, otherTag, player, other)) return;
-
     if (std::string(otherTag) == "item") {
         if (e.state != CollisionState::Enter) return;
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coinPickUp"));
         other->destroy();
         //scene state
         for (auto &entity: world.getEntities()) {

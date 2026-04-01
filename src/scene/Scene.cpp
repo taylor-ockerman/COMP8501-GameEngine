@@ -64,7 +64,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     delete grid;
     grid = nullptr;
     grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),
-                            world.getMap().height * world.getMap().getTileSize(), 8);
+                            world.getMap().height * world.getMap().getTileSize(), 4);
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
@@ -167,6 +167,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     //add scene state
     auto &state(world.createEntity());
     state.addComponent<SceneState>();
+
+    createPlayerPositionLabel();
 }
 
 Entity &Scene::createSettingsOverlay(int windowWidth, int windowHeight) {
@@ -259,5 +261,20 @@ void Scene::toggleSettingsOverlayVisibility(Entity &overlay) {
             }
         }
     }
+}
+
+Entity &Scene::createPlayerPositionLabel() {
+    auto &playerPositionLabel(world.createEntity());
+    Label label = {
+        "Test string",
+        AssetManager::getFont("arial"),
+        {255, 255, 255, 255},
+        LabelType::PlayerPosition,
+        "playerPos"
+    };
+    TextureManager::loadLabel(label);
+    playerPositionLabel.addComponent<Label>(label);
+    playerPositionLabel.addComponent<Transform>(Vector2D{10.0f, 10.0f}, 0.0f, 1.0f);
+    return playerPositionLabel;
 }
 

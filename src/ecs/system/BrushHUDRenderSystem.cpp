@@ -21,23 +21,27 @@ void BrushHUDRenderSystem::render(World &world, SDL_Renderer *renderer) {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 180);
 
-    drawCircle(renderer, centerX, centerY, (int) radius);
+    //drawCircle(renderer, centerX, centerY, (int) radius);
+    Vector2D center{(float) centerX, (float) centerY};
+    TextureManager::drawCircle(center, radius, 255, 255, 255);
 }
 
-void BrushHUDRenderSystem::drawCircle(SDL_Renderer *renderer, int cx, int cy, int radius) {
-    const int segments = 128;
+// void BrushHUDRenderSystem::drawCircle(SDL_Renderer *renderer, int cx, int cy, int radius) {
+//     const int segments = 128;
+//
+//     for (int i = 0; i < segments; i++) {
+//         float a1 = (2.0f * std::numbers::pi * i) / segments;
+//         float a2 = (2.0f * std::numbers::pi * (i + 1)) / segments;
+//
+//         float x1 = cx + radius * std::cos(a1);
+//         float y1 = cy + radius * std::sin(a1);
+//         float x2 = cx + radius * std::cos(a2);
+//         float y2 = cy + radius * std::sin(a2);
+//
+//         SDL_RenderLine(renderer, x1, y1, x2, y2);
+//     }
+// }
 
-    for (int i = 0; i < segments; i++) {
-        float a1 = (2.0f * std::numbers::pi * i) / segments;
-        float a2 = (2.0f * std::numbers::pi * (i + 1)) / segments;
 
-        float x1 = cx + radius * std::cos(a1);
-        float y1 = cy + radius * std::sin(a1);
-        float x2 = cx + radius * std::cos(a2);
-        float y2 = cy + radius * std::sin(a2);
-
-        SDL_RenderLine(renderer, x1, y1, x2, y2);
-    }
-}
 
 

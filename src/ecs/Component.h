@@ -14,6 +14,8 @@
 #include "Entity.h"
 #include "system/AnimationClip.h"
 
+#include "SDL3_ttf/SDL_ttf.h"
+
 struct Transform {
     Vector2D position{};
     float rotation{};
@@ -143,4 +145,21 @@ struct Particle {
     int gridY{};
 };
 
+enum class LabelType {
+    PlayerPosition,
+    Damage,
+    Health
+};
+
+struct Label {
+    std::string text{};
+    TTF_Font *font = nullptr;
+    SDL_Color color{};
+    LabelType type = LabelType::PlayerPosition;
+    std::string textureCacheKey{};
+    SDL_Texture *texture = nullptr;
+    SDL_FRect dst{};
+    bool visible = true;
+    bool dirty = false;
+};
 #endif //INC_8051TUTORIAL_COMPONENT_H

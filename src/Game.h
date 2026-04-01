@@ -5,6 +5,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 
+#include "AudioManager.h"
 #include "ecs/World.h"
 #include "manager/SceneManager.h"
 
@@ -36,7 +37,7 @@ public:
 
     SDL_Window *getWindow() { return window; }
     SDL_Renderer *renderer = nullptr;
-
+    AudioManager audioManager;
     SceneManager sceneManager;
     static std::function<void(std::string)> onSceneChangeRequest;
     static GameState gameState;

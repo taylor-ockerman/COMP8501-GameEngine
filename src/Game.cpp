@@ -38,10 +38,20 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
             std::cout << "Renderer could not be created!" << std::endl;
             return;
         }
+        if (!TTF_Init()) {
+            std::cerr << "TTF could not be initialized!" << SDL_GetError() << std::endl;
+        }
+
         isRunning = true;
     } else {
         isRunning = false;
     }
+    //load audio
+    audioManager.loadAudio("theme", "../assets/audio/switch_with_me.ogg");
+    audioManager.loadAudio("coinPickUp", "../assets/audio/coin.ogg");
+    //load fonts
+    AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
+
     //load assets
     AssetManager::loadAnimation("player", "../assets/animations/human_animations.xml");
     AssetManager::loadAnimation("enemy", "../assets/animations/bird_animations.xml");
@@ -54,6 +64,8 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
     //init game data/state
     gameState.playerHealth = 5;
 
+    //start music
+    audioManager.playMusic("theme");
     //start level 1
     sceneManager.changeSceneDeferred("mainmenu");
 

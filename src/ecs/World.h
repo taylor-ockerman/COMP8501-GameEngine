@@ -15,6 +15,7 @@
 #include "ParticleGrid.h"
 #include "EventManager.h"
 #include "AnimationSystem.h"
+#include "AudioEventQueue.h"
 #include "BrushHUDRenderSystem.h"
 #include "KeyboardInputSystem.h"
 #include "MovementSystem.h"
@@ -24,6 +25,7 @@
 #include "DestructionSystem.h"
 #include "SpawnTimerSystem.h"
 #include "EventResponseSystem.h"
+#include "HUDSystem.h"
 #include "SceneType.h"
 #include "MainMenuSystem.h"
 #include "MouseInputSystem.h"
@@ -32,6 +34,7 @@
 #include "ParticlePlacementHelper.h"
 #include "ParticleSyncSystem.h"
 #include "ParticleInteractionSystem.h"
+#include "PreRenderSystem.h"
 
 class World {
     Map map;
@@ -56,6 +59,9 @@ class World {
     ParticleSyncSystem particleSyncSystem;
     ParticleInteractionSystem particleInteractionSystem;
     BrushHUDRenderSystem brushHUDRenderSystem;
+    HUDSystem hudSystem;
+    PreRenderSystem preRenderSystem;
+    AudioEventQueue audioEventQueue;
 
 public:
     World() = default;
@@ -76,9 +82,12 @@ public:
             cameraSystem.update(entities);
             spawnTimerSystem.update(entities, dt);
             destructionSystem.update(entities);
+            hudSystem.update(entities);
         }
 
         mouseInputSystem.update(*this, event, grid);
+        audioEventQueue.process();
+        preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
     }
@@ -277,15 +286,11 @@ public:
         deferredEntities.clear();
     }
 
-    EventManager &getEventManager() { return eventManager; }
-
-    Map &getMap() { return map; }
 
     void setSelectedBrushTool(BrushTool brushTool) {
         selectedBrushTool = brushTool;
     }
 
-    //ParticleType getSelectedParticle() const { return selectedParticleType; };
     BrushTool getSelectedBrushTool() const { return selectedBrushTool; }
     int getBrushSize() { return brushSize; }
     int getMaxBrushSize() { return maxBrushSize; }
@@ -312,9 +317,12 @@ public:
     int getMouseScreenX() const { return mouseScreenX; }
     int getMouseScreenY() const { return mouseScreenY; }
 
+    AudioEventQueue &getAudioEventQueue() { return audioEventQueue; }
+    EventManager &getEventManager() { return eventManager; }
+    Map &getMap() { return map; }
+
 private:
     float gravity = 9.8f;
-    //ParticleType selectedParticleType = ParticleType::Sand;
     BrushTool selectedBrushTool = BrushTool::Sand;
     int brushSize = 1;
     int maxBrushSize = 20;
