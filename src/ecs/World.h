@@ -130,7 +130,9 @@ public:
         float worldY = static_cast<float>(gy * cellSize);
         e.addComponent<Transform>(Vector2D(worldX, worldY), 0.0f, 1.0f, Vector2D(gx, gy));
         e.addComponent<Particle>(type, gx, gy);
-        // colliders are a huge performance hit, disabling for now
+        // colliders are a huge e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
+        //                                 true,
+        //        performance hit, disabling for now
         // e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
         //                          true,
         //                          Vector2D(0, 0));
