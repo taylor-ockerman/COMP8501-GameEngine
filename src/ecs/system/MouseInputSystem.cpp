@@ -14,6 +14,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
 
     float mx, my;
     SDL_GetMouseState(&mx, &my);
+    world.setMouseScreenPosition((int) mx, (int) my);
     bool clickedClickable = false;
     float camOffx = 0.0f, camOffy = 0.0f;
     for (auto &e: world.getEntities()) {
