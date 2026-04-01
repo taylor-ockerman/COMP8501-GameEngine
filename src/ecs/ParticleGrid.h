@@ -18,6 +18,7 @@ struct Cell {
     ParticleBehaviour behaviour = ParticleBehaviour::Static;
     //this entity bridges ECS and cellular automata grid
     Entity *entity = nullptr;
+    bool occupiedByPlayer = false;
 };
 
 struct Chunk {
@@ -164,6 +165,10 @@ public:
         }
     }
 
+    std::vector<std::pair<int, int> > &getPreviousPlayerCells() {
+        return previousPlayerCells;
+    }
+
 private
 :
     int width;
@@ -174,6 +179,7 @@ private
     int chunkHeight;
     std::vector<Cell> cells;
     std::vector<Chunk> chunks;
+    std::vector<std::pair<int, int> > previousPlayerCells;
 };
 
 #endif //INC_8051TUTORIAL_PARTICLEGRIDSYSTEM_H

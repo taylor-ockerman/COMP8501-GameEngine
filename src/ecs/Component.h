@@ -123,6 +123,15 @@ enum class ParticleBehaviour {
     Gas
 };
 
+enum class BrushTool {
+    Sand,
+    Water,
+    Stone,
+    Smoke,
+    Erase
+};
+
+
 struct ParticleProperties {
     int density;
     ParticleBehaviour behaviour;

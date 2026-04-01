@@ -33,20 +33,24 @@ void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr
                         e->getComponent<Acceleration>().isGrounded = false;
                         break;
                     case SDLK_1:
-                        world.setSelectedParticle(ParticleType::Sand);
+                        world.setSelectedBrushTool(BrushTool::Sand);
                         std::cout << "Selected: Sand" << std::endl;
                         break;
                     case SDLK_2:
-                        world.setSelectedParticle(ParticleType::Stone);
-                        std::cout << "Selected: Stone" << std::endl;
-                        break;
-                    case SDLK_3:
-                        world.setSelectedParticle(ParticleType::Water);
+                        world.setSelectedBrushTool(BrushTool::Water);
                         std::cout << "Selected: Water" << std::endl;
                         break;
-                    case SDLK_4:
-                        world.setSelectedParticle(ParticleType::Smoke);
+                    case SDLK_3:
+                        world.setSelectedBrushTool(BrushTool::Smoke);
                         std::cout << "Selected: Smoke" << std::endl;
+                        break;
+                    case SDLK_4:
+                        world.setSelectedBrushTool(BrushTool::Stone);
+                        std::cout << "Selected: Stone" << std::endl;
+                        break;
+                    case SDLK_E:
+                        world.setSelectedBrushTool(BrushTool::Erase);
+                        std::cout << "Selected: Eraser" << std::endl;
                         break;
                     default:
                         break;

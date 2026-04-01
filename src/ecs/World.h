@@ -65,12 +65,11 @@ public:
             keyboardInputSystem.update(*this, entities, event);
             gravitySystem.update(entities, gravity, dt);
             movementSystem.update(entities, dt);
-            particleSimulationSystem.beginChunkFrame(*grid);
-            particleSimulationSystem.update(*grid);
-            particleSyncSystem.update(*grid);
-            particleSimulationSystem.endChunkFrame(*grid);
             colliderSyncSystem.update(*this);
-            particleInteractionSystem.update(entities, *grid);
+            particleSimulationSystem.update(*grid, entities);
+            particleSyncSystem.update(*grid);
+            //particleInteractionSystem.update(entities, *grid);
+
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
@@ -106,8 +105,8 @@ public:
 
         int gx = worldX / cellSize;
         int gy = worldY / cellSize;
-
-        if (!grid.inBounds(gx, gy) || !grid.isEmpty(gx, gy)) return false;
+        if ((!grid.inBounds(gx, gy) || !grid.isEmpty(gx, gy))) return false;
+        if (grid.at(gx, gy).occupiedByPlayer) return false;
         //TODO change is empty check so particles can overwrite each other under certain conditions
         return spawnParticleAtCell(gx, gy, grid, type);
     }
@@ -196,6 +195,33 @@ public:
         return true;
     }
 
+    void eraseBrushAtWorld(int worldX, int worldY, ParticleGrid &grid) {
+        int cellSize = grid.getCellSize();
+
+        int centerGX = worldX / cellSize;
+        int centerGY = worldY / cellSize;
+
+        for (int dy = -brushSize; dy <= brushSize; dy++) {
+            for (int dx = -brushSize; dx <= brushSize; dx++) {
+                if (dx * dx + dy * dy > brushSize * brushSize) continue;
+
+                int gx = centerGX + dx;
+                int gy = centerGY + dy;
+
+                if (!grid.inBounds(gx, gy)) continue;
+
+                Cell &cell = grid.at(gx, gy);
+
+                // usually you do not want to erase walls
+                if (cell.type == ParticleType::Wall) continue;
+
+                grid.clearCell(gx, gy);
+                grid.wakeChunkAndNeighborsForCell(gx, gy);
+                grid.getChunkFromCell(gx, gy).movedThisFrame = true;
+            }
+        }
+    }
+
     void destroyAllParticles(ParticleGrid *grid) {
         if (grid != nullptr) {
             grid->clearGrid();
@@ -251,12 +277,12 @@ public:
 
     Map &getMap() { return map; }
 
-    void setSelectedParticle(ParticleType particleType) {
-        selectedParticleType = particleType;
+    void setSelectedBrushTool(BrushTool brushTool) {
+        selectedBrushTool = brushTool;
     }
 
-    ParticleType getSelectedParticle() const { return selectedParticleType; };
-
+    //ParticleType getSelectedParticle() const { return selectedParticleType; };
+    BrushTool getSelectedBrushTool() const { return selectedBrushTool; }
     int getBrushSize() { return brushSize; }
     int getMaxBrushSize() { return maxBrushSize; }
 
@@ -276,7 +302,8 @@ public:
 
 private:
     float gravity = 9.8f;
-    ParticleType selectedParticleType = ParticleType::Sand;
+    //ParticleType selectedParticleType = ParticleType::Sand;
+    BrushTool selectedBrushTool = BrushTool::Sand;
     int brushSize = 1;
     int maxBrushSize = 8;
 };

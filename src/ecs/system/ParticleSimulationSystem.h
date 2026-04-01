@@ -4,14 +4,18 @@
 
 #ifndef INC_8051TUTORIAL_PARTICLESIMULATIONSYSTEM_H
 #define INC_8051TUTORIAL_PARTICLESIMULATIONSYSTEM_H
+#include <queue>
+
 #include "ParticleGrid.h"
 
 class ParticleGrid;
 
 class ParticleSimulationSystem {
 public:
-    void update(ParticleGrid &grid) {
-        //beginChunkFrame(grid);
+    void update(ParticleGrid &grid, std::vector<std::unique_ptr<Entity> > &entities) {
+        beginChunkFrame(grid);
+        clearPlayerOccupancy(grid);
+        markPlayerOccupancy(grid, entities);
         // powders/liquids/static: bottom-up chunk pass
         for (int cy = grid.getChunkHeight() - 1; cy >= 0; cy--) {
             bool leftToRightChunks = rand() % 2 == 0;
@@ -41,7 +45,7 @@ public:
                 }
             }
         }
-        //endChunkFrame(grid);
+        endChunkFrame(grid);
     }
 
     void beginChunkFrame(ParticleGrid &grid) {
@@ -305,12 +309,65 @@ private:
 
     bool canDisplace(ParticleGrid &grid, int fromX, int fromY, int toX, int toY) {
         if (!grid.inBounds(toX, toY)) return false;
+        if (grid.at(toX, toY).occupiedByPlayer) return false;
         ParticleType mover = grid.at(fromX, fromY).type;
         ParticleType target = grid.at(toX, toY).type;
-
         if (ParticleType::Empty == target) return true;
 
         return ParticleHelpers::getProperties(mover).density > ParticleHelpers::getProperties(target).density;
+    }
+
+    void clearPlayerOccupancy(ParticleGrid &grid) {
+        for (int y = 0; y < grid.getHeight(); y++) {
+            for (int x = 0; x < grid.getWidth(); x++) {
+                grid.at(x, y).occupiedByPlayer = false;
+            }
+        }
+    }
+
+    static void markPlayerOccupancy(ParticleGrid &grid, std::vector<std::unique_ptr<Entity> > &entities) {
+        int radius = 4;
+
+        for (auto &e: entities) {
+            if (!e->hasComponent<PlayerTag>() || !e->hasComponent<Collider>()) continue;
+
+            auto &collider = e->getComponent<Collider>();
+
+            int playerCenterX = grid.worldToGridX(collider.rect.x + collider.rect.w / 2);
+            int playerCenterY = grid.worldToGridY(collider.rect.y + collider.rect.h / 2);
+
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dx = -radius; dx <= radius; dx++) {
+                    if (dx * dx + dy * dy > radius * radius) continue;
+
+                    int gx = playerCenterX + dx;
+                    int gy = playerCenterY + dy;
+
+                    if (!grid.inBounds(gx, gy)) continue;
+
+                    Cell &cell = grid.at(gx, gy);
+                    cell.occupiedByPlayer = true;
+                    grid.getPreviousPlayerCells().push_back({gx, gy});
+
+                    if (cell.type != ParticleType::Wall) {
+                        grid.clearCell(gx, gy);
+                        cell.occupiedByPlayer = true;
+                    }
+
+                    grid.wakeChunkAndNeighborsForCell(gx, gy);
+                    grid.getChunkFromCell(gx, gy).movedThisFrame = true;
+                }
+            }
+        }
+    }
+
+    void clearPreviousPlayerOccupancy(ParticleGrid &grid) {
+        auto &cells = grid.getPreviousPlayerCells();
+        for (const auto &[x, y]: cells) {
+            if (!grid.inBounds(x, y)) continue;
+            grid.at(x, y).occupiedByPlayer = false;
+        }
+        cells.clear();
     }
 };
 #endif //INC_8051TUTORIAL_PARTICLESIMULATIONSYSTEM_H

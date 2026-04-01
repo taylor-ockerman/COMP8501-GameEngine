@@ -41,7 +41,7 @@ public:
                         anim.lastMoveClip = newClip;
                     }
                 } else if (velocity.direction.y > 0.0f) {
-                    newClip = "walk_down";
+                    newClip = "idle_down";
                     if (e->hasComponent<PlayerTag>()) {
                         anim.lastMoveClip = newClip;
                     }

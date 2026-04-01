@@ -68,11 +68,30 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         event.button.button == SDL_BUTTON_LEFT && !clickedClickable) {
         if (grid != nullptr) {
             auto &e = world.createDeferredEntity();
-            // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-            //                            world.getSelectedParticle());
-            world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                    world.getSelectedParticle()
-            );
+            // world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+            //                         ParticlePlacementHelper::brushToolToParticleType(world.getSelectedBrushTool())
+            // );
+            switch (world.getSelectedBrushTool()) {
+                case BrushTool::Sand:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Sand);
+                    break;
+                case BrushTool::Stone:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Stone);
+                    break;
+                case BrushTool::Water:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Water);
+                    break;
+                case BrushTool::Smoke:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Smoke);
+                    break;
+                case BrushTool::Erase:
+                    world.eraseBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid);
+                    break;
+            }
             //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
         }
     }
@@ -81,11 +100,27 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         (event.motion.state & SDL_BUTTON_LMASK) && !clickedClickable) {
         if (grid != nullptr) {
             auto &e = world.createDeferredEntity();
-            // world.spawnParticleAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-            //                            world.getSelectedParticle());
-            world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                    world.getSelectedParticle()
-            );
+            switch (world.getSelectedBrushTool()) {
+                case BrushTool::Sand:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Sand);
+                    break;
+                case BrushTool::Stone:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Stone);
+                    break;
+                case BrushTool::Water:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Water);
+                    break;
+                case BrushTool::Smoke:
+                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
+                                            ParticleType::Smoke);
+                    break;
+                case BrushTool::Erase:
+                    world.eraseBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid);
+                    break;
+            }
         }
     }
     if (event.type == SDL_EVENT_MOUSE_WHEEL) {
