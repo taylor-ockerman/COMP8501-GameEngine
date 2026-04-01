@@ -111,7 +111,7 @@ void Map::draw(const Camera &cam) {
                     break;
             }
             //std::cout << src.x << " " << src.y << " " << src.w << " " << src.h << std::endl;
-            TextureManager::draw(tileset, src, dest);
+            TextureManager::draw(tileset, &src, &dest);
         }
     }
 }

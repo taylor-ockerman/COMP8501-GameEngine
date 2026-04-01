@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include <iostream>
 #include "Game.h"
+#include "Component.h"
 //global variable, doesn't create any extra memory, just grabs the reference of this object
 extern Game *game;
 
@@ -46,7 +47,82 @@ SDL_Texture *TextureManager::load(const char *path) {
     return texture;
 }
 
-void TextureManager::draw(SDL_Texture *tex, SDL_FRect src, SDL_FRect dest) {
+void TextureManager::draw(SDL_Texture *tex, const SDL_FRect *src, const SDL_FRect *dest) {
     //draw the texture to the screen from vram
-    SDL_RenderTexture(game->renderer, tex, &src, &dest);
+    SDL_RenderTexture(game->renderer, tex, src, dest);
+}
+
+//credit to Logan Pederson for drawCircle function
+void TextureManager::drawCircle(Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b) {
+    Uint8 oldR, oldG, oldB, oldA;
+    float buffer = 1.0f;
+    float thickness = 5.0f;
+    float stepSize = 1.0f;
+    std::vector<SDL_FPoint> points;
+    points.resize(points.size() + 1);
+    SDL_GetRenderDrawColor(game->renderer, &oldR, &oldG, &oldB, &oldA);
+    SDL_SetRenderDrawColor(game->renderer, r, g, b, 255);
+    float inner = radius - 5 + buffer;
+    float outer = radius - 5 + thickness;
+
+    float innerSq = inner * inner;
+    float outerSq = outer * outer;
+    for (float i = center.x - radius; i <= center.x + radius; i += stepSize) {
+        float dx = i - center.x;
+
+        float maxY = sqrt(radius * radius - dx * dx);
+
+        for (float j = center.y - maxY; j <= center.y + maxY; j += stepSize) {
+            float dy = j - center.y;
+            float distSq = dx * dx + dy * dy;
+
+            if (distSq >= innerSq && distSq <= outerSq) {
+                points.push_back({i, j});
+            }
+        }
+    }
+
+    SDL_RenderPoints(game->renderer, points.data(), points.size());
+    SDL_SetRenderDrawColor(game->renderer, oldR, oldG, oldB, oldA);
+}
+
+void TextureManager::loadLabel(Label &label) {
+    auto it = textures.find(label.textureCacheKey);
+    if (it != textures.end()) {
+        label.texture = it->second;
+        return;
+    }
+
+    updateLabel(label);
+}
+
+void TextureManager::updateLabel(Label &label) {
+    if (!label.dirty) return;
+
+    if (label.texture) {
+        SDL_DestroyTexture(label.texture);
+        label.texture = nullptr;
+    }
+
+    SDL_Surface *tempSurface = TTF_RenderText_Blended(label.font, label.text.c_str(), label.text.size(), label.color);
+    if (!tempSurface) {
+        std::cerr << "Failed to load surface: " << label.textureCacheKey << SDL_GetError() << std::endl;
+    }
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(game->renderer, tempSurface);
+    SDL_DestroySurface(tempSurface);
+
+    if (!texture) {
+        std::cerr << "Failed to create texture: " << label.textureCacheKey << std::endl;
+    }
+
+    float w, h;
+    SDL_GetTextureSize(texture, &w, &h);
+    label.dst.w = w;
+    label.dst.h = h;
+
+    //cache
+    label.texture = texture;
+    textures[label.textureCacheKey] = texture;
+
+    label.dirty = false;
 }

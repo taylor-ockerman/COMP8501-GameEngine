@@ -13,7 +13,9 @@
 class Scene {
 public:
     Scene(SceneType sceneType, const char *sceneName, const char *mapPath, int windowWidth, int windowHeight);
+
     ~Scene();
+
     void update(const float dt, const SDL_Event &e) {
         world.update(dt, e, sceneType, grid);
     }
@@ -44,7 +46,9 @@ public:
     void setUpParticleGrid(int windowWidth, int windowHeight, int cellSize) {
         grid = new ParticleGrid(windowWidth, windowHeight, cellSize);
     };
+
     void resetScene();
+
 private:
     std::string name;
     SceneType sceneType;
@@ -63,5 +67,7 @@ private:
     void createSettingsUIComponents(Entity &overlay);
 
     void toggleSettingsOverlayVisibility(Entity &overlay);
+
+    Entity &createPlayerPositionLabel();
 };
 #endif //INC_8051TUTORIAL_SCENE_H
