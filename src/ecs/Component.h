@@ -36,7 +36,8 @@ struct Acceleration {
 
 enum class RenderLayer {
     World,
-    UI
+    UI,
+    HUD
 };
 
 struct Sprite {
@@ -115,7 +116,6 @@ enum class ParticleType {
     Gunpowder,
     Fire,
     Wall,
-    //TODO more to come...
 };
 
 enum class ParticleBehaviour {
@@ -161,5 +161,8 @@ struct Label {
     SDL_FRect dst{};
     bool visible = true;
     bool dirty = false;
+};
+
+struct SpawnerHUDTag {
 };
 #endif //INC_8051TUTORIAL_COMPONENT_H

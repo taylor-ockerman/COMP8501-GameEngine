@@ -15,15 +15,20 @@ class HUDSystem {
 public:
     void update(const std::vector<std::unique_ptr<Entity> > &entities) {
         Entity *playerEntity = nullptr;
-
+        Entity *spawnerHUD = nullptr;
         //find player
         for (auto &entity: entities) {
             if (entity->hasComponent<PlayerTag>()) {
                 playerEntity = entity.get();
-                break;
             }
+            if (entity->hasComponent<SpawnerHUDTag>()) {
+                spawnerHUD = entity.get();
+            }
+            if (spawnerHUD && playerEntity) break;
         }
 
+        if (spawnerHUD && spawnerHUD->hasComponent<Sprite>()) {
+        }
         if (!playerEntity) return;
         auto &playerTransform = playerEntity->getComponent<Transform>();
 

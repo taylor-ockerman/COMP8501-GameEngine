@@ -34,22 +34,27 @@ void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr
                         break;
                     case SDLK_1:
                         world.setSelectedBrushTool(BrushTool::Sand);
+                        world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Sand});
                         std::cout << "Selected: Sand" << std::endl;
                         break;
                     case SDLK_2:
                         world.setSelectedBrushTool(BrushTool::Water);
+                        world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Water});
                         std::cout << "Selected: Water" << std::endl;
                         break;
                     case SDLK_3:
                         world.setSelectedBrushTool(BrushTool::Smoke);
+                        world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Smoke});
                         std::cout << "Selected: Smoke" << std::endl;
                         break;
                     case SDLK_4:
                         world.setSelectedBrushTool(BrushTool::Stone);
+                        world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Stone});
                         std::cout << "Selected: Stone" << std::endl;
                         break;
                     case SDLK_E:
                         world.setSelectedBrushTool(BrushTool::Erase);
+                        world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Empty});
                         std::cout << "Selected: Eraser" << std::endl;
                         break;
                     default:

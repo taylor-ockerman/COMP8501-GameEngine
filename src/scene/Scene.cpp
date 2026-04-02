@@ -65,6 +65,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     grid = nullptr;
     grid = new ParticleGrid(world.getMap().width * world.getMap().getTileSize(),
                             world.getMap().height * world.getMap().getTileSize(), 4);
+
     //setUpParticleGrid(windowWidth, windowHeight, 4);
     for (auto &collider: world.getMap().colliders) {
         auto &e = world.createEntity();
@@ -82,21 +83,21 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
         e.addComponent<Sprite>(tex, colSrc, colDst);
     }
-
-    for (auto &sp: world.getMap().coins) {
-        auto &item = world.createEntity();
-        item.addComponent<Transform>(Vector2D(sp.rect.x, sp.rect.y), 0.0f, 1.0f);
-        auto &c = item.addComponent<Collider>("item");
-        c.rect.x = sp.rect.x;
-        c.rect.y = sp.rect.y;
-        SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
-        // SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png"); //uncomment for red box on collider
-        SDL_FRect itemSrc{0, 0, 32, 32};
-        SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
-        auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
-        c.rect.w = s.dst.w;
-        c.rect.h = s.dst.h;
-    }
+    //dont need coins
+    // for (auto &sp: world.getMap().coins) {
+    //     auto &item = world.createEntity();
+    //     item.addComponent<Transform>(Vector2D(sp.rect.x, sp.rect.y), 0.0f, 1.0f);
+    //     auto &c = item.addComponent<Collider>("item");
+    //     c.rect.x = sp.rect.x;
+    //     c.rect.y = sp.rect.y;
+    //     SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
+    //     // SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png"); //uncomment for red box on collider
+    //     SDL_FRect itemSrc{0, 0, 32, 32};
+    //     SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
+    //     auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
+    //     c.rect.w = s.dst.w;
+    //     c.rect.h = s.dst.h;
+    // }
 
     auto &cam = world.createEntity();
     SDL_FRect camView{};
@@ -140,35 +141,46 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
 
     player.addComponent<Health>(Game::gameState.playerHealth);
 
-    auto &spawner(world.createEntity());
-    Transform t = spawner.addComponent<Transform>(Vector2D(windowWidth / 2, windowHeight - 5), 0.0f, 1.0f);
-    spawner.addComponent<TimedSpawner>(2.0f, [this, t] {
-        //create our projectile
-        auto &e(world.createDeferredEntity());
-        e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
-        e.addComponent<Velocity>(Vector2D(0, -1), 200.0f);
-        //e.addComponent<Acceleration>();
-
-        auto &anim = AssetManager::getAnimation("enemy");
-        e.addComponent<Animation>(anim);
-
-        SDL_Texture *tex = TextureManager::load("../assets/animations/bird_anim.png");
-        SDL_FRect src = {0, 0, 32, 32};
-        SDL_FRect dest{t.position.x, t.position.y, 32, 32};
-        e.addComponent<Sprite>(tex, src, dest);
-
-        auto &c = e.addComponent<Collider>("projectile");
-        c.rect.w = dest.w;
-        c.rect.h = dest.h;
-
-        e.addComponent<ProjectileTag>();
-    });
+    //dont need crows spawning
+    // auto &spawner(world.createEntity());
+    // Transform t = spawner.addComponent<Transform>(Vector2D(windowWidth / 2, windowHeight - 5), 0.0f, 1.0f);
+    // spawner.addComponent<TimedSpawner>(2.0f, [this, t] {
+    //     //create our projectile
+    //     auto &e(world.createDeferredEntity());
+    //     e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
+    //     e.addComponent<Velocity>(Vector2D(0, -1), 200.0f);
+    //     //e.addComponent<Acceleration>();
+    //
+    //     auto &anim = AssetManager::getAnimation("enemy");
+    //     e.addComponent<Animation>(anim);
+    //
+    //     SDL_Texture *tex = TextureManager::load("../assets/animations/bird_anim.png");
+    //     SDL_FRect src = {0, 0, 32, 32};
+    //     SDL_FRect dest{t.position.x, t.position.y, 32, 32};
+    //     e.addComponent<Sprite>(tex, src, dest);
+    //
+    //     auto &c = e.addComponent<Collider>("projectile");
+    //     c.rect.w = dest.w;
+    //     c.rect.h = dest.h;
+    //
+    //     e.addComponent<ProjectileTag>();
+    // });
 
     //add scene state
     auto &state(world.createEntity());
     state.addComponent<SceneState>();
 
     createPlayerPositionLabel();
+    //create texture for HUD that shows what particle is selected to spawn
+    Entity &particleSpawnerHUD = world.createEntity();
+    Transform t = particleSpawnerHUD.addComponent<Transform>(Vector2D(6.0f, windowHeight - 70.0f),
+                                                             0.0f,
+                                                             1.0f);
+    SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
+    SDL_FRect src{0, 0, 64, 64};
+    SDL_FRect dst{t.position.x, t.position.y, 64, 64};
+    particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
+    particleSpawnerHUD.addComponent<SpawnerHUDTag>();
 }
 
 Entity &Scene::createSettingsOverlay(int windowWidth, int windowHeight) {

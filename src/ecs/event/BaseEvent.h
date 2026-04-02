@@ -11,7 +11,8 @@
 enum class EventType {
     Collision,
     PlayerAction,
-    MouseInteraction
+    MouseInteraction,
+    SpawnerChange
 };
 
 struct BaseEvent {
@@ -52,6 +53,17 @@ struct MouseInteractionEvent : BaseEvent {
 
     MouseInteractionEvent(Entity *entity, MouseInteractionState state) : entity(entity), state(state) {
         type = EventType::MouseInteraction;
+    }
+};
+
+struct SpawnerChangeEvent : BaseEvent {
+    Entity *entity = nullptr;
+
+    ParticleType pType = ParticleType::Sand;
+
+    SpawnerChangeEvent(ParticleType pType) {
+        this->pType = pType;
+        type = EventType::SpawnerChange;
     }
 };
 #endif //INC_8051TUTORIAL_BASEEVENT_H

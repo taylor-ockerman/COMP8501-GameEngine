@@ -7,8 +7,8 @@
 
 #include "Collision.h"
 #include "CollisionResolution.h"
-#include "../World.h"
-#include "../../Game.h"
+#include "World.h"
+#include "Game.h"
 
 EventResponseSystem::EventResponseSystem(World &world) {
     //subscriptions
@@ -16,18 +16,18 @@ EventResponseSystem::EventResponseSystem(World &world) {
         [this,&world](const BaseEvent &e) {
             if (e.type != EventType::Collision) return;
             const auto &collision = static_cast<const CollisionEvent &>(e); //cast base type to collision type
-
             onCollision(collision, "item", world);
             onCollision(collision, "wall", world);
             onCollision(collision, "projectile", world);
-            onCollision(collision, "particle", world);
+
+            //don't need this anymore as colliders are disabled
+            //onCollision(collision, "particle", world);
         });
 
     world.getEventManager().subscribe(
         [this,&world](const BaseEvent &e) {
             if (e.type != EventType::PlayerAction) return;
             const auto &playerAction = static_cast<const PlayerActionEvent &>(e); //cast base type to collision type
-            //TODO onPlayerAction
         });
 
     world.getEventManager().subscribe(
@@ -36,6 +36,13 @@ EventResponseSystem::EventResponseSystem(World &world) {
             const auto &mouseInteractionEvent = static_cast<const MouseInteractionEvent &>(e);
             onMouseInteraction(mouseInteractionEvent);
         });
+
+    world.getEventManager().subscribe([this, &world](const BaseEvent &e) {
+        if (e.type != EventType::SpawnerChange) return;
+        const auto &spawnerChangeEvent = static_cast<const SpawnerChangeEvent &>(e);
+        onSpawnerChangeEvent(spawnerChangeEvent, world);
+        std::cout << "subscribed" << std::endl;
+    });
 }
 
 void EventResponseSystem::onCollision(const CollisionEvent &e, const char *otherTag, World &world) {
@@ -64,12 +71,8 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
             return;
         }
         if (e.state != CollisionState::Stay) return;
-        // //stop the player
-        // auto &t = player->getComponent<Transform>();
-        // auto &a = player->getComponent<Acceleration>();
-        // a.isGrounded = true;
-        // t.position = t.oldPosition;
-        // //std::cout << "Player wall collision!!";
+        //stop the player
+        //std::cout << "Player wall collision!!";
         CollisionResolution::resolvePlayerWall(*player, *other);
     } else if (std::string(otherTag) == "projectile") {
         if (e.state != CollisionState::Enter) return;
@@ -140,4 +143,50 @@ void EventResponseSystem::onMouseInteraction(const MouseInteractionEvent &e) {
         default:
             break;
     }
+}
+
+void EventResponseSystem::
+onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
+    Entity *spawner = nullptr;
+    for (auto &e: world.getEntities()) {
+        if (e->hasComponent<SpawnerHUDTag>()) {
+            spawner = e.get();
+        }
+    }
+    if (!spawner) {
+        std::cout << "no spawner hud element found" << std::endl;
+        return;
+    }
+    auto &sprite = spawner->getComponent<Sprite>();
+    SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
+    SDL_FRect src{0, 0, 64, 64};
+    std::cout << "hitting that shiz" << std::endl;
+    switch (e.pType) {
+        case ParticleType::Sand:
+            src.x = 0;
+            src.y = 0;
+            break;
+        case ParticleType::Water:
+            src.x = 0;
+            src.y = 128;
+            break;
+        case ParticleType::Stone:
+            src.x = 192;
+            src.y = 192;
+            break;
+        case ParticleType::Smoke:
+            src.x = 192;
+            src.y = 128;
+        case ParticleType::Empty:
+            src.x = 0;
+            src.y = 160;
+            break;
+        default:
+            break;
+    }
+
+    SDL_FRect dst = sprite.dst;
+    spawner->deactivateComponent<Sprite>();
+    spawner->addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
+    //sprite = Sprite{tex, src, dst, RenderLayer::UI, true};
 }

@@ -24,7 +24,7 @@ AudioManager::AudioManager() {
 
     musicTrack = MIX_CreateTrack(mixer);
     sfxTrack = MIX_CreateTrack(mixer);
-    MIX_SetTrackGain(musicTrack, 0.5f);
+    MIX_SetTrackGain(musicTrack, 0.01f);
 }
 
 void AudioManager::loadAudio(const std::string &name, const char *path) const {

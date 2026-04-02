@@ -23,7 +23,10 @@ private:
     //player action
     void onPlayerAction(const CollisionEvent &e,
                         const std::function<void(Entity *player, PlayerAction action)> &callback);
+
     void onMouseInteraction(const MouseInteractionEvent &e);
+
+    void onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world);
 };
 
 #endif //INC_8051TUTORIAL_EVENTRESPONSESYSTEM_H
