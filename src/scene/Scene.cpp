@@ -279,7 +279,7 @@ Entity &Scene::createPlayerPositionLabel() {
     auto &playerPositionLabel(world.createEntity());
     Label label = {
         "Test string",
-        AssetManager::getFont("arial"),
+        AssetManager::getFont("pixel"),
         {255, 255, 255, 255},
         LabelType::PlayerPosition,
         "playerPos"

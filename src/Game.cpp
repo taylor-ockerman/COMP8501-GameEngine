@@ -51,6 +51,7 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
     audioManager.loadAudio("coinPickUp", "../assets/audio/coin.ogg");
     //load fonts
     AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
+    AssetManager::loadFont("pixel", "../assets/fonts/pixel.ttf", 24);
 
     //load assets
     AssetManager::loadAnimation("player", "../assets/animations/human_animations.xml");
