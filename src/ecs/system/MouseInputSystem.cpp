@@ -17,11 +17,13 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     world.setMouseScreenPosition((int) mx, (int) my);
     bool clickedClickable = false;
     float camOffx = 0.0f, camOffy = 0.0f;
+    float camZoom = 1.0f;
     for (auto &e: world.getEntities()) {
         if (e->hasComponent<Camera>()) {
             auto &camera = e->getComponent<Camera>();
-            camOffx = camera.view.x;
-            camOffy = camera.view.y;
+            camZoom = camera.zoom;
+            camOffx = camera.view.x * camZoom;
+            camOffy = camera.view.y * camZoom;
         }
         if (e->hasComponent<Clickable>() && e->hasComponent<Collider>()) {
             auto &clickable = e->getComponent<Clickable>();
@@ -68,31 +70,19 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
         event.button.button == SDL_BUTTON_LEFT && !clickedClickable) {
         if (grid != nullptr) {
-            auto &e = world.createDeferredEntity();
             // world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
             //                         ParticlePlacementHelper::brushToolToParticleType(world.getSelectedBrushTool())
             // );
-            switch (world.getSelectedBrushTool()) {
-                case BrushTool::Sand:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                            ParticleType::Sand);
-                    break;
-                case BrushTool::Stone:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                            ParticleType::Stone);
-                    break;
-                case BrushTool::Water:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                            ParticleType::Water);
-                    break;
-                case BrushTool::Smoke:
-                    world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-                                            ParticleType::Smoke);
-                    break;
-                case BrushTool::Erase:
-                    world.eraseBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid);
-                    break;
+            if (world.getSelectedBrushTool() == ParticleType::Erase) {
+                world.eraseBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
+                                        (int) (event.button.y + camOffy) / camZoom, *grid);
+            } else {
+                world.spawnBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
+                                        (int) (event.button.y + camOffy) / camZoom, *grid,
+                                        world.getSelectedBrushTool());
             }
+
+
             //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
         }
     }
@@ -100,27 +90,13 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     if (event.type == SDL_EVENT_MOUSE_MOTION &&
         (event.motion.state & SDL_BUTTON_LMASK) && !clickedClickable) {
         if (grid != nullptr) {
-            auto &e = world.createDeferredEntity();
-            switch (world.getSelectedBrushTool()) {
-                case BrushTool::Sand:
-                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
-                                            ParticleType::Sand);
-                    break;
-                case BrushTool::Stone:
-                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
-                                            ParticleType::Stone);
-                    break;
-                case BrushTool::Water:
-                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
-                                            ParticleType::Water);
-                    break;
-                case BrushTool::Smoke:
-                    world.spawnBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid,
-                                            ParticleType::Smoke);
-                    break;
-                case BrushTool::Erase:
-                    world.eraseBrushAtWorld((int) event.motion.x + camOffx, (int) event.motion.y + camOffy, *grid);
-                    break;
+            if (world.getSelectedBrushTool() == ParticleType::Erase) {
+                world.eraseBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
+                                        (int) (event.button.y + camOffy) / camZoom, *grid);
+            } else {
+                world.spawnBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
+                                        (int) (event.button.y + camOffy) / camZoom, *grid,
+                                        world.getSelectedBrushTool());
             }
         }
     }

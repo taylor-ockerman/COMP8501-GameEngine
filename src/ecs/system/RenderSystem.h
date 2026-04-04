@@ -33,22 +33,18 @@ public:
 
                 if (sprite.renderLayer != RenderLayer::World) continue;
                 //we are converting from world space to screen space
-                sprite.dst.x = t.position.x - cam.view.x;
-                sprite.dst.y = t.position.y - cam.view.y;
-
+                SDL_FRect renderDst{};
+                renderDst.x = (t.position.x - cam.view.x) * cam.zoom;
+                renderDst.y = (t.position.y - cam.view.y) * cam.zoom;
+                renderDst.w = sprite.dst.w * t.scale * cam.zoom;
+                renderDst.h = sprite.dst.h * t.scale * cam.zoom;
                 //if the entity has animation component, update the src rect
                 if (entity->hasComponent<Animation>()) {
                     auto &anim = entity->getComponent<Animation>();
-                    // std::cout << "W: " << anim.clips[anim.currentClip].frameIndices[anim.currentFrame].w << " H: " <<
-                    //         anim.clips[anim.
-                    //             currentClip].frameIndices[anim.currentFrame].h << " x: " << anim.clips[anim.currentClip]
-                    //         .frameIndices[anim
-                    //             .currentFrame].x << anim.clips[anim.currentClip].frameIndices[anim.currentFrame].y <<
-                    //         " y: " << std::endl;
                     sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
                 }
 
-                TextureManager::draw(sprite.texture, &sprite.src, &sprite.dst);
+                TextureManager::draw(sprite.texture, &sprite.src, &renderDst);
             }
         }
     }

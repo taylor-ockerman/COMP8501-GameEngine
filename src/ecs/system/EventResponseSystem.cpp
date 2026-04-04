@@ -41,7 +41,6 @@ EventResponseSystem::EventResponseSystem(World &world) {
         if (e.type != EventType::SpawnerChange) return;
         const auto &spawnerChangeEvent = static_cast<const SpawnerChangeEvent &>(e);
         onSpawnerChangeEvent(spawnerChangeEvent, world);
-        std::cout << "subscribed" << std::endl;
     });
 }
 
@@ -158,33 +157,11 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
         return;
     }
     auto &sprite = spawner->getComponent<Sprite>();
-    SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
-    SDL_FRect src{0, 0, 64, 64};
-    std::cout << "hitting that shiz" << std::endl;
-    switch (e.pType) {
-        case ParticleType::Sand:
-            src.x = 0;
-            src.y = 0;
-            break;
-        case ParticleType::Water:
-            src.x = 0;
-            src.y = 128;
-            break;
-        case ParticleType::Stone:
-            src.x = 192;
-            src.y = 192;
-            break;
-        case ParticleType::Smoke:
-            src.x = 192;
-            src.y = 128;
-        case ParticleType::Empty:
-            src.x = 0;
-            src.y = 160;
-            break;
-        default:
-            break;
-    }
-
+    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    SDL_FRect src = ParticleHelpers::getProperties(e.pType, false).spriteSrc;
+    //std::cout << "hitting that shiz" << std::endl;
+    src.w += 64;
+    src.h += 64;
     SDL_FRect dst = sprite.dst;
     spawner->deactivateComponent<Sprite>();
     spawner->addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
