@@ -68,6 +68,7 @@ struct Camera {
     SDL_FRect view{};
     float worldWidth;
     float worldHeight;
+    float zoom = 2.0f;
 };
 
 struct TimedSpawner {
@@ -116,6 +117,10 @@ enum class ParticleType {
     Gunpowder,
     Fire,
     Wall,
+    Oil,
+    Wood,
+    Steam,
+    Erase
 };
 
 enum class ParticleBehaviour {
@@ -125,18 +130,10 @@ enum class ParticleBehaviour {
     Gas
 };
 
-enum class BrushTool {
-    Sand,
-    Water,
-    Stone,
-    Smoke,
-    Erase
-};
-
-
 struct ParticleProperties {
-    int density;
-    ParticleBehaviour behaviour;
+    int density = 1;
+    ParticleBehaviour behaviour = ParticleBehaviour::Powder;
+    SDL_FRect spriteSrc{};
 };
 
 struct Particle {

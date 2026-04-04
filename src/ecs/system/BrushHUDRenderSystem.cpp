@@ -20,10 +20,17 @@ void BrushHUDRenderSystem::render(World &world, SDL_Renderer *renderer) {
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 180);
-
+    Entity *cam = nullptr;
+    for (auto &e: world.getEntities()) {
+        if (e->hasComponent<Camera>()) {
+            cam = e.get();
+        }
+    }
     //drawCircle(renderer, centerX, centerY, (int) radius);
-    Vector2D center{(float) centerX, (float) centerY};
-    TextureManager::drawCircle(center, radius, 255, 255, 255);
+    if (cam && cam->hasComponent<Camera>()) {
+        Vector2D center{(float) centerX, (float) centerY};
+        TextureManager::drawCircle(cam, center, radius, 255, 255, 255);
+    }
 }
 
 // void BrushHUDRenderSystem::drawCircle(SDL_Renderer *renderer, int cx, int cy, int radius) {

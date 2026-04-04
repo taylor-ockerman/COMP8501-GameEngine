@@ -16,7 +16,7 @@ int main() {
     Uint64 ticks = 0;
 
     game = new Game();
-    game->init("8051 Tutorial Engine", 800, 600, false);
+    game->init("8051 Tutorial Engine", 1280, 720, false);
 
     //game loop
     while (game->running()) {

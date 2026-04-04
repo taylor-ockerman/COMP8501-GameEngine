@@ -314,7 +314,8 @@ private:
         ParticleType target = grid.at(toX, toY).type;
         if (ParticleType::Empty == target) return true;
 
-        return ParticleHelpers::getProperties(mover).density > ParticleHelpers::getProperties(target).density;
+        return ParticleHelpers::getProperties(mover, false).density > ParticleHelpers::getProperties(target, false).
+               density;
     }
 
     void clearPlayerOccupancy(ParticleGrid &grid) {

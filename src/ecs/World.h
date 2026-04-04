@@ -123,6 +123,7 @@ public:
     }
 
     void spawnBrushAtWorld(int worldX, int worldY, ParticleGrid &grid, ParticleType type) {
+        //hacky way to stop erasers from spawning everywhere
         int cellSize = grid.getCellSize();
         for (int dy = -brushSize; dy <= brushSize; dy++) {
             for (int dx = -brushSize; dx <= brushSize; dx++) {
@@ -139,6 +140,7 @@ public:
         float worldY = static_cast<float>(gy * cellSize);
         e.addComponent<Transform>(Vector2D(worldX, worldY), 0.0f, 1.0f, Vector2D(gx, gy));
         e.addComponent<Particle>(type, gx, gy);
+
         // colliders are a huge e.addComponent<Collider>("particle", SDL_FRect{worldX, worldY, (float) cellSize, (float) cellSize},
         //                                 true,
         //        performance hit, disabling for now
@@ -146,61 +148,14 @@ public:
         //                          true,
         //                          Vector2D(0, 0));
 
-        SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
-        SDL_FRect src{0, 0, 64, 64};
-        switch (type) {
-            case ParticleType::Sand:
-                src.x = 0;
-                src.y = 0;
-                //src.w = 64;
-                //src.h = 64;
-                break;
-            case ParticleType::Water:
-                src.x = 0;
-                src.y = 128;
-                //src.w = 64;
-                //src.h = 64;
-                break;
-            case ParticleType::Stone:
-                src.x = 192;
-                src.y = 192;
-                //src.w = 64;
-                //src.h = 64;
-                break;
-            case ParticleType::Smoke:
-                src.x = 192;
-                src.y = 128;
-            default:
-                break;
-        }
-        //SDL_FRect src{0, 0, 64, 64};
+        SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+        e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(type, true));
+
         SDL_FRect dest{worldX, worldY, (float) cellSize, (float) cellSize};
-        e.addComponent<Sprite>(tex, src, dest, RenderLayer::World, true);
+        e.addComponent<Sprite>(tex, e.getComponent<ParticleProperties>().spriteSrc, dest, RenderLayer::World, true);
 
-        ParticleType particleType = ParticleType::Empty;
-        switch (type) {
-            case ParticleType::Sand:
-                particleType = ParticleType::Sand;
-                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Sand));
-                break;
-            case ParticleType::Water:
-                particleType = ParticleType::Water;
-                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Water));
-                break;
-            case ParticleType::Stone:
-                particleType = ParticleType::Stone;
-                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Stone));
-                break;
-            case ParticleType::Smoke:
-                particleType = ParticleType::Smoke;
-                e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(ParticleType::Smoke));
-                break;
-            default:
-                particleType = ParticleType::Empty;
-                break;
-        }
-
-        if (!ParticlePlacementHelper::spawnParticleAtCell(grid, gx, gy, particleType, e)) {
+        if (!ParticlePlacementHelper::spawnParticleAtCell(grid, gx, gy, type, e)) {
+            std::cout << "spawnParticleAtCell failed for " << static_cast<int>(type) << std::endl;
             e.destroy();
             return false;
         }
@@ -287,11 +242,11 @@ public:
     }
 
 
-    void setSelectedBrushTool(BrushTool brushTool) {
+    void setSelectedBrushTool(ParticleType brushTool) {
         selectedBrushTool = brushTool;
     }
 
-    BrushTool getSelectedBrushTool() const { return selectedBrushTool; }
+    ParticleType getSelectedBrushTool() const { return selectedBrushTool; }
     int getBrushSize() { return brushSize; }
     int getMaxBrushSize() { return maxBrushSize; }
 
@@ -323,7 +278,7 @@ public:
 
 private:
     float gravity = 9.8f;
-    BrushTool selectedBrushTool = BrushTool::Sand;
+    ParticleType selectedBrushTool = ParticleType::Sand;
     int brushSize = 1;
     int maxBrushSize = 20;
     int mouseScreenX = 0;

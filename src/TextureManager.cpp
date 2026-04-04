@@ -52,25 +52,37 @@ void TextureManager::draw(SDL_Texture *tex, const SDL_FRect *src, const SDL_FRec
     SDL_RenderTexture(game->renderer, tex, src, dest);
 }
 
-//credit to Logan Pederson for drawCircle function
-void TextureManager::drawCircle(Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b) {
+//credit to Logan Pederson for drawCircle function, modified by Taylor Ockerman
+void TextureManager::drawCircle(Entity *cam, Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b) {
     Uint8 oldR, oldG, oldB, oldA;
+
     float buffer = 1.0f;
     float thickness = 5.0f;
     float stepSize = 1.0f;
+
     std::vector<SDL_FPoint> points;
-    points.resize(points.size() + 1);
+
     SDL_GetRenderDrawColor(game->renderer, &oldR, &oldG, &oldB, &oldA);
     SDL_SetRenderDrawColor(game->renderer, r, g, b, 255);
-    float inner = radius - 5 + buffer;
-    float outer = radius - 5 + thickness;
+
+    auto &camera = cam->getComponent<Camera>();
+
+    // world -> screen
+    float screenRadius = radius * camera.zoom;
+    float screenThickness = thickness * camera.zoom;
+    float screenBuffer = buffer * camera.zoom;
+
+    // float inner = screenRadius - 5.0f * camera.zoom + screenBuffer;
+    // float outer = screenRadius - 5.0f * camera.zoom + screenThickness;
+    float inner = screenRadius - screenThickness + screenBuffer;
+    float outer = screenRadius + screenBuffer;
 
     float innerSq = inner * inner;
     float outerSq = outer * outer;
-    for (float i = center.x - radius; i <= center.x + radius; i += stepSize) {
-        float dx = i - center.x;
 
-        float maxY = sqrt(radius * radius - dx * dx);
+    for (float i = center.x - screenRadius; i <= center.x + screenRadius; i += stepSize) {
+        float dx = i - center.x;
+        float maxY = sqrt(screenRadius * screenRadius - dx * dx);
 
         for (float j = center.y - maxY; j <= center.y + maxY; j += stepSize) {
             float dy = j - center.y;
@@ -82,7 +94,10 @@ void TextureManager::drawCircle(Vector2D &center, float radius, Uint8 r, Uint8 g
         }
     }
 
-    SDL_RenderPoints(game->renderer, points.data(), points.size());
+    if (!points.empty()) {
+        SDL_RenderPoints(game->renderer, points.data(), static_cast<int>(points.size()));
+    }
+
     SDL_SetRenderDrawColor(game->renderer, oldR, oldG, oldB, oldA);
 }
 

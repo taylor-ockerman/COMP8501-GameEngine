@@ -42,15 +42,15 @@ void Scene::createProjectile(Vector2D pos, Vector2D dir, int speed) {
 void Scene::initMainMenu(int windowWidth, int windowHeight) {
     //camera
     auto &cam = world.createEntity();
-    cam.addComponent<Camera>();
+    cam.addComponent<Camera>(SDL_FRect{}, 0.0f, 0.0f, 1.0f);
 
     //menu
     auto &menu(world.createEntity());
     auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
 
     SDL_Texture *tex = TextureManager::load("../assets/menu.png");
-    SDL_FRect menuSrc{0, 0, (float) windowWidth, (float) windowHeight};
-    SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, menuSrc.w, menuSrc.h};
+    SDL_FRect menuSrc{0, 0, 2752.0f, 1536.0f};
+    SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, (float) windowWidth, (float) windowHeight};
     menu.addComponent<Sprite>(tex, menuSrc, menuDest);
 
     auto &settingsOverlay = createSettingsOverlay(windowWidth, windowHeight);
@@ -59,7 +59,8 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
-    world.getMap().load(mapPath, TextureManager::load("../assets/tileset2.png"));
+    world.getMap().load(mapPath, TextureManager::load("../assets/grassland_bg_tileset.png"),
+                        TextureManager::load("../assets/grassland_tileset.png"));
     //remove old grid before creating new one
     delete grid;
     grid = nullptr;
@@ -78,10 +79,10 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         //adding wall colliders to grid system.
         grid->addWallRect(c.rect);
         //uncomment this block to show red boxes on wall colliders
-        SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
-        SDL_FRect colSrc{0, 32, 32, 32};
-        SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
-        e.addComponent<Sprite>(tex, colSrc, colDst);
+        // SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
+        // SDL_FRect colSrc{0, 32, 32, 32};
+        // SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
+        // e.addComponent<Sprite>(tex, colSrc, colDst);
     }
     //dont need coins
     // for (auto &sp: world.getMap().coins) {
@@ -103,7 +104,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     SDL_FRect camView{};
     camView.w = windowWidth;
     camView.h = windowHeight;
-    cam.addComponent<Camera>(camView, world.getMap().width * 32.0f, world.getMap().height * 32.0f);
+    cam.addComponent<Camera>(camView, (float) (world.getMap().width * world.getMap().tileWidth),
+                             (float) (world.getMap().height * world.getMap().tileHeight));
 
     //add entities
     auto &player(world.createEntity());
@@ -125,10 +127,6 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     playerCollider.rect.h = 25;
     playerCollider.offset.x = (playerDest.w - playerCollider.rect.w) / 2;
     playerCollider.offset.y = (playerDest.h - playerCollider.rect.h) / 2;
-    //playerCollider.offset.x = 0;
-    //playerCollider.offset.y = 0;
-    // std::cout << "Collider rect w:" << playerCollider.rect.w << " h:" << playerCollider.rect.h << " offset x:"
-    //         << playerCollider.offset.x << " offset y:" << playerCollider.offset.y << std::endl;
     player.addComponent<PlayerTag>();
 
     //uncomment to add red texture to player collision box
@@ -176,8 +174,9 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     Transform t = particleSpawnerHUD.addComponent<Transform>(Vector2D(6.0f, windowHeight - 70.0f),
                                                              0.0f,
                                                              1.0f);
-    SDL_Texture *tex = TextureManager::load("../assets/tileset2.png");
-    SDL_FRect src{0, 0, 64, 64};
+
+    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    SDL_FRect src{0, 0, 128, 128};
     SDL_FRect dst{t.position.x, t.position.y, 64, 64};
     particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
     particleSpawnerHUD.addComponent<SpawnerHUDTag>();

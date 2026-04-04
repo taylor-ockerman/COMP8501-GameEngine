@@ -30,7 +30,7 @@ public:
 
     static void clean();
 
-    static void drawCircle(Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b);
+    static void drawCircle(Entity *cam, Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b);
 };
 
 #endif //INC_8051TUTORIAL_TEXTUREMANAGER_H
