@@ -43,7 +43,14 @@ public:
                     auto &anim = entity->getComponent<Animation>();
                     sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
                 }
-
+                if (entity->hasComponent<Particle>()) {
+                    auto &particle = entity->getComponent<Particle>();
+                    if (particle.type == ParticleType::Fire) {
+                        if (particle.life % 10 == 0) {
+                            sprite.src = ParticleHelpers::getProperties(particle.type, true).spriteSrc;
+                        }
+                    }
+                }
                 TextureManager::draw(sprite.texture, &sprite.src, &renderDst);
             }
         }

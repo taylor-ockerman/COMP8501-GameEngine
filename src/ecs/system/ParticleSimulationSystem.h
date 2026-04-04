@@ -14,7 +14,7 @@ class ParticleSimulationSystem {
 public:
     void update(ParticleGrid &grid, std::vector<std::unique_ptr<Entity> > &entities) {
         beginChunkFrame(grid);
-        clearPlayerOccupancy(grid);
+        clearPreviousPlayerOccupancy(grid);
         markPlayerOccupancy(grid, entities);
         // powders/liquids/static: bottom-up chunk pass
         for (int cy = grid.getChunkHeight() - 1; cy >= 0; cy--) {
@@ -92,6 +92,7 @@ private:
 
             if (leftToRight) {
                 for (int x = startX; x < endX; x++) {
+                    if (grid.at(x, y).type == ParticleType::Empty) continue;
                     ParticleBehaviour bh = grid.at(x, y).behaviour;
                     if (bh == ParticleBehaviour::Gas) continue;
 
@@ -111,6 +112,7 @@ private:
                 }
             } else {
                 for (int x = endX - 1; x >= startX; x--) {
+                    if (grid.at(x, y).type == ParticleType::Empty) continue;
                     ParticleBehaviour bh = grid.at(x, y).behaviour;
                     if (bh == ParticleBehaviour::Gas) continue;
 
@@ -155,12 +157,14 @@ private:
 
             if (leftToRight) {
                 for (int x = startX; x < endX; x++) {
+                    if (grid.at(x, y).type == ParticleType::Empty) continue;
                     if (grid.at(x, y).behaviour == ParticleBehaviour::Gas) {
                         updateGas(grid, x, y);
                     }
                 }
             } else {
                 for (int x = endX - 1; x >= startX; x--) {
+                    if (grid.at(x, y).type == ParticleType::Empty) continue;
                     if (grid.at(x, y).behaviour == ParticleBehaviour::Gas) {
                         updateGas(grid, x, y);
                     }
@@ -230,26 +234,7 @@ private:
                 return;
             }
         }
-        //if diagonals dont work, move sideways
-        if (leftFirst) {
-            if (canDisplace(grid, x, y, x - 1, y)) {
-                grid.swapCells(x - 1, y, x, y);
-                return;
-            }
-            if (canDisplace(grid, x, y, x + 1, y)) {
-                grid.swapCells(x + 1, y, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(grid, x, y, x + 1, y)) {
-                grid.swapCells(x + 1, y, x, y);
-                return;
-            }
-            if (canDisplace(grid, x, y, x - 1, y)) {
-                grid.swapCells(x - 1, y, x, y);
-                return;
-            }
-        }
+        if (tryFlowSideways(grid, x, y, 4, true)) return;
     }
 
     void updateGas(ParticleGrid &grid, int x, int y) {
@@ -281,26 +266,7 @@ private:
                 return;
             }
         }
-        //if diagonals dont work, move sideways
-        if (leftFirst) {
-            if (canDisplace(grid, x, y, x - 1, y)) {
-                grid.swapCells(x - 1, y, x, y);
-                return;
-            }
-            if (canDisplace(grid, x, y, x + 1, y)) {
-                grid.swapCells(x + 1, y, x, y);
-                return;
-            }
-        } else {
-            if (canDisplace(grid, x, y, x + 1, y)) {
-                grid.swapCells(x + 1, y, x, y);
-                return;
-            }
-            if (canDisplace(grid, x, y, x - 1, y)) {
-                grid.swapCells(x - 1, y, x, y);
-                return;
-            }
-        }
+        if (tryFlowSideways(grid, x, y, 8, false)) return;
     }
 
     void updateStatic(ParticleGrid &grid, int x, int y) {
@@ -316,14 +282,6 @@ private:
 
         return ParticleHelpers::getProperties(mover, false).density > ParticleHelpers::getProperties(target, false).
                density;
-    }
-
-    void clearPlayerOccupancy(ParticleGrid &grid) {
-        for (int y = 0; y < grid.getHeight(); y++) {
-            for (int x = 0; x < grid.getWidth(); x++) {
-                grid.at(x, y).occupiedByPlayer = false;
-            }
-        }
     }
 
     static void markPlayerOccupancy(ParticleGrid &grid, std::vector<std::unique_ptr<Entity> > &entities) {
@@ -369,6 +327,44 @@ private:
             grid.at(x, y).occupiedByPlayer = false;
         }
         cells.clear();
+    }
+
+    bool tryFlowSideways(ParticleGrid &grid, int x, int y, int maxDist, bool isLiquid) {
+        std::vector<int> flatTargets;
+        std::vector<int> dropTargets;
+
+        int verticalDir = isLiquid ? 1 : -1;
+
+        for (int dir: {-1, 1}) {
+            for (int d = 1; d <= maxDist; d++) {
+                int nx = x + dir * d;
+
+                if (!grid.inBounds(nx, y)) break;
+                if (!canDisplace(grid, x, y, nx, y)) break;
+
+                if (grid.inBounds(nx, y + verticalDir) &&
+                    canDisplace(grid, x, y, nx, y + verticalDir)) {
+                    dropTargets.push_back(nx);
+                    break; // stop searching farther in this direction
+                } else {
+                    flatTargets.push_back(nx);
+                }
+            }
+        }
+
+        if (!dropTargets.empty()) {
+            int targetX = dropTargets[rand() % dropTargets.size()];
+            grid.swapCells(x, y, targetX, y);
+            return true;
+        }
+
+        if (!flatTargets.empty()) {
+            int targetX = flatTargets[rand() % flatTargets.size()];
+            grid.swapCells(x, y, targetX, y);
+            return true;
+        }
+
+        return false;
     }
 };
 #endif //INC_8051TUTORIAL_PARTICLESIMULATIONSYSTEM_H

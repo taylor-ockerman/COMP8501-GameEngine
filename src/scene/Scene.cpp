@@ -49,7 +49,8 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
     auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
 
     SDL_Texture *tex = TextureManager::load("../assets/menu.png");
-    SDL_FRect menuSrc{0, 0, 2752.0f, 1536.0f};
+    SDL_FRect menuSrc{0, 0, 2752.0f, 1536.0f}; //dimensions are so it fits the png i have for the mainmenu
+
     SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, (float) windowWidth, (float) windowHeight};
     menu.addComponent<Sprite>(tex, menuSrc, menuDest);
 

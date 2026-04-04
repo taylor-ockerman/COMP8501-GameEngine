@@ -122,21 +122,19 @@ public:
     void swapCells(int x1, int y1, int x2, int y2) {
         std::swap(at(x1, y1), at(x2, y2));
         getChunkFromCell(x1, y1).movedThisFrame = true;
-        getChunkFromCell(x2, y1).movedThisFrame = true;
+        getChunkFromCell(x2, y2).movedThisFrame = true;
         wakeChunkAndNeighborsForCell(x1, y1);
         wakeChunkAndNeighborsForCell(x2, y2);
-
-        getChunkFromCell(x1, y1).movedThisFrame = true;
-        getChunkFromCell(x2, y2).movedThisFrame = true;
     }
 
     void clearCell(int gx, int gy) {
         if (!inBounds(gx, gy)) return;
         Cell &cell = at(gx, gy);
-        cell.type = ParticleType::Empty;
         if (cell.entity != nullptr) {
             cell.entity->destroy();
         }
+        cell.type = ParticleType::Empty;
+        cell.behaviour = ParticleBehaviour::Static;
         cell.entity = nullptr;
     }
 
@@ -169,8 +167,35 @@ public:
         return previousPlayerCells;
     }
 
-private
-:
+
+    int getActiveChunkCount() {
+        int count = 0;
+        for (auto &chunk: chunks) {
+            if (chunk.active) count++;
+        }
+        return count;
+    }
+
+    int countNonEmptyCells() {
+        int count = 0;
+        for (auto &cell: cells) {
+            if (cell.type != ParticleType::Empty && cell.type != ParticleType::Wall) count++;
+        }
+        return count;
+    }
+
+    std::vector<std::pair<int, int> > getNeighbours(int gx, int gy) {
+        std::vector<std::pair<int, int> > neighbours{};
+        if (!inBounds(gx, gy)) return neighbours;
+        for (int x = gx - 1; x <= gx + 1; x++) {
+            for (int y = gy - 1; y <= gy + 1; y++) {
+                if (inBounds(x, y)) neighbours.push_back(std::pair<int, int>(x, y));
+            }
+        }
+        return neighbours;
+    }
+
+private:
     int width;
     int height;
     int cellSize;

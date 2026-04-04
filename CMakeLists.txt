@@ -52,8 +52,9 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/ecs/system/ParticleSyncSystem.cpp
         src/utils/ParticlePlacementHelper.cpp
         src/ecs/system/ParticleInteractionSystem.h
-        src/ecs/system/BrushHUDRenderSystem.cpp
-        src/manager/AudioManager.cpp)
+        src/manager/AudioManager.cpp
+        src/ecs/system/HUDSystem.cpp
+        src/ecs/system/UIRenderSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3

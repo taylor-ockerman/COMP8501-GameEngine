@@ -13,34 +13,69 @@ public:
     static ParticleProperties getProperties(ParticleType type, bool getRandomSprite) {
         switch (type) {
             case ParticleType::Empty:
-                return {0, ParticleBehaviour::Static, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    0, false, 0, 0, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Sand:
-                return {20, ParticleBehaviour::Powder, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    20, false, 100, 0, ParticleBehaviour::Powder,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Stone:
-                return {100, ParticleBehaviour::Static, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    100, false, 100, 0, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Fire:
-                return {1, ParticleBehaviour::Liquid, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    100, false, 200, 0, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Water:
-                return {10, ParticleBehaviour::Liquid, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    10, false, 100, 100, ParticleBehaviour::Liquid,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Gunpowder:
-                return {15, ParticleBehaviour::Powder, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    15, true, 5, 100, ParticleBehaviour::Powder,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Smoke:
-                return {5, ParticleBehaviour::Gas, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    5, false, 1000, 0, ParticleBehaviour::Gas,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Wood:
-                return {50, ParticleBehaviour::Static, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    50, true, 400, 15, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Oil:
-                return {15, ParticleBehaviour::Liquid, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    21, true, 30, 5, ParticleBehaviour::Liquid,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Steam:
-                return {1, ParticleBehaviour::Gas, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    1, false, 1000, 0, ParticleBehaviour::Gas,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             case ParticleType::Wall:
-                return {999, ParticleBehaviour::Static, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    999, false, 100, 0, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
             default:
-                return {0, ParticleBehaviour::Static, randomTile(type, tilesetLocations.at(type), getRandomSprite)};
+                return {
+                    0, false, 100, 0, ParticleBehaviour::Static,
+                    getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
+                };
         }
     }
 
-private:
-    static SDL_FRect randomTile(ParticleType type, SDL_FRect src, bool getRandom) {
+    static SDL_FRect getTileSprite(ParticleType type, SDL_FRect src, bool getRandom) {
         if (getRandom) {
             int colorVariant = pickVariant(type);
             src.y += (colorVariant / 2) * 64;
@@ -49,6 +84,7 @@ private:
         return src;
     }
 
+private:
     static int weightedVariant(int w0, int w1, int w2, int w3) {
         int total = w0 + w1 + w2 + w3;
         int roll = rand() % total;
@@ -67,36 +103,20 @@ private:
     static int pickVariant(ParticleType type) {
         switch (type) {
             case ParticleType::Sand:
-                // randomize evenly
                 return weightedVariant(25, 25, 25, 25);
-
             case ParticleType::Stone:
-                // mostly middle two shades
                 return weightedVariant(2, 48, 48, 2);
-
             case ParticleType::Water:
-                // bias toward darker shades
                 return weightedVariant(40, 5, 50, 5);
-
             case ParticleType::Smoke:
-                // lighter overall
                 return weightedVariant(35, 10, 45, 10);
-
             case ParticleType::Steam:
-                // even lighter overall
                 return weightedVariant(1, 1, 54, 54);
-
             case ParticleType::Wood:
-                // mostly mid tones
                 return weightedVariant(10, 40, 40, 10);
-
             case ParticleType::Fire:
-
                 return weightedVariant(35, 35, 20, 10);
-
             case ParticleType::Oil:
-                // mostly darkest two
-                //return 0;
                 return weightedVariant(50, 30, 15, 5);
             case ParticleType::Erase:
                 return 0;

@@ -16,7 +16,6 @@
 #include "EventManager.h"
 #include "AnimationSystem.h"
 #include "AudioEventQueue.h"
-#include "BrushHUDRenderSystem.h"
 #include "KeyboardInputSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
@@ -58,7 +57,6 @@ class World {
     ParticleSimulationSystem particleSimulationSystem;
     ParticleSyncSystem particleSyncSystem;
     ParticleInteractionSystem particleInteractionSystem;
-    BrushHUDRenderSystem brushHUDRenderSystem;
     HUDSystem hudSystem;
     PreRenderSystem preRenderSystem;
     AudioEventQueue audioEventQueue;
@@ -76,7 +74,7 @@ public:
             colliderSyncSystem.update(*this);
             particleSimulationSystem.update(*grid, entities);
             particleSyncSystem.update(*grid);
-            //particleInteractionSystem.update(entities, *grid);
+            particleInteractionSystem.update(entities, *grid);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);
             cameraSystem.update(entities);
@@ -100,8 +98,7 @@ public:
             }
         }
         renderSystem.render(entities);
-        brushHUDRenderSystem.render(*this, renderer);
-        uiRenderSystem.render(entities);
+        uiRenderSystem.render(*this, entities);
     }
 
     Entity &createEntity() {
@@ -150,7 +147,8 @@ public:
 
         SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
         e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(type, true));
-
+        e.getComponent<Particle>().life = e.getComponent<ParticleProperties>().life;
+        //messy, but need to assign here or else it will be default 100
         SDL_FRect dest{worldX, worldY, (float) cellSize, (float) cellSize};
         e.addComponent<Sprite>(tex, e.getComponent<ParticleProperties>().spriteSrc, dest, RenderLayer::World, true);
 
@@ -164,6 +162,8 @@ public:
     }
 
     void eraseBrushAtWorld(int worldX, int worldY, ParticleGrid &grid) {
+        int particleCount = 0;
+
         int cellSize = grid.getCellSize();
 
         int centerGX = worldX / cellSize;
@@ -188,6 +188,14 @@ public:
                 grid.getChunkFromCell(gx, gy).movedThisFrame = true;
             }
         }
+        for (auto &e: entities) {
+            if (e->hasComponent<Particle>()) particleCount++;
+        }
+        std::cout << "entities=" << entities.size()
+                << " particles=" << particleCount
+                << " activeChunks=" << grid.getActiveChunkCount()
+                << " nonEmptyCells=" << grid.countNonEmptyCells()
+                << std::endl;
     }
 
     void destroyAllParticles(ParticleGrid *grid) {
@@ -275,8 +283,10 @@ public:
     AudioEventQueue &getAudioEventQueue() { return audioEventQueue; }
     EventManager &getEventManager() { return eventManager; }
     Map &getMap() { return map; }
+    ParticleGrid *getGrid() const { return grid; }
 
 private:
+    ParticleGrid *grid;
     float gravity = 9.8f;
     ParticleType selectedBrushTool = ParticleType::Sand;
     int brushSize = 1;

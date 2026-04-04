@@ -132,6 +132,9 @@ enum class ParticleBehaviour {
 
 struct ParticleProperties {
     int density = 1;
+    bool flammable = false;
+    int life = 0;
+    int ignitionChance = 0;
     ParticleBehaviour behaviour = ParticleBehaviour::Powder;
     SDL_FRect spriteSrc{};
 };
@@ -140,6 +143,7 @@ struct Particle {
     ParticleType type = ParticleType::Sand;
     int gridX{};
     int gridY{};
+    int life = 100;
 };
 
 enum class LabelType {
