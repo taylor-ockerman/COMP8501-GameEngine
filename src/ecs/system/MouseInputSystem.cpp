@@ -11,19 +11,24 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         SDL_EVENT_MOUSE_BUTTON_UP && event.type != SDL_EVENT_MOUSE_WHEEL) {
         return;
     }
-
     float mx, my;
     SDL_GetMouseState(&mx, &my);
-    world.setMouseScreenPosition((int) mx, (int) my);
+    //world.setMouseScreenPosition((int) mx, (int) my);
     bool clickedClickable = false;
     float camOffx = 0.0f, camOffy = 0.0f;
     float camZoom = 1.0f;
+    BrushState *brushState = nullptr;
     for (auto &e: world.getEntities()) {
         if (e->hasComponent<Camera>()) {
             auto &camera = e->getComponent<Camera>();
             camZoom = camera.zoom;
             camOffx = camera.view.x * camZoom;
             camOffy = camera.view.y * camZoom;
+        }
+        if (e->hasComponent<BrushState>()) {
+            brushState = &e->getComponent<BrushState>();
+            brushState->mouseScreenPos.x = mx;
+            brushState->mouseScreenPos.y = my;
         }
         if (e->hasComponent<Clickable>() && e->hasComponent<Collider>()) {
             auto &clickable = e->getComponent<Clickable>();
@@ -66,48 +71,42 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
             }
         }
     }
-    //mouse events so spawn particles
-    if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
-        event.button.button == SDL_BUTTON_LEFT && !clickedClickable) {
-        if (grid != nullptr) {
-            // world.spawnBrushAtWorld((int) event.button.x + camOffx, (int) event.button.y + camOffy, *grid,
-            //                         ParticlePlacementHelper::brushToolToParticleType(world.getSelectedBrushTool())
-            // );
-            if (world.getSelectedBrushTool() == ParticleType::Erase) {
-                world.eraseBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
-                                        (int) (event.button.y + camOffy) / camZoom, *grid);
-            } else {
-                world.spawnBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
-                                        (int) (event.button.y + camOffy) / camZoom, *grid,
-                                        world.getSelectedBrushTool());
-            }
-
-
-            //std::cout << "grid h: " << grid->getHeight() << " grid w: " << grid->getWidth() << std::endl;
-        }
-    }
-    //allows for holding mouse button to spawn particles
-    if (event.type == SDL_EVENT_MOUSE_MOTION &&
-        (event.motion.state & SDL_BUTTON_LMASK) && !clickedClickable) {
-        if (grid != nullptr) {
-            if (world.getSelectedBrushTool() == ParticleType::Erase) {
-                world.eraseBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
-                                        (int) (event.button.y + camOffy) / camZoom, *grid);
-            } else {
-                world.spawnBrushAtWorld((int) (event.button.x + camOffx) / camZoom,
-                                        (int) (event.button.y + camOffy) / camZoom, *grid,
-                                        world.getSelectedBrushTool());
-            }
-        }
-    }
+    if (brushState == nullptr) return;
     if (event.type == SDL_EVENT_MOUSE_WHEEL) {
         if (event.wheel.y > 0) {
-            world.incrementBrushSize();
+            brushState->brushSize++;
+            if (brushState->brushSize > brushState->maxBrushSize) {
+                brushState->brushSize = brushState->maxBrushSize;
+            }
         } else if (event.wheel.y < 0) {
-            world.decrementBrushSize();
+            brushState->brushSize--;
+            if (brushState->brushSize < 0) {
+                brushState->brushSize = 0;
+            }
         }
 
-        std::cout << "Brush radius: " << world.getBrushSize() << std::endl;
+        std::cout << "Brush radius: " << brushState->brushSize << std::endl;
         return;
+    }
+
+    if (grid == nullptr) return;
+    if (brushState == nullptr) return;
+    brushState->mouseScreenPos = Vector2D(mx, my);
+    brushState->mouseWorldPos = Vector2D(
+        static_cast<int>((mx + camOffx) / camZoom),
+        static_cast<int>((my + camOffy) / camZoom)
+    );
+
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+        event.button.button == SDL_BUTTON_LEFT) {
+        world.printParticleCounts(*grid);
+        brushState->isPainting = !clickedClickable;
+        brushState->uiCapturedClick = clickedClickable;
+    }
+
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_UP &&
+        event.button.button == SDL_BUTTON_LEFT) {
+        brushState->isPainting = false;
+        brushState->uiCapturedClick = false;
     }
 }

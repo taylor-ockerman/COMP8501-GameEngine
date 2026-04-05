@@ -14,7 +14,7 @@
 
 class GravitySystem {
 public:
-    void update(std::vector<std::unique_ptr<Entity> > &entities, float gravity, float dt) {
+    void update(std::vector<std::unique_ptr<Entity> > &entities, float dt) {
         for (auto &e: entities) {
             if (e->hasComponent<Particle>()) continue;
             if (e->hasComponent<Transform>() && e->hasComponent<Velocity>() && e->hasComponent<Acceleration>()) {
@@ -40,6 +40,9 @@ public:
             }
         }
     }
+
+private:
+    float gravity = 9.8f;
 };
 
 #endif //INC_8051TUTORIAL_GRAVITYSYSTEM_H

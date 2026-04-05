@@ -2,8 +2,8 @@
 // Created by taylo on 1/14/2026.
 //
 
-#include "TextureManager.h"
 #include <iostream>
+#include "TextureManager.h"
 #include "Game.h"
 #include "Component.h"
 //global variable, doesn't create any extra memory, just grabs the reference of this object

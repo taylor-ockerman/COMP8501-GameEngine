@@ -9,7 +9,7 @@
 
 #include "../Entity.h"
 #include "../Component.h"
-#include "../../TextureManager.h"
+#include "../../manager/TextureManager.h"
 
 class RenderSystem {
 public:

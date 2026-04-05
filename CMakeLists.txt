@@ -33,7 +33,7 @@ endif ()
 
 add_executable(COMP8051_Tutorial src/main.cpp
         src/Game.cpp
-        src/TextureManager.cpp
+        src/manager/TextureManager.cpp
         src/Map.cpp
         src/GameObject.cpp
         src/utils/Vector2D.cpp
@@ -54,7 +54,8 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/ecs/system/ParticleInteractionSystem.h
         src/manager/AudioManager.cpp
         src/ecs/system/HUDSystem.cpp
-        src/ecs/system/UIRenderSystem.cpp)
+        src/ecs/system/UIRenderSystem.cpp
+        src/ecs/system/ParticleSpawnDeSpawnSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3

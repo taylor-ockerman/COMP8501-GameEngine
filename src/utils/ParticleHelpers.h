@@ -49,7 +49,7 @@ public:
                 };
             case ParticleType::Wood:
                 return {
-                    50, true, 400, 15, ParticleBehaviour::Static,
+                    50, true, 400, 3, ParticleBehaviour::Static,
                     getTileSprite(type, tilesetLocations.at(type), getRandomSprite)
                 };
             case ParticleType::Oil:

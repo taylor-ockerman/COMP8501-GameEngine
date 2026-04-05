@@ -6,8 +6,8 @@
 #include <SDL3/SDL.h>
 
 #include "AudioManager.h"
-#include "ecs/World.h"
-#include "manager/SceneManager.h"
+#include "World.h"
+#include "SceneManager.h"
 
 struct GameState {
     int playerHealth;

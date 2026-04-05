@@ -82,6 +82,7 @@ struct SceneState {
     int coinsCollected = 0;
 };
 
+
 struct PlayerTag {
     bool isGrounded = false;
 };
@@ -120,7 +121,8 @@ enum class ParticleType {
     Oil,
     Wood,
     Steam,
-    Erase
+    Erase,
+    Last
 };
 
 enum class ParticleBehaviour {
@@ -165,5 +167,15 @@ struct Label {
 };
 
 struct SpawnerHUDTag {
+};
+
+struct BrushState {
+    ParticleType selectedParticle = ParticleType::Sand;
+    int brushSize = 1;
+    int maxBrushSize = 20;
+    Vector2D mouseScreenPos;
+    Vector2D mouseWorldPos;
+    bool isPainting = false;
+    bool uiCapturedClick = false;
 };
 #endif //INC_8051TUTORIAL_COMPONENT_H

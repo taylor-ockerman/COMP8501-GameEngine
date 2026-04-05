@@ -147,9 +147,13 @@ void EventResponseSystem::onMouseInteraction(const MouseInteractionEvent &e) {
 void EventResponseSystem::
 onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
     Entity *spawner = nullptr;
+    BrushState *state = nullptr;
     for (auto &e: world.getEntities()) {
         if (e->hasComponent<SpawnerHUDTag>()) {
             spawner = e.get();
+        }
+        if (e->hasComponent<BrushState>()) {
+            state = &e->getComponent<BrushState>();
         }
     }
     if (!spawner) {
@@ -157,6 +161,11 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
         return;
     }
     auto &sprite = spawner->getComponent<Sprite>();
+    if (!state) {
+        std::cout << "no brushState" << std::endl;
+        return;
+    }
+    state->selectedParticle = e.pType;
     SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
     SDL_FRect src = ParticleHelpers::getProperties(e.pType, false).spriteSrc;
     //std::cout << "hitting that shiz" << std::endl;

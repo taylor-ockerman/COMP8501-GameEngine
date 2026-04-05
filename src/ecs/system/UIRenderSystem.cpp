@@ -39,10 +39,18 @@ void UIRenderSystem::render(World &world, const std::vector<std::unique_ptr<Enti
 }
 
 void UIRenderSystem::drawBrush(World &world, const std::vector<std::unique_ptr<Entity> > &entities) {
-    int centerX = world.getMouseScreenX();
-    int centerY = world.getMouseScreenY();
+    BrushState *brushState = nullptr;
+    for (auto &e: entities) {
+        if (e->hasComponent<BrushState>()) {
+            brushState = &e->getComponent<BrushState>();
+            break;
+        }
+    }
+    if (!brushState) return;
+    int centerX = brushState->mouseScreenPos.x;
+    int centerY = brushState->mouseScreenPos.y;
 
-    int brushSize = world.getBrushSize();
+    int brushSize = brushState->brushSize;
 
     const float radiusScale = 4.0f; //should be same value as cell size
     const float baseRadius = 1.0f;

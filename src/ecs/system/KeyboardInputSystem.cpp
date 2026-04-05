@@ -10,6 +10,13 @@
 
 void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr<Entity> > &entities,
                                  const SDL_Event &event) {
+    BrushState bs;
+    for (auto &e: entities) {
+        if (e->hasComponent<BrushState>()) {
+            bs = e->getComponent<BrushState>();
+            break;
+        }
+    }
     for (auto &e: entities) {
         if (e->hasComponent<PlayerTag>() && e->hasComponent<Velocity>()) {
             auto &v = e->getComponent<Velocity>();
@@ -33,47 +40,56 @@ void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr
                         e->getComponent<Acceleration>().isGrounded = false;
                         break;
                     case SDLK_1:
-                        world.setSelectedBrushTool(ParticleType::Sand);
+                        //world.setSelectedBrushTool(ParticleType::Sand);
+                        bs.selectedParticle = ParticleType::Sand;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Sand});
                         std::cout << "Selected: Sand" << std::endl;
                         break;
                     case SDLK_2:
-                        world.setSelectedBrushTool(ParticleType::Water);
+                        // world.setSelectedBrushTool(ParticleType::Water);
+                        bs.selectedParticle = ParticleType::Water;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Water});
                         std::cout << "Selected: Water" << std::endl;
                         break;
                     case SDLK_3:
-                        world.setSelectedBrushTool(ParticleType::Smoke);
+                        //world.setSelectedBrushTool(ParticleType::Smoke);
+                        bs.selectedParticle = ParticleType::Smoke;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Smoke});
                         std::cout << "Selected: Smoke" << std::endl;
                         break;
                     case SDLK_4:
-                        world.setSelectedBrushTool(ParticleType::Stone);
+                        //world.setSelectedBrushTool(ParticleType::Stone);
+                        bs.selectedParticle = ParticleType::Stone;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Stone});
                         std::cout << "Selected: Stone" << std::endl;
                         break;
                     case SDLK_5:
-                        world.setSelectedBrushTool(ParticleType::Wood);
+                        //world.setSelectedBrushTool(ParticleType::Wood);
+                        bs.selectedParticle = ParticleType::Wood;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Wood});
                         std::cout << "Selected: Wood" << std::endl;
                         break;
                     case SDLK_6:
-                        world.setSelectedBrushTool(ParticleType::Steam);
+                        //world.setSelectedBrushTool(ParticleType::Steam);
+                        bs.selectedParticle = ParticleType::Steam;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Steam});
                         std::cout << "Selected: Steam" << std::endl;
                         break;
                     case SDLK_7:
-                        world.setSelectedBrushTool(ParticleType::Oil);
+                        //world.setSelectedBrushTool(ParticleType::Oil);
+                        bs.selectedParticle = ParticleType::Oil;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Oil});
                         std::cout << "Selected: Oil" << std::endl;
                         break;
                     case SDLK_8:
-                        world.setSelectedBrushTool(ParticleType::Fire);
+                        //world.setSelectedBrushTool(ParticleType::Fire);
+                        bs.selectedParticle = ParticleType::Fire;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Fire});
                         std::cout << "Selected: Fire" << std::endl;
                         break;
                     case SDLK_E:
-                        world.setSelectedBrushTool(ParticleType::Erase);
+                        //world.setSelectedBrushTool(ParticleType::Erase);
+                        bs.selectedParticle = ParticleType::Erase;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Erase});
                         std::cout << "Selected: Eraser" << std::endl;
                         break;
@@ -92,7 +108,6 @@ void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr
                     v.magnitude = 0.0f;
                 }
             }
-
             if (event.type == SDL_EVENT_KEY_UP) {
                 switch (event.key.key) {
                     case SDLK_W:

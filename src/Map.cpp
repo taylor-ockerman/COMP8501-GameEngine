@@ -131,7 +131,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "TextureManager.h"
+#include "manager/TextureManager.h"
 #include "vendor/tinyxml2.h"
 
 void Map::loadLayerData(tinyxml2::XMLElement *layer, std::vector<std::vector<int> > &outData) {

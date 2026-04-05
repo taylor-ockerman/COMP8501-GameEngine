@@ -37,6 +37,43 @@ public:
         chunkWidth = (width + chunkSize - 1) / chunkSize;
         chunkHeight = (height + chunkSize - 1) / chunkSize;
         chunks.resize(chunkWidth * chunkHeight);
+
+        for (int i = 0; i < static_cast<int>(ParticleType::Last); i++) {
+            particleTypeCountMap.emplace(static_cast<ParticleType>(i), 0);
+        }
+        // for (auto &p: particleTypeCountMap) {
+        //     switch (p.first) {
+        //         case ParticleType::Empty:
+        //             std::cout << "Empty ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Sand:
+        //             std::cout << "Sand ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Stone:
+        //             std::cout << "Stone ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Water:
+        //             std::cout << "Water ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Gunpowder:
+        //             std::cout << "Gunpowder ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Fire:
+        //             std::cout << "Fire ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Oil:
+        //             std::cout << "Oil ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Wood:
+        //             std::cout << "Wood ParticleType added" << std::endl;
+        //             break;
+        //         case ParticleType::Steam:
+        //             std::cout << "Steam ParticleType added" << std::endl;
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // }
     };
 
     int worldToGridX(float worldX) const {
@@ -130,6 +167,7 @@ public:
     void clearCell(int gx, int gy) {
         if (!inBounds(gx, gy)) return;
         Cell &cell = at(gx, gy);
+        particleTypeCountMap.at(cell.type)--;
         if (cell.entity != nullptr) {
             cell.entity->destroy();
         }
@@ -205,6 +243,7 @@ private:
     std::vector<Cell> cells;
     std::vector<Chunk> chunks;
     std::vector<std::pair<int, int> > previousPlayerCells;
+    std::unordered_map<ParticleType, int> particleTypeCountMap{};
 };
 
 #endif //INC_8051TUTORIAL_PARTICLEGRIDSYSTEM_H

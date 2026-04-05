@@ -85,6 +85,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         // SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
         // e.addComponent<Sprite>(tex, colSrc, colDst);
     }
+
     //dont need coins
     // for (auto &sp: world.getMap().coins) {
     //     auto &item = world.createEntity();
@@ -181,6 +182,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     SDL_FRect dst{t.position.x, t.position.y, 64, 64};
     particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
     particleSpawnerHUD.addComponent<SpawnerHUDTag>();
+    auto &brushState = world.createEntity();
+    brushState.addComponent<BrushState>();
 }
 
 Entity &Scene::createSettingsOverlay(int windowWidth, int windowHeight) {
