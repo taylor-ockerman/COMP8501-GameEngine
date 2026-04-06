@@ -67,7 +67,7 @@ void AudioManager::playSfx(const std::string &name) {
     }
 
     MIX_PlayTrack(sfxTrack, 0);
-    std::cout << "Playing sfx: " << name << std::endl;
+    //std::cout << "Playing sfx: " << name << std::endl;
 }
 
 void AudioManager::playSpawn(const std::string &name) {
@@ -88,13 +88,13 @@ void AudioManager::playSpawn(const std::string &name) {
     MIX_PlayTrack(spawnTrack, -1);
     //MIX_SetTrackGain(spawnTrack, 8.0f);
     currentSpawnAudioLoop = name;
-    std::cout << "Playing sfx: " << name << std::endl;
+    //std::cout << "Playing sfx: " << name << std::endl;
 }
 
 void AudioManager::stopSpawn() {
     if (currentSpawnAudioLoop.empty()) return;
 
     MIX_StopTrack(spawnTrack, 0);
-    std::cout << "Stopping spawn track: " << currentSpawnAudioLoop << std::endl;
+    //std::cout << "Stopping spawn track: " << currentSpawnAudioLoop << std::endl;
     currentSpawnAudioLoop.clear();
 }

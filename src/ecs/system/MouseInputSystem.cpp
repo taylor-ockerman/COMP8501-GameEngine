@@ -99,7 +99,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
 
     if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
         event.button.button == SDL_BUTTON_LEFT) {
-        world.printParticleCounts(*grid);
+        //world.printParticleCounts(*grid);
         brushState->isPainting = !clickedClickable;
         brushState->uiCapturedClick = clickedClickable;
         if (brushState->isPainting) {
