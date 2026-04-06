@@ -31,7 +31,7 @@ if (WIN32)
     )
 endif ()
 
-add_executable(COMP8051_Tutorial src/main.cpp
+add_executable(COMP8051_Tutorial WIN32 src/main.cpp
         src/Game.cpp
         src/manager/TextureManager.cpp
         src/Map.cpp
@@ -64,3 +64,11 @@ target_link_libraries(COMP8051_Tutorial
         SDL3_mixer
 )
 
+if (WIN32)
+    add_custom_command(TARGET COMP8051_Tutorial POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/assets
+            $<TARGET_FILE_DIR:COMP8051_Tutorial>/assets
+            COMMENT "Copying assets to build output"
+    )
+endif ()

@@ -95,7 +95,7 @@ bool ParticleSpawnDeSpawnSystem::spawnParticleAtCell(World &world, ParticleGrid 
     e.addComponent<Transform>(Vector2D(worldX, worldY), 0.0f, 1.0f, Vector2D(gx, gy));
     e.addComponent<Particle>(type, gx, gy);
 
-    static SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    static SDL_Texture *tex = TextureManager::load("assets/particle_tileset.png");
     e.addComponent<ParticleProperties>(ParticleHelpers::getProperties(type, true));
     e.getComponent<Particle>().life = e.getComponent<ParticleProperties>().life;
 

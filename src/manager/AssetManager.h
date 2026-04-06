@@ -6,7 +6,7 @@
 #define INC_8051TUTORIAL_ASSETMANAGER_H
 #include <unordered_map>
 
-#include "../ecs/Component.h"
+#include "Component.h"
 
 class AssetManager {
   static std::unordered_map<std::string, Animation> animations;

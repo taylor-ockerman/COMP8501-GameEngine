@@ -192,7 +192,7 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
         }
     }
     state->selectedParticle = e.pType;
-    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    SDL_Texture *tex = TextureManager::load("assets/particle_tileset.png");
     SDL_FRect src = ParticleHelpers::getProperties(e.pType, false).spriteSrc;
     //std::cout << "hitting that shiz" << std::endl;
     src.w += 64;

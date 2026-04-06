@@ -5,7 +5,7 @@
 #ifndef INC_8051TUTORIAL_EVENTRESPONSESYSTEM_H
 #define INC_8051TUTORIAL_EVENTRESPONSESYSTEM_H
 #include <functional>
-#include "../event/BaseEvent.h"
+#include "BaseEvent.h"
 
 class Entity;
 class World;

@@ -7,7 +7,7 @@
 #include <functional>
 #include <SDL3/SDL_render.h>
 
-#include "../utils/Vector2D.h"
+#include "Vector2D.h"
 #include <string>
 #include <unordered_map>
 

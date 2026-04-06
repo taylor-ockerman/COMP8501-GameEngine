@@ -9,7 +9,7 @@
 
 #include "Component.h"
 #include "Entity.h"
-#include "../../manager/TextureManager.h"
+#include "TextureManager.h"
 
 class PreRenderSystem {
 public:

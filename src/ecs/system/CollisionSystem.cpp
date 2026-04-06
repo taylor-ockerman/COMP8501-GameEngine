@@ -2,8 +2,8 @@
 // Created by taylo on 2/4/2026.
 //
 #include "CollisionSystem.h"
-#include "../World.h"
-#include "../../utils/Collision.h"
+#include "World.h"
+#include "Collision.h"
 //let's say we have three entities eA, eB, eC
 //1. positions the collider with the transform
 //2. checking for collisions

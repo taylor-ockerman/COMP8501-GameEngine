@@ -7,9 +7,9 @@
 #include <memory>
 #include <vector>
 
-#include "../Entity.h"
-#include "../Component.h"
-#include "../../manager/TextureManager.h"
+#include "Entity.h"
+#include "Component.h"
+#include "TextureManager.h"
 
 class RenderSystem {
 public:

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="15">
- <tileset firstgid="1" source="../../../Users/taylo/OneDrive - BCIT/BCIT/BsACS/Term 2/COMP 8051 (Game Architecture)/Week 6/spritesheet.tsx"/>
+ <tileset firstgid="1" source="tileset.png"/>
  <layer id="1" name="Terrain Layer" width="30" height="20">
   <data encoding="csv">
 2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,

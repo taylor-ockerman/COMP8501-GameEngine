@@ -1,9 +1,9 @@
 //
 // Created by taylo on 2/18/2026.
 //
-#include "./AssetManager.h"
+#include "AssetManager.h"
 
-#include "../vendor/tinyxml2.h"
+#include "tinyxml2.h"
 
 std::unordered_map<std::string, Animation> AssetManager::animations;
 std::unordered_map<std::string, TTF_Font *> AssetManager::fonts;

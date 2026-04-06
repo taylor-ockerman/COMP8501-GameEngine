@@ -7,8 +7,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "../Entity.h"
-#include "../Component.h"
+#include "Entity.h"
+#include "Component.h"
 
 
 //State system: Deciding which clip to use

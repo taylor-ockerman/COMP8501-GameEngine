@@ -48,7 +48,7 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
     auto &menu(world.createEntity());
     auto menuTransform = menu.addComponent<Transform>(Vector2D(0, 0), 0.0f, 1.0f);
 
-    SDL_Texture *tex = TextureManager::load("../assets/menu.png");
+    SDL_Texture *tex = TextureManager::load("assets/menu.png");
     SDL_FRect menuSrc{0, 0, 2752.0f, 1536.0f}; //dimensions are so it fits the png i have for the mainmenu
 
     SDL_FRect menuDest{menuTransform.position.x, menuTransform.position.y, (float) windowWidth, (float) windowHeight};
@@ -60,8 +60,8 @@ void Scene::initMainMenu(int windowWidth, int windowHeight) {
 
 void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight) {
     //load out map
-    world.getMap().load(mapPath, TextureManager::load("../assets/grassland_bg_tileset.png"),
-                        TextureManager::load("../assets/grassland_tileset.png"));
+    world.getMap().load(mapPath, TextureManager::load("assets/grassland_bg_tileset.png"),
+                        TextureManager::load("assets/grassland_tileset.png"));
     //remove old grid before creating new one
     delete grid;
     grid = nullptr;
@@ -80,7 +80,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         //adding wall colliders to grid system.
         grid->addWallRect(c.rect);
         //uncomment this block to show red boxes on wall colliders
-        // SDL_Texture *tex = TextureManager::load("../assets/tileset.png");
+        // SDL_Texture *tex = TextureManager::load("assets/tileset.png");
         // SDL_FRect colSrc{0, 32, 32, 32};
         // SDL_FRect colDst{c.rect.x, c.rect.y, c.rect.w, c.rect.h};
         // e.addComponent<Sprite>(tex, colSrc, colDst);
@@ -93,8 +93,8 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     //     auto &c = item.addComponent<Collider>("item");
     //     c.rect.x = sp.rect.x;
     //     c.rect.y = sp.rect.y;
-    //     SDL_Texture *itemTex = TextureManager::load("../assets/coin.png");
-    //     // SDL_Texture *itemTex = TextureManager::load("../assets/tileset.png"); //uncomment for red box on collider
+    //     SDL_Texture *itemTex = TextureManager::load("assets/coin.png");
+    //     // SDL_Texture *itemTex = TextureManager::load("assets/tileset.png"); //uncomment for red box on collider
     //     SDL_FRect itemSrc{0, 0, 32, 32};
     //     SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
     //     auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
@@ -117,7 +117,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     //comment this block out to remove player sprite and enable red texture on collider to test collider box
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
-    SDL_Texture *texture = TextureManager::load("../assets/animations/human_anim.png");
+    SDL_Texture *texture = TextureManager::load("assets/animations/human_anim.png");
     SDL_FRect playerSrc = anim.clips[anim.currentClip].frameIndices[0];
 
     SDL_FRect playerDest{playerTrans.position.x, playerTrans.position.y, 64, 64};
@@ -132,7 +132,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     player.addComponent<PlayerTag>();
 
     //uncomment to add red texture to player collision box
-    // SDL_Texture *red = TextureManager::load("../assets/tileset.png");
+    // SDL_Texture *red = TextureManager::load("assets/tileset.png");
     // SDL_FRect redSrc{0, 32, 32, 32};
     // player.addComponent<Sprite>(red, redSrc,
     //                             SDL_FRect(playerTrans.position.x + playerCollider.offset.x,
@@ -154,7 +154,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     //     auto &anim = AssetManager::getAnimation("enemy");
     //     e.addComponent<Animation>(anim);
     //
-    //     SDL_Texture *tex = TextureManager::load("../assets/animations/bird_anim.png");
+    //     SDL_Texture *tex = TextureManager::load("assets/animations/bird_anim.png");
     //     SDL_FRect src = {0, 0, 32, 32};
     //     SDL_FRect dest{t.position.x, t.position.y, 32, 32};
     //     e.addComponent<Sprite>(tex, src, dest);
@@ -181,7 +181,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
 
 Entity &Scene::createSettingsOverlay(int windowWidth, int windowHeight) {
     auto &overlay(world.createEntity());
-    SDL_Texture *overlayTex = TextureManager::load("../assets/ui/settings.jpg");
+    SDL_Texture *overlayTex = TextureManager::load("assets/ui/settings.jpg");
     SDL_FRect overlaySrc{0, 0, windowWidth * 0.85f, windowHeight * 0.85f};
     SDL_FRect overlayDest{
         (float) windowWidth / 2 - overlaySrc.w / 2, (float) windowHeight / 2 - overlaySrc.h / 2, overlaySrc.w,
@@ -198,7 +198,7 @@ Entity &Scene::createCogButton(int windowWidth, int windowHeight, Entity &overla
     auto &cog(world.createEntity());
     auto &cogTransform = cog.addComponent<Transform>(Vector2D((float) windowWidth - 50, (float) windowHeight - 50),
                                                      0.0f, 1.0f);
-    SDL_Texture *tex = TextureManager::load("../assets/ui/cog.png");
+    SDL_Texture *tex = TextureManager::load("assets/ui/cog.png");
     SDL_FRect cogSrc{0, 0, 32, 32};
     SDL_FRect cogDest{cogTransform.position.x, cogTransform.position.y, cogSrc.w, cogSrc.h};
     cog.addComponent<Sprite>(tex, cogSrc, cogDest, RenderLayer::UI, true);
@@ -230,7 +230,7 @@ void Scene::createSettingsUIComponents(Entity &overlay) {
     auto &closeButton = world.createEntity();
     auto &closeTransform = closeButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w - 40, baseY + 10),
                                                                0.0f, 1.0f);
-    SDL_Texture *text = TextureManager::load("../assets/ui/close.png");
+    SDL_Texture *text = TextureManager::load("assets/ui/close.png");
     SDL_FRect closeSrc{0, 0, (float) 32, (float) 32};
     SDL_FRect closeDest{closeTransform.position.x, closeTransform.position.y, closeSrc.w, closeSrc.h};
     closeButton.addComponent<Sprite>(text, closeSrc, closeDest, RenderLayer::UI, false);
@@ -273,7 +273,7 @@ void Scene::toggleSettingsOverlayVisibility(Entity &overlay) {
 
 Entity &Scene::createMenuOverlay(int windowWidth, int windowHeight, Camera &cam) {
     auto &overlay(world.createEntity());
-    SDL_Texture *overlayTex = TextureManager::load("../assets/ui/settings.jpg");
+    SDL_Texture *overlayTex = TextureManager::load("assets/ui/settings.jpg");
     SDL_FRect overlaySrc{0, 0, (windowWidth * 0.60f), (windowHeight * 0.70f)};
     SDL_FRect overlayDest{
         (float) windowWidth / 2 - overlaySrc.w / 2, (float) windowHeight / 2 - overlaySrc.h / 2, overlaySrc.w,
@@ -378,7 +378,7 @@ Entity &Scene::createSpawnerHUD(int windowHeight) {
     Transform t = particleSpawnerHUD.addComponent<Transform>(Vector2D(6.0f, windowHeight - 70.0f),
                                                              0.0f,
                                                              1.0f);
-    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    SDL_Texture *tex = TextureManager::load("assets/particle_tileset.png");
     SDL_FRect src{0, 0, 128, 128};
     SDL_FRect dst{t.position.x, t.position.y, 64, 64};
     particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);

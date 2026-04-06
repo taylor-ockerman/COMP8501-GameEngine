@@ -6,7 +6,7 @@
 #define INC_8051TUTORIAL_COLLISION_H
 #include <SDL3/SDL_rect.h>
 
-#include "../ecs/Component.h"
+#include "Component.h"
 
 struct CollisionData {
     bool colliding = false;
