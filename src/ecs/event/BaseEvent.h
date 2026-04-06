@@ -12,7 +12,8 @@ enum class EventType {
     Collision,
     PlayerAction,
     MouseInteraction,
-    SpawnerChange
+    SpawnerChange,
+    MenuToggle
 };
 
 struct BaseEvent {
@@ -64,6 +65,12 @@ struct SpawnerChangeEvent : BaseEvent {
     SpawnerChangeEvent(ParticleType pType) {
         this->pType = pType;
         type = EventType::SpawnerChange;
+    }
+};
+
+struct MenuToggleEvent : BaseEvent {
+    MenuToggleEvent() {
+        type = EventType::MenuToggle;
     }
 };
 #endif //INC_8051TUTORIAL_BASEEVENT_H

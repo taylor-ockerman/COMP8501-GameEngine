@@ -50,7 +50,6 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/ecs/system/KeyboardInputSystem.cpp
         src/utils/ParticleHelpers.h
         src/ecs/system/ParticleSyncSystem.cpp
-        src/utils/ParticlePlacementHelper.cpp
         src/ecs/system/ParticleInteractionSystem.h
         src/manager/AudioManager.cpp
         src/ecs/system/HUDSystem.cpp

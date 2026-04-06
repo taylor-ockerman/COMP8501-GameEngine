@@ -5,8 +5,11 @@
 
 #include <cmath>
 #include <iostream>
+
+#include "Game.h"
 #include "World.h"
 
+extern Game *game;
 
 void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr<Entity> > &entities,
                                  const SDL_Event &event) {
@@ -92,6 +95,15 @@ void KeyboardInputSystem::update(World &world, const std::vector<std::unique_ptr
                         bs.selectedParticle = ParticleType::Erase;
                         world.getEventManager().emit(SpawnerChangeEvent{ParticleType::Erase});
                         std::cout << "Selected: Eraser" << std::endl;
+                        break;
+                    case SDLK_ESCAPE:
+                        if (!event.key.repeat) {
+                            world.getEventManager().emit(MenuToggleEvent{});
+                        }
+                        break;
+                    case SDLK_F10:
+                        game->destroy();
+                        std::exit(0);
                         break;
                     default:
                         break;

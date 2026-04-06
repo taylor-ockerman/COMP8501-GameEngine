@@ -151,7 +151,10 @@ struct Particle {
 enum class LabelType {
     PlayerPosition,
     Damage,
-    Health
+    Health,
+    MenuText,
+    SpawnerText,
+    ParticleCount
 };
 
 struct Label {
@@ -164,9 +167,13 @@ struct Label {
     SDL_FRect dst{};
     bool visible = true;
     bool dirty = false;
+    int wrapWidth = 0;
 };
 
 struct SpawnerHUDTag {
+};
+
+struct MenuTag {
 };
 
 struct BrushState {

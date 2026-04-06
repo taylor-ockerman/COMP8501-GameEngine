@@ -42,6 +42,12 @@ EventResponseSystem::EventResponseSystem(World &world) {
         const auto &spawnerChangeEvent = static_cast<const SpawnerChangeEvent &>(e);
         onSpawnerChangeEvent(spawnerChangeEvent, world);
     });
+
+    world.getEventManager().subscribe([this, &world](const BaseEvent &e) {
+        if (e.type != EventType::MenuToggle) return;
+        const auto &menuToggleEvent = static_cast<const MenuToggleEvent &>(e);
+        onMenuToggle(menuToggleEvent, world);
+    });
 }
 
 void EventResponseSystem::onCollision(const CollisionEvent &e, const char *otherTag, World &world) {
@@ -148,12 +154,12 @@ void EventResponseSystem::
 onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
     Entity *spawner = nullptr;
     BrushState *state = nullptr;
-    for (auto &e: world.getEntities()) {
-        if (e->hasComponent<SpawnerHUDTag>()) {
-            spawner = e.get();
+    for (auto &ent: world.getEntities()) {
+        if (ent->hasComponent<SpawnerHUDTag>()) {
+            spawner = ent.get();
         }
-        if (e->hasComponent<BrushState>()) {
-            state = &e->getComponent<BrushState>();
+        if (ent->hasComponent<BrushState>()) {
+            state = &ent->getComponent<BrushState>();
         }
     }
     if (!spawner) {
@@ -164,6 +170,15 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
     if (!state) {
         std::cout << "no brushState" << std::endl;
         return;
+    }
+    if (spawner->hasComponent<Children>()) {
+        for (auto &ent: spawner->getComponent<Children>().children) {
+            if (ent->hasComponent<Label>()) {
+                auto &label = ent->getComponent<Label>();
+                label.text = ParticleHelpers::particleTypeToString(e.pType);
+                label.dirty = true;
+            }
+        }
     }
     state->selectedParticle = e.pType;
     SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
@@ -176,3 +191,33 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
     spawner->addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
     //sprite = Sprite{tex, src, dst, RenderLayer::UI, true};
 }
+
+void EventResponseSystem::onMenuToggle(const MenuToggleEvent &e, World &world) {
+    Entity *menu = nullptr;
+    for (auto &e: world.getEntities()) {
+        if (e->hasComponent<MenuTag>() && e->hasComponent<Sprite>()) {
+            menu = e.get();
+            break;
+        }
+    }
+    if (!menu) {
+        std::cout << "no menu found" << std::endl;
+        return;
+    }
+
+    auto &sprite = menu->getComponent<Sprite>();
+    bool newVisibility = !sprite.visible;
+    sprite.visible = newVisibility;
+
+    if (menu->hasComponent<Children>()) {
+        auto &children = menu->getComponent<Children>();
+        for (auto &child: children.children) {
+            if (child->hasComponent<Sprite>()) {
+                child->getComponent<Sprite>().visible = newVisibility;
+            }
+            if (child->hasComponent<Label>()) {
+                child->getComponent<Label>().visible = newVisibility;
+            }
+        }
+    }
+};

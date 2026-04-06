@@ -84,6 +84,24 @@ public:
         return src;
     }
 
+    static std::string particleTypeToString(ParticleType type) {
+        switch (type) {
+            case ParticleType::Empty: return "Empty";
+            case ParticleType::Sand: return "Sand";
+            case ParticleType::Stone: return "Stone";
+            case ParticleType::Smoke: return "Smoke";
+            case ParticleType::Water: return "Water";
+            case ParticleType::Gunpowder: return "Gunpowder";
+            case ParticleType::Fire: return "Fire";
+            case ParticleType::Wall: return "Wall";
+            case ParticleType::Oil: return "Oil";
+            case ParticleType::Wood: return "Wood";
+            case ParticleType::Steam: return "Steam";
+            case ParticleType::Erase: return "Erase";
+            default: return "Unknown";
+        }
+    }
+
 private:
     static int weightedVariant(int w0, int w1, int w2, int w3) {
         int total = w0 + w1 + w2 + w3;

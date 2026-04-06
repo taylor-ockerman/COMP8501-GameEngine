@@ -170,18 +170,11 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     auto &state(world.createEntity());
     state.addComponent<SceneState>();
 
-    createPlayerPositionLabel();
-    //create texture for HUD that shows what particle is selected to spawn
-    Entity &particleSpawnerHUD = world.createEntity();
-    Transform t = particleSpawnerHUD.addComponent<Transform>(Vector2D(6.0f, windowHeight - 70.0f),
-                                                             0.0f,
-                                                             1.0f);
-
-    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
-    SDL_FRect src{0, 0, 128, 128};
-    SDL_FRect dst{t.position.x, t.position.y, 64, 64};
-    particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
-    particleSpawnerHUD.addComponent<SpawnerHUDTag>();
+    //createPlayerPositionLabel();
+    createParticleCountLabel();
+    createMenuOverlay(windowWidth, windowHeight, cam.getComponent<Camera>());
+    createSpawnerHUD(windowHeight);
+    //create brush state that is used to spawn particles on the mouse location
     auto &brushState = world.createEntity();
     brushState.addComponent<BrushState>();
 }
@@ -278,18 +271,126 @@ void Scene::toggleSettingsOverlayVisibility(Entity &overlay) {
     }
 }
 
+Entity &Scene::createMenuOverlay(int windowWidth, int windowHeight, Camera &cam) {
+    auto &overlay(world.createEntity());
+    SDL_Texture *overlayTex = TextureManager::load("../assets/ui/settings.jpg");
+    SDL_FRect overlaySrc{0, 0, (windowWidth * 0.60f), (windowHeight * 0.70f)};
+    SDL_FRect overlayDest{
+        (float) windowWidth / 2 - overlaySrc.w / 2, (float) windowHeight / 2 - overlaySrc.h / 2, overlaySrc.w,
+        overlaySrc.h
+    };
+    overlay.addComponent<Transform>(Vector2D(overlayDest.x, overlayDest.y), 0.0f, 1.0f);
+    overlay.addComponent<Sprite>(overlayTex, overlaySrc, overlayDest, RenderLayer::UI, false);
+    overlay.addComponent<MenuTag>();
+    createMenuUIComponents(overlay);
+    return overlay;
+}
+
+void Scene::createMenuUIComponents(Entity &overlay) {
+    if (!overlay.hasComponent<Children>()) {
+        overlay.addComponent<Children>();
+    }
+    auto &overlayTransform = overlay.getComponent<Transform>();
+    auto &overlaySprite = overlay.getComponent<Sprite>();
+
+    auto &controlText = createMenuControlText();
+    auto &t = controlText.getComponent<Transform>();
+    t.position.y = overlayTransform.position.y + overlaySprite.dst.h / 8;
+    t.position.x = overlayTransform.position.x + overlaySprite.dst.w / 8;
+
+    auto &parentChildren = overlay.getComponent<Children>();
+    parentChildren.children.push_back(&controlText);
+}
+
+
 Entity &Scene::createPlayerPositionLabel() {
     auto &playerPositionLabel(world.createEntity());
     Label label = {
         "Test string",
-        AssetManager::getFont("pixel"),
+        AssetManager::getFont("pixelLarge"),
         {255, 255, 255, 255},
         LabelType::PlayerPosition,
         "playerPos"
     };
     TextureManager::loadLabel(label);
     playerPositionLabel.addComponent<Label>(label);
+    playerPositionLabel.addComponent<Transform>(Vector2D{10.0f, 50.0f}, 0.0f, 1.0f);
+    return playerPositionLabel;
+}
+
+Entity &Scene::createParticleCountLabel() {
+    auto &playerPositionLabel(world.createEntity());
+    Label label = {
+        "Test string",
+        AssetManager::getFont("pixelLarge"),
+        {255, 255, 255, 255},
+        LabelType::ParticleCount,
+        "particleCount"
+    };
+    TextureManager::loadLabel(label);
+    playerPositionLabel.addComponent<Label>(label);
     playerPositionLabel.addComponent<Transform>(Vector2D{10.0f, 10.0f}, 0.0f, 1.0f);
     return playerPositionLabel;
 }
+
+Entity &Scene::createMenuControlText() {
+    auto &text(world.createEntity());
+    Label label = {
+        "CONTROLS\n"
+        "WASD: Move character\n"
+        "Space: Jump\n"
+        "Left Click: Spawn particle\n"
+        "1-8: Select particle to spawn\n"
+        "Scroll Wheel: Change Spawner Size\n"
+        "Esc: Toggle menu\n"
+        "F10: Quit game",
+        AssetManager::getFont("pixelLarge"),
+        {0, 0, 0, 0},
+        LabelType::MenuText,
+        "menuText",
+    };
+    label.dirty = true;
+    label.visible = false;
+    TextureManager::loadLabel(label);
+    text.addComponent<Label>(label);
+    text.addComponent<Transform>(Vector2D{1.0f, 1.0f}, 0.0f, 1.0f);
+    return text;
+}
+
+Entity &Scene::createSpawnerLabel() {
+    auto &text(world.createEntity());
+    Label label = {
+        "Sand",
+        AssetManager::getFont("pixelLarge"),
+        {255, 255, 255, 255},
+        LabelType::SpawnerText,
+        "spawnerText",
+    };
+    label.dirty = true;
+    TextureManager::loadLabel(label);
+    text.addComponent<Label>(label);
+    text.addComponent<Transform>(Vector2D{1.0f, 1.0f}, 0.0f, 1.0f);
+    return text;
+}
+
+Entity &Scene::createSpawnerHUD(int windowHeight) {
+    Entity &particleSpawnerHUD = world.createEntity();
+    Transform t = particleSpawnerHUD.addComponent<Transform>(Vector2D(6.0f, windowHeight - 70.0f),
+                                                             0.0f,
+                                                             1.0f);
+    SDL_Texture *tex = TextureManager::load("../assets/particle_tileset.png");
+    SDL_FRect src{0, 0, 128, 128};
+    SDL_FRect dst{t.position.x, t.position.y, 64, 64};
+    particleSpawnerHUD.addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
+    particleSpawnerHUD.addComponent<SpawnerHUDTag>();
+    auto &spawnLabel = createSpawnerLabel();
+    auto &spawnT = spawnLabel.getComponent<Transform>();
+    auto &spawnHUDT = particleSpawnerHUD.getComponent<Transform>();
+    spawnLabel.addComponent<Parent>(&particleSpawnerHUD);
+    particleSpawnerHUD.addComponent<Children>().children.push_back(&spawnLabel);
+    spawnT.position.x = spawnHUDT.position.x;
+    spawnT.position.y = spawnHUDT.position.y - 40;
+    return particleSpawnerHUD;
+}
+
 

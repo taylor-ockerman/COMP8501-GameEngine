@@ -69,5 +69,19 @@ private:
     void toggleSettingsOverlayVisibility(Entity &overlay);
 
     Entity &createPlayerPositionLabel();
+
+    void createMenuUIComponents(Entity &overlay);
+
+    void toggleMenuOverlayVisibility(Entity &overlay);
+
+    Entity &createMenuOverlay(int windowWidth, int windowHeight, Camera &cam);
+
+    Entity &createMenuControlText();
+
+    Entity &createSpawnerLabel();
+
+    Entity &createSpawnerHUD(int windowHeight);
+
+    Entity &createParticleCountLabel();
 };
 #endif //INC_8051TUTORIAL_SCENE_H

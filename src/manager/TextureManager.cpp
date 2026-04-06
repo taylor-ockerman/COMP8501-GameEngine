@@ -119,7 +119,8 @@ void TextureManager::updateLabel(Label &label) {
         label.texture = nullptr;
     }
 
-    SDL_Surface *tempSurface = TTF_RenderText_Blended(label.font, label.text.c_str(), label.text.size(), label.color);
+    SDL_Surface *tempSurface = TTF_RenderText_Blended_Wrapped(label.font, label.text.c_str(), label.text.size(),
+                                                              label.color, label.wrapWidth);
     if (!tempSurface) {
         std::cerr << "Failed to load surface: " << label.textureCacheKey << SDL_GetError() << std::endl;
     }

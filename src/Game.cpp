@@ -52,7 +52,7 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
     //load fonts
     AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
     AssetManager::loadFont("pixel", "../assets/fonts/pixel.ttf", 24);
-
+    AssetManager::loadFont("pixelLarge", "../assets/fonts/pixel.ttf", 48);
     //load assets
     AssetManager::loadAnimation("player", "../assets/animations/human_animations.xml");
     AssetManager::loadAnimation("enemy", "../assets/animations/bird_animations.xml");

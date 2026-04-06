@@ -5,6 +5,7 @@
 #include "World.h"
 
 void HUDSystem::update(const std::vector<std::unique_ptr<Entity> > &entities) {
+    int particleCount = 0;
     Entity *playerEntity = nullptr;
     Entity *spawnerHUD = nullptr;
     Entity *camera = nullptr;
@@ -16,7 +17,9 @@ void HUDSystem::update(const std::vector<std::unique_ptr<Entity> > &entities) {
         if (entity->hasComponent<SpawnerHUDTag>()) {
             spawnerHUD = entity.get();
         }
-        if (spawnerHUD && playerEntity) break;
+        if (entity->hasComponent<Particle>()) {
+            particleCount++;
+        }
     }
 
     if (spawnerHUD && spawnerHUD->hasComponent<Sprite>()) {
@@ -31,6 +34,12 @@ void HUDSystem::update(const std::vector<std::unique_ptr<Entity> > &entities) {
             if (label.type == LabelType::PlayerPosition) {
                 std::stringstream ss;
                 ss << "Player position: " << playerTransform.position;
+                label.text = ss.str();
+                label.dirty = true;
+            }
+            if (label.type == LabelType::ParticleCount) {
+                std::stringstream ss;
+                ss << "Particles: " << particleCount;
                 label.text = ss.str();
                 label.dirty = true;
             }

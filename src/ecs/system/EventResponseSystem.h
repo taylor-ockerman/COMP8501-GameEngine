@@ -27,6 +27,8 @@ private:
     void onMouseInteraction(const MouseInteractionEvent &e);
 
     void onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world);
+
+    void onMenuToggle(const MenuToggleEvent &e, World &world);
 };
 
 #endif //INC_8051TUTORIAL_EVENTRESPONSESYSTEM_H
