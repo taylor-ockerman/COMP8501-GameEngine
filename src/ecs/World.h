@@ -30,7 +30,6 @@
 #include "MouseInputSystem.h"
 #include "ParticleSimulationSystem.h"
 #include "UIRenderSystem.h"
-#include "ParticlePlacementHelper.h"
 #include "ParticleSyncSystem.h"
 #include "ParticleInteractionSystem.h"
 #include "PreRenderSystem.h"
@@ -76,7 +75,7 @@ public:
             colliderSyncSystem.update(*this);
             particleSimulationSystem.update(*grid, entities);
             particleSyncSystem.update(*grid);
-            particleInteractionSystem.update(entities, *grid);
+            particleInteractionSystem.update(*this, entities, *grid);
             particleCreationSystem.update(*this, *grid);
             collisionSystem.update(*this);
             animationSystem.update(entities, dt);

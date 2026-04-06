@@ -54,7 +54,8 @@ add_executable(COMP8051_Tutorial src/main.cpp
         src/manager/AudioManager.cpp
         src/ecs/system/HUDSystem.cpp
         src/ecs/system/UIRenderSystem.cpp
-        src/ecs/system/ParticleSpawnDeSpawnSystem.cpp)
+        src/ecs/system/ParticleSpawnDeSpawnSystem.cpp
+        src/ecs/system/ParticleInteractionSystem.cpp)
 
 target_link_libraries(COMP8051_Tutorial
         SDL3

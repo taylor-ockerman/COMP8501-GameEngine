@@ -102,6 +102,15 @@ public:
         }
     }
 
+    static std::string spawnClipForParticle(ParticleType type) {
+        switch (type) {
+            case ParticleType::Sand: return "powderSpawn";
+            case ParticleType::Water: return "waterSpawn";
+            case ParticleType::Fire: return "fireSpawn";
+            default: return "";
+        }
+    }
+
 private:
     static int weightedVariant(int w0, int w1, int w2, int w3) {
         int total = w0 + w1 + w2 + w3;

@@ -6,8 +6,10 @@
 #include <iostream>
 #include <ostream>
 
-MIX_Track *AudioManager::sfxTrack;
+MIX_Track *AudioManager::spawnTrack = nullptr;
+MIX_Track *AudioManager::sfxTrack = nullptr;
 std::unordered_map<std::string, MIX_Audio *> AudioManager::audio;
+std::string AudioManager::currentSpawnAudioLoop{};
 
 
 AudioManager::AudioManager() {
@@ -24,11 +26,15 @@ AudioManager::AudioManager() {
 
     musicTrack = MIX_CreateTrack(mixer);
     sfxTrack = MIX_CreateTrack(mixer);
-    MIX_SetTrackGain(musicTrack, 0.01f);
+    spawnTrack = MIX_CreateTrack(mixer);
+    MIX_SetTrackGain(musicTrack, 0.1f);
 }
 
 void AudioManager::loadAudio(const std::string &name, const char *path) const {
-    if (audio.contains(path)) {
+    // if (audio.contains(path)) {
+    //     return;
+    // }
+    if (audio.contains(name)) {
         return;
     }
     auto audioPtr = MIX_LoadAudio(mixer, path, true);
@@ -62,4 +68,33 @@ void AudioManager::playSfx(const std::string &name) {
 
     MIX_PlayTrack(sfxTrack, 0);
     std::cout << "Playing sfx: " << name << std::endl;
+}
+
+void AudioManager::playSpawn(const std::string &name) {
+    if (!audio.contains(name)) {
+        std::cout << "Cant find spawn music: " << name << std::endl;
+        return;
+    }
+    if (currentSpawnAudioLoop == name) {
+        return;
+    }
+    MIX_StopTrack(spawnTrack, 0);
+
+    if (!MIX_SetTrackAudio(spawnTrack, audio[name])) {
+        std::cout << "MIX_SetTrackAudio() failed for: " << name << std::endl;
+        return;
+    }
+
+    MIX_PlayTrack(spawnTrack, -1);
+    //MIX_SetTrackGain(spawnTrack, 8.0f);
+    currentSpawnAudioLoop = name;
+    std::cout << "Playing sfx: " << name << std::endl;
+}
+
+void AudioManager::stopSpawn() {
+    if (currentSpawnAudioLoop.empty()) return;
+
+    MIX_StopTrack(spawnTrack, 0);
+    std::cout << "Stopping spawn track: " << currentSpawnAudioLoop << std::endl;
+    currentSpawnAudioLoop.clear();
 }

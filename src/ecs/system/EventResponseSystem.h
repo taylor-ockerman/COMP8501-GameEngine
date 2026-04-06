@@ -29,6 +29,10 @@ private:
     void onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world);
 
     void onMenuToggle(const MenuToggleEvent &e, World &world);
+
+    void onFireExtinguish(const FireExtinguishEvent &e, World &world);
+
+    void onSpawnAudio(const SpawnAudioEvent &e, World &world);
 };
 
 #endif //INC_8051TUTORIAL_EVENTRESPONSESYSTEM_H

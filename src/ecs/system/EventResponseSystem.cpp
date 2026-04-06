@@ -48,6 +48,17 @@ EventResponseSystem::EventResponseSystem(World &world) {
         const auto &menuToggleEvent = static_cast<const MenuToggleEvent &>(e);
         onMenuToggle(menuToggleEvent, world);
     });
+
+    world.getEventManager().subscribe([this,&world](const BaseEvent &e) {
+        if (e.type != EventType::FireExtinguish) return;
+        const auto &fireExtinguishEvent = static_cast<const FireExtinguishEvent &>(e);
+        onFireExtinguish(fireExtinguishEvent, world);
+    });
+    world.getEventManager().subscribe([this,&world](const BaseEvent &e) {
+        if (e.type != EventType::SpawnAudio) return;
+        const auto &spawnAudioEvent = static_cast<const SpawnAudioEvent &>(e);
+        onSpawnAudio(spawnAudioEvent, world);
+    });
 }
 
 void EventResponseSystem::onCollision(const CollisionEvent &e, const char *otherTag, World &world) {
@@ -56,7 +67,7 @@ void EventResponseSystem::onCollision(const CollisionEvent &e, const char *other
     if (!getCollisionEntities(e, otherTag, player, other)) return;
     if (std::string(otherTag) == "item") {
         if (e.state != CollisionState::Enter) return;
-        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coinPickUp"));
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coinPickUp", AudioCommand::PlayOneShot));
         other->destroy();
         //scene state
         for (auto &entity: world.getEntities()) {
@@ -221,3 +232,22 @@ void EventResponseSystem::onMenuToggle(const MenuToggleEvent &e, World &world) {
         }
     }
 };
+
+void EventResponseSystem::onFireExtinguish(const FireExtinguishEvent &e, World &world) {
+    world.getAudioEventQueue().push(std::make_unique<AudioEvent>("waterHitsFire", AudioCommand::PlayOneShot));
+}
+
+void EventResponseSystem::onSpawnAudio(const SpawnAudioEvent &e, World &world) {
+    std::string clip = ParticleHelpers::spawnClipForParticle(e.pType);
+    if (clip.empty()) return;
+
+    if (e.start) {
+        world.getAudioEventQueue().push(
+            std::make_unique<AudioEvent>(clip, AudioCommand::StartSpawnLoop)
+        );
+    } else {
+        world.getAudioEventQueue().push(
+            std::make_unique<AudioEvent>("", AudioCommand::StopSpawnLoop)
+        );
+    }
+}

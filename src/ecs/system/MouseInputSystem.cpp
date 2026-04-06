@@ -102,10 +102,16 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
         world.printParticleCounts(*grid);
         brushState->isPainting = !clickedClickable;
         brushState->uiCapturedClick = clickedClickable;
+        if (brushState->isPainting) {
+            world.getEventManager().emit(SpawnAudioEvent{brushState->selectedParticle, true});
+        }
     }
 
     if (event.type == SDL_EVENT_MOUSE_BUTTON_UP &&
         event.button.button == SDL_BUTTON_LEFT) {
+        if (brushState->isPainting) {
+            world.getEventManager().emit(SpawnAudioEvent{brushState->selectedParticle, false});
+        }
         brushState->isPainting = false;
         brushState->uiCapturedClick = false;
     }

@@ -47,8 +47,13 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
         isRunning = false;
     }
     //load audio
-    audioManager.loadAudio("theme", "../assets/audio/switch_with_me.ogg");
+    //song "When the Leaves Leaf", artist "RoccoW", source "Free Music Archive", license type "CC BY"
+    audioManager.loadAudio("theme", "../assets/audio/RoccoW - When the Leaves Leaf.mp3");
     audioManager.loadAudio("coinPickUp", "../assets/audio/coin.ogg");
+    audioManager.loadAudio("fireSpawn", "../assets/audio/fire.mp3");
+    audioManager.loadAudio("powderSpawn", "../assets/audio/sand-fall.mp3");
+    audioManager.loadAudio("waterHitsFire", "../assets/audio/water-sizzle.mp3");
+    audioManager.loadAudio("waterSpawn", "../assets/audio/water-sounds.mp3");
     //load fonts
     AssetManager::loadFont("arial", "../assets/fonts/arial.ttf", 16);
     AssetManager::loadFont("pixel", "../assets/fonts/pixel.ttf", 24);

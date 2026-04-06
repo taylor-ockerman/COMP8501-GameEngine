@@ -10,17 +10,34 @@
 
 #include "AudioManager.h"
 
+enum class AudioCommand {
+    PlayOneShot,
+    StartSpawnLoop,
+    StopSpawnLoop
+};
+
 class AudioEvent {
 public:
-    explicit AudioEvent(std::string name) : name(name) {
+    explicit AudioEvent(std::string name, AudioCommand command) : name(name), command(command) {
     }
 
     void execute() const {
-        AudioManager::playSfx(name);
+        switch (command) {
+            case AudioCommand::PlayOneShot:
+                AudioManager::playSfx(name);
+                break;
+            case AudioCommand::StartSpawnLoop:
+                AudioManager::playSpawn(name);
+                break;
+            case AudioCommand::StopSpawnLoop:
+                AudioManager::stopSpawn();
+                break;
+        }
     }
 
 private:
     std::string name;
+    AudioCommand command;
 };
 
 class AudioEventQueue {

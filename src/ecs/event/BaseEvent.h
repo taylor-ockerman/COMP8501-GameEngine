@@ -13,7 +13,9 @@ enum class EventType {
     PlayerAction,
     MouseInteraction,
     SpawnerChange,
-    MenuToggle
+    MenuToggle,
+    FireExtinguish,
+    SpawnAudio
 };
 
 struct BaseEvent {
@@ -71,6 +73,21 @@ struct SpawnerChangeEvent : BaseEvent {
 struct MenuToggleEvent : BaseEvent {
     MenuToggleEvent() {
         type = EventType::MenuToggle;
+    }
+};
+
+struct FireExtinguishEvent : BaseEvent {
+    FireExtinguishEvent() {
+        type = EventType::FireExtinguish;
+    }
+};
+
+struct SpawnAudioEvent : BaseEvent {
+    ParticleType pType;
+    bool start;
+
+    SpawnAudioEvent(ParticleType ptype, bool start) : pType(ptype), start(start) {
+        type = EventType::SpawnAudio;
     }
 };
 #endif //INC_8051TUTORIAL_BASEEVENT_H
