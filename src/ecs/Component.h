@@ -7,12 +7,14 @@
 #include <functional>
 #include <SDL3/SDL_render.h>
 
-#include "../utils/Vector2D.h"
+#include "Vector2D.h"
 #include <string>
 #include <unordered_map>
 
 #include "Entity.h"
 #include "system/AnimationClip.h"
+
+#include "SDL3_ttf/SDL_ttf.h"
 
 struct Transform {
     Vector2D position{};
@@ -23,12 +25,19 @@ struct Transform {
 
 struct Velocity {
     Vector2D direction{};
-    float speed{};
+    float magnitude{};
+};
+
+struct Acceleration {
+    Vector2D direction{};
+    float magnitude{};
+    bool isGrounded = false;
 };
 
 enum class RenderLayer {
     World,
-    UI
+    UI,
+    HUD
 };
 
 struct Sprite {
@@ -43,6 +52,7 @@ struct Collider {
     std::string tag;
     SDL_FRect rect{};
     bool enabled = true;
+    Vector2D offset{};
 };
 
 struct Animation {
@@ -58,6 +68,7 @@ struct Camera {
     SDL_FRect view{};
     float worldWidth;
     float worldHeight;
+    float zoom = 2.0f;
 };
 
 struct TimedSpawner {
@@ -71,7 +82,9 @@ struct SceneState {
     int coinsCollected = 0;
 };
 
+
 struct PlayerTag {
+    bool isGrounded = false;
 };
 
 struct ProjectileTag {
@@ -94,5 +107,82 @@ struct Parent {
 
 struct Children {
     std::vector<Entity *> children{};
+};
+
+enum class ParticleType {
+    Empty,
+    Sand,
+    Stone,
+    Smoke,
+    Water,
+    Gunpowder,
+    Fire,
+    Wall,
+    Oil,
+    Wood,
+    Steam,
+    Erase,
+    Last
+};
+
+enum class ParticleBehaviour {
+    Static,
+    Powder,
+    Liquid,
+    Gas
+};
+
+struct ParticleProperties {
+    int density = 1;
+    bool flammable = false;
+    int life = 0;
+    int ignitionChance = 0;
+    ParticleBehaviour behaviour = ParticleBehaviour::Powder;
+    SDL_FRect spriteSrc{};
+};
+
+struct Particle {
+    ParticleType type = ParticleType::Sand;
+    int gridX{};
+    int gridY{};
+    int life = 100;
+};
+
+enum class LabelType {
+    PlayerPosition,
+    Damage,
+    Health,
+    MenuText,
+    SpawnerText,
+    ParticleCount
+};
+
+struct Label {
+    std::string text{};
+    TTF_Font *font = nullptr;
+    SDL_Color color{};
+    LabelType type = LabelType::PlayerPosition;
+    std::string textureCacheKey{};
+    SDL_Texture *texture = nullptr;
+    SDL_FRect dst{};
+    bool visible = true;
+    bool dirty = false;
+    int wrapWidth = 0;
+};
+
+struct SpawnerHUDTag {
+};
+
+struct MenuTag {
+};
+
+struct BrushState {
+    ParticleType selectedParticle = ParticleType::Sand;
+    int brushSize = 1;
+    int maxBrushSize = 20;
+    Vector2D mouseScreenPos;
+    Vector2D mouseWorldPos;
+    bool isPainting = false;
+    bool uiCapturedClick = false;
 };
 #endif //INC_8051TUTORIAL_COMPONENT_H

@@ -5,12 +5,17 @@
 #ifndef INC_8051TUTORIAL_BASEEVENT_H
 #define INC_8051TUTORIAL_BASEEVENT_H
 
-#include "../Entity.h"
+#include "Component.h"
+#include "Entity.h"
 
 enum class EventType {
     Collision,
     PlayerAction,
-    MouseInteraction
+    MouseInteraction,
+    SpawnerChange,
+    MenuToggle,
+    FireExtinguish,
+    SpawnAudio
 };
 
 struct BaseEvent {
@@ -51,6 +56,38 @@ struct MouseInteractionEvent : BaseEvent {
 
     MouseInteractionEvent(Entity *entity, MouseInteractionState state) : entity(entity), state(state) {
         type = EventType::MouseInteraction;
+    }
+};
+
+struct SpawnerChangeEvent : BaseEvent {
+    Entity *entity = nullptr;
+
+    ParticleType pType = ParticleType::Sand;
+
+    SpawnerChangeEvent(ParticleType pType) {
+        this->pType = pType;
+        type = EventType::SpawnerChange;
+    }
+};
+
+struct MenuToggleEvent : BaseEvent {
+    MenuToggleEvent() {
+        type = EventType::MenuToggle;
+    }
+};
+
+struct FireExtinguishEvent : BaseEvent {
+    FireExtinguishEvent() {
+        type = EventType::FireExtinguish;
+    }
+};
+
+struct SpawnAudioEvent : BaseEvent {
+    ParticleType pType;
+    bool start;
+
+    SpawnAudioEvent(ParticleType ptype, bool start) : pType(ptype), start(start) {
+        type = EventType::SpawnAudio;
     }
 };
 #endif //INC_8051TUTORIAL_BASEEVENT_H

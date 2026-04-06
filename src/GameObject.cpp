@@ -2,7 +2,7 @@
 // Created by taylo on 1/14/2026.
 //
 #include "GameObject.h"
-#include "TextureManager.h"
+#include "manager/TextureManager.h"
 
 GameObject::GameObject(const char *path, float x, float y) : xPos(x), yPos(y), texture(TextureManager::load(path)) {
 }
@@ -33,5 +33,5 @@ void GameObject::update(float deltaTime) {
 }
 
 void GameObject::draw() {
-    TextureManager::draw(texture, srcRect, destRect);
+    TextureManager::draw(texture, &srcRect, &destRect);
 }

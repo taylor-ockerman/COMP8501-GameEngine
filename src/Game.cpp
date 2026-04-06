@@ -38,22 +38,40 @@ void Game::init(const char *title, int width, int height, bool fullscreen) {
             std::cout << "Renderer could not be created!" << std::endl;
             return;
         }
+        if (!TTF_Init()) {
+            std::cerr << "TTF could not be initialized!" << SDL_GetError() << std::endl;
+        }
+
         isRunning = true;
     } else {
         isRunning = false;
     }
+    //load audio
+    //song "When the Leaves Leaf", artist "RoccoW", source "Free Music Archive", license type "CC BY"
+    audioManager.loadAudio("theme", "assets/audio/RoccoW - When the Leaves Leaf.mp3");
+    audioManager.loadAudio("coinPickUp", "assets/audio/coin.ogg");
+    audioManager.loadAudio("fireSpawn", "assets/audio/fire.mp3");
+    audioManager.loadAudio("powderSpawn", "assets/audio/sand-fall.mp3");
+    audioManager.loadAudio("waterHitsFire", "assets/audio/water-sizzle.mp3");
+    audioManager.loadAudio("waterSpawn", "assets/audio/water-sounds.mp3");
+    //load fonts
+    AssetManager::loadFont("arial", "assets/fonts/arial.ttf", 16);
+    AssetManager::loadFont("pixel", "assets/fonts/pixel.ttf", 24);
+    AssetManager::loadFont("pixelLarge", "assets/fonts/pixel.ttf", 48);
     //load assets
-    AssetManager::loadAnimation("player", "../assets/animations/human_animations.xml");
-    AssetManager::loadAnimation("enemy", "../assets/animations/bird_animations.xml");
+    AssetManager::loadAnimation("player", "assets/animations/human_animations.xml");
+    AssetManager::loadAnimation("enemy", "assets/animations/bird_animations.xml");
 
     //load scenes
     sceneManager.loadScene(SceneType::MainMenu, "mainmenu", nullptr, width, height);
-    sceneManager.loadScene(SceneType::Gameplay, "level1", "../assets/map1.tmx", width, height);
-    sceneManager.loadScene(SceneType::Gameplay, "level2", "../assets/map2.tmx", width, height);
+    sceneManager.loadScene(SceneType::Gameplay, "level1", "assets/sandbox_map.tmx", width, height);
+    sceneManager.loadScene(SceneType::Gameplay, "level2", "assets/map2.tmx", width, height);
 
     //init game data/state
     gameState.playerHealth = 5;
 
+    //start music
+    audioManager.playMusic("theme");
     //start level 1
     sceneManager.changeSceneDeferred("mainmenu");
 
@@ -99,7 +117,7 @@ void Game::render() {
     //every frame the renderer is cleared with the draw color;
     SDL_RenderClear(renderer);
 
-    sceneManager.render();
+    sceneManager.render(renderer);
 
     //swaps back buffer to the screen
     SDL_RenderPresent(renderer);;

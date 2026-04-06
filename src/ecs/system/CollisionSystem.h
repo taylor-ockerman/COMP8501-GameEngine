@@ -8,7 +8,7 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include "../Entity.h"
+#include "Entity.h"
 
 using CollisionKey = std::pair<Entity *, Entity *>;
 //forward declaration
