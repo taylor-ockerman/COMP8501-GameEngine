@@ -2,7 +2,7 @@
 // Created by taylo on 1/28/2026.
 //
 
-#include "../utils/Vector2D.h"
+#include "Vector2D.h"
 
 #include <math.h>
 

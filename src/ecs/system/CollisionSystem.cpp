@@ -2,8 +2,8 @@
 // Created by taylo on 2/4/2026.
 //
 #include "CollisionSystem.h"
-#include "../World.h"
-#include "../../utils/Collision.h"
+#include "World.h"
+#include "Collision.h"
 //let's say we have three entities eA, eB, eC
 //1. positions the collider with the transform
 //2. checking for collisions
@@ -13,12 +13,14 @@ void CollisionSystem::update(World &world) {
     const std::vector<Entity *> collidables = queryCollidables(world.getEntities());
 
     //update all collider positions first
-    for (auto entity: collidables) {
-        auto &t = entity->getComponent<Transform>();
-        auto &c = entity->getComponent<Collider>();
-        c.rect.x = t.position.x;
-        c.rect.y = t.position.y;
-    }
+    //this is removed because it is being done by the sprite collider offset system now
+    // for (auto entity: collidables) {
+    //     auto &t = entity->getComponent<Transform>();
+    //     auto &c = entity->getComponent<Collider>();
+    //     //applying offset to player collider so it better matches sprite
+    //     c.rect.x = t.position.x;
+    //     c.rect.y = t.position.y;
+    // }
 
     std::set<CollisionKey> currentCollisions;
 
@@ -32,7 +34,6 @@ void CollisionSystem::update(World &world) {
         for (size_t j = i + 1; j < collidables.size(); ++j) {
             auto &entityB = collidables[j];
             auto &colliderB = entityB->getComponent<Collider>();
-
             if (Collision::AABB(colliderA, colliderB)) {
                 CollisionKey key = makeKey(entityA, entityB);
                 currentCollisions.insert(key);

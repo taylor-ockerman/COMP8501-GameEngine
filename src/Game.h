@@ -5,8 +5,9 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-#include "ecs/World.h"
-#include "manager/SceneManager.h"
+#include "AudioManager.h"
+#include "World.h"
+#include "SceneManager.h"
 
 struct GameState {
     int playerHealth;
@@ -34,8 +35,9 @@ public:
         return isRunning;
     }
 
+    SDL_Window *getWindow() { return window; }
     SDL_Renderer *renderer = nullptr;
-
+    AudioManager audioManager;
     SceneManager sceneManager;
     static std::function<void(std::string)> onSceneChangeRequest;
     static GameState gameState;

@@ -6,8 +6,8 @@
 #define INC_8051TUTORIAL_DESTRUCTIONSYSTEM_H
 #include <memory>
 #include <vector>
-#include "../Entity.h"
-#include "../Component.h"
+#include "Entity.h"
+#include "Component.h"
 
 class DestructionSystem {
 public:

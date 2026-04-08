@@ -4,6 +4,7 @@
 
 #ifndef INC_8051TUTORIAL_VECTOR2D_H
 #define INC_8051TUTORIAL_VECTOR2D_H
+#include <iostream>
 
 class Vector2D {
 public:
@@ -50,4 +51,8 @@ public:
 
     Vector2D &normalize();
 };
+
+inline std::ostream &operator<<(std::ostream &os, const Vector2D &vec) {
+    return os << static_cast<int>(vec.x) << ", " << static_cast<int>(vec.y);
+}
 #endif //INC_8051TUTORIAL_VECTOR2D_H

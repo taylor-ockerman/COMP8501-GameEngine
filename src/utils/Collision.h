@@ -6,7 +6,13 @@
 #define INC_8051TUTORIAL_COLLISION_H
 #include <SDL3/SDL_rect.h>
 
-#include "../ecs/Component.h"
+#include "Component.h"
+
+struct CollisionData {
+    bool colliding = false;
+    Vector2D collisionNormal{0.0f, 0.0f};
+    float penetration = 0.0f;
+};
 
 class Collision {
 public:

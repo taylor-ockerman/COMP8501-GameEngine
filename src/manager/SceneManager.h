@@ -8,7 +8,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "../scene/Scene.h"
+#include "Scene.h"
+#include <SDL3/SDL.h>
+#include <iostream>
 
 struct SceneParams {
     SceneType sceneType;
@@ -26,6 +28,8 @@ class SceneManager {
         auto it = scenes.find(name);
         if (it != scenes.end()) {
             const auto &params = it->second;
+            //reset scene
+            currentScene.reset();
             //create Scene object
             //build scene
             currentScene = std::make_unique<Scene>(
@@ -59,8 +63,8 @@ public:
         }
     }
 
-    void render() const {
-        if (currentScene) currentScene->render();
+    void render(SDL_Renderer *renderer) const {
+        if (currentScene) currentScene->render(renderer);
     }
 };
 #endif //INC_8051TUTORIAL_SCENEMANAGER_H
