@@ -50,4 +50,4 @@ Before building, update those paths in `CMakeLists.txt` so they match your machi
 - `src/scene/` – scene setup and gameplay/main menu initialization  
 - `src/manager/` – scene, texture, asset, and audio management  
 - `src/utils/` – helper utilities such as math, collision, and particle helpers  
-- `assets/` – maps, textures, fonts, audio, UI, and animation data :contentReference
+- `assets/` – maps, textures, fonts, audio, UI, and animation data
