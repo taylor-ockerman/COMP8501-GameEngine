@@ -10,6 +10,8 @@
 
 class ParticleHelpers {
 public:
+    //gets a particle types particluar properties and sprite.
+    //sprite can be picked randomly for one of four options if bool is set to true
     static ParticleProperties getProperties(ParticleType type, bool getRandomSprite) {
         switch (type) {
             case ParticleType::Empty:

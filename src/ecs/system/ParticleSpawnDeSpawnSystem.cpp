@@ -30,7 +30,7 @@ void ParticleSpawnDeSpawnSystem::update(World &world, ParticleGrid &grid) {
     }
 }
 
-//calls function to spawn at all brush coords
+//calls function to spawn particles at each brush coordinate
 void ParticleSpawnDeSpawnSystem::spawnBrushAtWorld(World &world, ParticleGrid &grid,
                                                    int worldX, int worldY,
                                                    ParticleType type, int brushSize) {
@@ -49,7 +49,7 @@ void ParticleSpawnDeSpawnSystem::spawnBrushAtWorld(World &world, ParticleGrid &g
     }
 }
 
-//convert world coords into grid coords
+//convert world coords into grid coords and then calls func to spawn particles at those cells
 bool ParticleSpawnDeSpawnSystem::spawnParticleAtWorld(World &world, ParticleGrid &grid,
                                                       int worldX, int worldY,
                                                       ParticleType type) {
@@ -109,10 +109,6 @@ bool ParticleSpawnDeSpawnSystem::spawnParticleAtCell(World &world, ParticleGrid 
 
     grid.wakeChunkAndNeighborsForCell(gx, gy);
     grid.getChunkFromCell(gx, gy).movedThisFrame = true;
-    // std::cout << "spawnParticleAtCell: gx=" << gx
-    //   << " gy=" << gy
-    //   << " type=" << static_cast<int>(type)
-    //   << std::endl;
     return true;
 }
 
@@ -167,10 +163,6 @@ void ParticleSpawnDeSpawnSystem::destroyParticle(ParticleGrid &grid, int gx, int
     if (!grid.inBounds(gx, gy)) return;
 
     Cell &cell = grid.at(gx, gy);
-
-    if (cell.entity != nullptr) {
-        cell.entity->destroy();
-    }
 
     grid.clearCell(gx, gy);
     grid.wakeChunkAndNeighborsForCell(gx, gy);

@@ -11,17 +11,6 @@
 void CollisionSystem::update(World &world) {
     //get a list of entities that have colliders and transforms
     const std::vector<Entity *> collidables = queryCollidables(world.getEntities());
-
-    //update all collider positions first
-    //this is removed because it is being done by the sprite collider offset system now
-    // for (auto entity: collidables) {
-    //     auto &t = entity->getComponent<Transform>();
-    //     auto &c = entity->getComponent<Collider>();
-    //     //applying offset to player collider so it better matches sprite
-    //     c.rect.x = t.position.x;
-    //     c.rect.y = t.position.y;
-    // }
-
     std::set<CollisionKey> currentCollisions;
 
     //outer loop

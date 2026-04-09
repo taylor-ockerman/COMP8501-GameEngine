@@ -13,7 +13,6 @@ Scene::Scene(SceneType sceneType, const char *sceneName, const char *mapPath, co
         initMainMenu(windowWidth, windowHeight);
         return;
     }
-    //grid = nullptr;
     initGameplay(mapPath, windowWidth, windowHeight);
 }
 
@@ -79,6 +78,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         c.rect.h = collider.rect.h;
         //adding wall colliders to grid system.
         grid->addWallRect(c.rect);
+
         //uncomment this block to show red boxes on wall colliders
         // SDL_Texture *tex = TextureManager::load("assets/tileset.png");
         // SDL_FRect colSrc{0, 32, 32, 32};
@@ -86,21 +86,6 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
         // e.addComponent<Sprite>(tex, colSrc, colDst);
     }
 
-    //dont need coins
-    // for (auto &sp: world.getMap().coins) {
-    //     auto &item = world.createEntity();
-    //     item.addComponent<Transform>(Vector2D(sp.rect.x, sp.rect.y), 0.0f, 1.0f);
-    //     auto &c = item.addComponent<Collider>("item");
-    //     c.rect.x = sp.rect.x;
-    //     c.rect.y = sp.rect.y;
-    //     SDL_Texture *itemTex = TextureManager::load("assets/coin.png");
-    //     // SDL_Texture *itemTex = TextureManager::load("assets/tileset.png"); //uncomment for red box on collider
-    //     SDL_FRect itemSrc{0, 0, 32, 32};
-    //     SDL_FRect itemDst{c.rect.x, c.rect.y, 32, 32};
-    //     auto &s = item.addComponent<Sprite>(itemTex, itemSrc, itemDst);
-    //     c.rect.w = s.dst.w;
-    //     c.rect.h = s.dst.h;
-    // }
 
     auto &cam = world.createEntity();
     SDL_FRect camView{};
@@ -114,6 +99,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     auto &playerTrans = player.addComponent<Transform>(Vector2D(5.0f, 5.0f), 0.0f, 1.0f);
     player.addComponent<Velocity>(Vector2D(0.0f, 0.0f), 240.0f);
     player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f), 0.0f, false);
+
     //comment this block out to remove player sprite and enable red texture on collider to test collider box
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
@@ -140,33 +126,7 @@ void Scene::initGameplay(const char *mapPath, int windowWidth, int windowHeight)
     //                                       playerCollider.rect.h));
 
     player.addComponent<Health>(Game::gameState.playerHealth);
-
-    //dont need crows spawning
-    // auto &spawner(world.createEntity());
-    // Transform t = spawner.addComponent<Transform>(Vector2D(windowWidth / 2, windowHeight - 5), 0.0f, 1.0f);
-    // spawner.addComponent<TimedSpawner>(2.0f, [this, t] {
-    //     //create our projectile
-    //     auto &e(world.createDeferredEntity());
-    //     e.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
-    //     e.addComponent<Velocity>(Vector2D(0, -1), 200.0f);
-    //     //e.addComponent<Acceleration>();
-    //
-    //     auto &anim = AssetManager::getAnimation("enemy");
-    //     e.addComponent<Animation>(anim);
-    //
-    //     SDL_Texture *tex = TextureManager::load("assets/animations/bird_anim.png");
-    //     SDL_FRect src = {0, 0, 32, 32};
-    //     SDL_FRect dest{t.position.x, t.position.y, 32, 32};
-    //     e.addComponent<Sprite>(tex, src, dest);
-    //
-    //     auto &c = e.addComponent<Collider>("projectile");
-    //     c.rect.w = dest.w;
-    //     c.rect.h = dest.h;
-    //
-    //     e.addComponent<ProjectileTag>();
-    // });
-
-    //add scene state
+ //add scene state
     auto &state(world.createEntity());
     state.addComponent<SceneState>();
 

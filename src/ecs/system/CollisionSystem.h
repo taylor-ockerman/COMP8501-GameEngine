@@ -18,7 +18,6 @@ class CollisionSystem {
 public:
     void update(World &world);
 
-    //void freeCollision(Entity *entityA, Entity *entityB);
     std::set<CollisionKey> activeCollisions;
 
 private:

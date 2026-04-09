@@ -4,37 +4,30 @@
 #include "ParticleInteractionSystem.h"
 #include "World.h"
 
-void ParticleInteractionSystem::convertParticle(Entity *entity, Cell &cell, ParticleType newType, int gx, int gy) {
-    auto &particle = entity->getComponent<Particle>();
-    ParticleProperties props = ParticleHelpers::getProperties(newType, true);
+void ParticleInteractionSystem::update(World &world, std::vector<std::unique_ptr<Entity> > &entities,
+                                       ParticleGrid &grid) {
+    for (auto &e: entities) {
+        if (!e->hasComponent<Particle>()) continue;
 
-    particle.type = newType;
-    particle.life = props.life;
-    particle.gridX = gx;
-    particle.gridY = gy;
+        auto &particle = e->getComponent<Particle>();
 
-    cell.type = newType;
-    cell.behaviour = props.behaviour;
-    cell.entity = entity;
-
-    if (entity->hasComponent<Sprite>()) {
-        auto &sprite = entity->getComponent<Sprite>();
-        sprite.src = props.spriteSrc;
+        switch (particle.type) {
+            case ParticleType::Fire:
+                handleFire(world, e.get(), grid);
+                break;
+            case ParticleType::Smoke:
+                handleSmoke(e.get(), grid);
+                break;
+            case ParticleType::Steam:
+                handleSteam(e.get(), grid);
+                break;
+            default:
+                break;
+        }
     }
 }
 
-void ParticleInteractionSystem::destroyParticle(Entity *entity, ParticleGrid &grid) {
-    auto &particle = entity->getComponent<Particle>();
-
-    if (grid.inBounds(particle.gridX, particle.gridY)) {
-        grid.wakeChunkAndNeighborsForCell(particle.gridX, particle.gridY);
-        grid.getChunkFromCell(particle.gridX, particle.gridY).movedThisFrame = true;
-        grid.clearCell(particle.gridX, particle.gridY);
-    }
-
-    entity->destroy();
-}
-
+//most complicated interaction, bit messy of an implementation
 void ParticleInteractionSystem::handleFire(World &world, Entity *entity, ParticleGrid &grid) {
     auto &particle = entity->getComponent<Particle>();
     particle.life--;
@@ -50,7 +43,7 @@ void ParticleInteractionSystem::handleFire(World &world, Entity *entity, Particl
         }
         return;
     }
-
+    //check neighbours for water or flammable materials
     for (auto &[nx, ny]: grid.getNeighbours(particle.gridX, particle.gridY)) {
         if (!grid.inBounds(nx, ny)) continue;
 
@@ -84,7 +77,7 @@ void ParticleInteractionSystem::handleFire(World &world, Entity *entity, Particl
         auto &neighborParticle = neighborCell.entity->getComponent<Particle>();
         neighborParticle.life = oldProps.life;
 
-        // wood/oil becoming fire should not move like liquid/gas
+        // fire behavior is static, so we need to set this after conversion
         neighborCell.behaviour = ParticleBehaviour::Static;
 
         grid.wakeChunkAndNeighborsForCell(nx, ny);
@@ -113,26 +106,34 @@ void ParticleInteractionSystem::handleSteam(Entity *entity, ParticleGrid &grid) 
     tickParticleLife(entity, grid, ParticleType::Steam);
 }
 
+void ParticleInteractionSystem::convertParticle(Entity *entity, Cell &cell, ParticleType newType, int gx, int gy) {
+    auto &particle = entity->getComponent<Particle>();
+    ParticleProperties props = ParticleHelpers::getProperties(newType, true);
 
-void ParticleInteractionSystem::update(World &world, std::vector<std::unique_ptr<Entity> > &entities,
-                                       ParticleGrid &grid) {
-    for (auto &e: entities) {
-        if (!e->hasComponent<Particle>()) continue;
+    particle.type = newType;
+    particle.life = props.life;
+    particle.gridX = gx;
+    particle.gridY = gy;
 
-        auto &particle = e->getComponent<Particle>();
+    cell.type = newType;
+    cell.behaviour = props.behaviour;
+    cell.entity = entity;
 
-        switch (particle.type) {
-            case ParticleType::Fire:
-                handleFire(world, e.get(), grid);
-                break;
-            case ParticleType::Smoke:
-                handleSmoke(e.get(), grid);
-                break;
-            case ParticleType::Steam:
-                handleSteam(e.get(), grid);
-                break;
-            default:
-                break;
-        }
+    if (entity->hasComponent<Sprite>()) {
+        auto &sprite = entity->getComponent<Sprite>();
+        sprite.src = props.spriteSrc;
     }
 }
+
+void ParticleInteractionSystem::destroyParticle(Entity *entity, ParticleGrid &grid) {
+    auto &particle = entity->getComponent<Particle>();
+
+    if (grid.inBounds(particle.gridX, particle.gridY)) {
+        grid.wakeChunkAndNeighborsForCell(particle.gridX, particle.gridY);
+        grid.getChunkFromCell(particle.gridX, particle.gridY).movedThisFrame = true;
+        grid.clearCell(particle.gridX, particle.gridY);
+    }
+
+    entity->destroy();
+}
+

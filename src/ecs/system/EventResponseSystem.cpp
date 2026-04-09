@@ -182,6 +182,7 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
         std::cout << "no brushState" << std::endl;
         return;
     }
+    //create label with particle type text
     if (spawner->hasComponent<Children>()) {
         for (auto &ent: spawner->getComponent<Children>().children) {
             if (ent->hasComponent<Label>()) {
@@ -193,14 +194,13 @@ onSpawnerChangeEvent(const SpawnerChangeEvent &e, World &world) {
     }
     state->selectedParticle = e.pType;
     SDL_Texture *tex = TextureManager::load("assets/particle_tileset.png");
+    //always return the same sprite that include the 4 64x64px color variations
     SDL_FRect src = ParticleHelpers::getProperties(e.pType, false).spriteSrc;
-    //std::cout << "hitting that shiz" << std::endl;
     src.w += 64;
     src.h += 64;
     SDL_FRect dst = sprite.dst;
     spawner->deactivateComponent<Sprite>();
     spawner->addComponent<Sprite>(tex, src, dst, RenderLayer::UI, true);
-    //sprite = Sprite{tex, src, dst, RenderLayer::UI, true};
 }
 
 void EventResponseSystem::onMenuToggle(const MenuToggleEvent &e, World &world) {

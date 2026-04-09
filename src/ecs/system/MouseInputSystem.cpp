@@ -19,6 +19,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
     float camZoom = 1.0f;
     BrushState *brushState = nullptr;
     for (auto &e: world.getEntities()) {
+        //find the camera and brushState components, will be needed for spawning logic
         if (e->hasComponent<Camera>()) {
             auto &camera = e->getComponent<Camera>();
             camZoom = camera.zoom;
@@ -91,6 +92,7 @@ void MouseInputSystem::update(World &world, const SDL_Event &event, ParticleGrid
 
     if (grid == nullptr) return;
     if (brushState == nullptr) return;
+    //set new brushState location with offsets to ensure spawning happens on mouse
     brushState->mouseScreenPos = Vector2D(mx, my);
     brushState->mouseWorldPos = Vector2D(
         static_cast<int>((mx + camOffx) / camZoom),

@@ -10,13 +10,6 @@ class World;
 class ParticleSpawnDeSpawnSystem {
 public:
     void update(World &world, ParticleGrid &grid);
-
-    //ParticlePlacementHelpers functions
-    // bool spawnParticleAtCell(ParticleGrid &grid, int gx, int gy, ParticleType type, Entity &entity);
-
-    //void spawnBrushAtWorld(World &world, int worldX, int worldY, ParticleGrid &grid, ParticleType type);
-
-    //World functions
 private:
     bool spawnParticleAtWorld(World &world, ParticleGrid &grid,
                               int worldX, int worldY,

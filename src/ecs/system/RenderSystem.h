@@ -32,7 +32,7 @@ public:
                 auto &sprite = entity->getComponent<Sprite>();
 
                 if (sprite.renderLayer != RenderLayer::World) continue;
-                //we are converting from world space to screen space
+                //we are converting from world space to screen space, accounts for cam zoom as well
                 SDL_FRect renderDst{};
                 renderDst.x = (t.position.x - cam.view.x) * cam.zoom;
                 renderDst.y = (t.position.y - cam.view.y) * cam.zoom;

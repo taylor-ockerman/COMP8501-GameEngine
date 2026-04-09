@@ -86,11 +86,6 @@ public:
         }
 
         mouseInputSystem.update(*this, event, grid);
-        // if (sceneType != SceneType::MainMenu && grid != nullptr) {
-        //     //a bit janky but this needs to come after mouseinput
-        //     //system since it is responsible for actually creating and deleting from mouse clicks
-        //     //particleCreationSystem.update(*this, *grid);
-        // }
         audioEventQueue.process();
         preRenderSystem.update(entities);
         synchronizeEntities();
@@ -114,6 +109,7 @@ public:
         return *entities.back();
     }
 
+    //for debugging
     void printParticleCounts(ParticleGrid &grid) {
         int particleCount = 0;
 

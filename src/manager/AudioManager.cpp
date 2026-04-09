@@ -31,9 +31,6 @@ AudioManager::AudioManager() {
 }
 
 void AudioManager::loadAudio(const std::string &name, const char *path) const {
-    // if (audio.contains(path)) {
-    //     return;
-    // }
     if (audio.contains(name)) {
         return;
     }
@@ -50,7 +47,7 @@ void AudioManager::playMusic(const std::string &name) const {
         std::cout << "MIX_SetTrackAudio() failed." << std::endl;
         return;
     }
-
+    //loop music due to -1
     MIX_PlayTrack(musicTrack, -1);
 
     std::cout << "Playing music: " << name << std::endl;
@@ -67,7 +64,6 @@ void AudioManager::playSfx(const std::string &name) {
     }
 
     MIX_PlayTrack(sfxTrack, 0);
-    //std::cout << "Playing sfx: " << name << std::endl;
 }
 
 void AudioManager::playSpawn(const std::string &name) {
@@ -86,15 +82,12 @@ void AudioManager::playSpawn(const std::string &name) {
     }
 
     MIX_PlayTrack(spawnTrack, -1);
-    //MIX_SetTrackGain(spawnTrack, 8.0f);
     currentSpawnAudioLoop = name;
-    //std::cout << "Playing sfx: " << name << std::endl;
 }
 
 void AudioManager::stopSpawn() {
     if (currentSpawnAudioLoop.empty()) return;
 
     MIX_StopTrack(spawnTrack, 0);
-    //std::cout << "Stopping spawn track: " << currentSpawnAudioLoop << std::endl;
     currentSpawnAudioLoop.clear();
 }

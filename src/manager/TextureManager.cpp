@@ -52,7 +52,7 @@ void TextureManager::draw(SDL_Texture *tex, const SDL_FRect *src, const SDL_FRec
     SDL_RenderTexture(game->renderer, tex, src, dest);
 }
 
-//credit to Logan Pederson for drawCircle function, modified by Taylor Ockerman
+//credit to Logan Pedersen for drawCircle function, modified by Taylor Ockerman
 void TextureManager::drawCircle(Entity *cam, Vector2D &center, float radius, Uint8 r, Uint8 g, Uint8 b) {
     Uint8 oldR, oldG, oldB, oldA;
 
@@ -71,10 +71,7 @@ void TextureManager::drawCircle(Entity *cam, Vector2D &center, float radius, Uin
     float screenRadius = radius * camera.zoom;
     float screenThickness = thickness * camera.zoom;
     float screenBuffer = buffer * camera.zoom;
-
-    // float inner = screenRadius - 5.0f * camera.zoom + screenBuffer;
-    // float outer = screenRadius - 5.0f * camera.zoom + screenThickness;
-    float inner = screenRadius - screenThickness + screenBuffer;
+ float inner = screenRadius - screenThickness + screenBuffer;
     float outer = screenRadius + screenBuffer;
 
     float innerSq = inner * inner;

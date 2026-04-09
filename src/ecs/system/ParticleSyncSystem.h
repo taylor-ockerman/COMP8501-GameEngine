@@ -9,6 +9,6 @@ class ParticleGrid;
 
 class ParticleSyncSystem {
 public:
-    void update(ParticleGrid &grid);
+    void update(ParticleGrid &grid); //keeps entity transforms and sprite synced with grid positions
 };
 #endif //INC_8051TUTORIAL_PARTICLESYNCSYSTEM_H

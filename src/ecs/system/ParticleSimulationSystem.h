@@ -16,7 +16,7 @@ public:
         beginChunkFrame(grid);
         clearPreviousPlayerOccupancy(grid);
         markPlayerOccupancy(grid, entities);
-        // powders/liquids/static: bottom-up chunk pass
+        // powders/liquids/static, bottom-up chunk pass
         for (int cy = grid.getChunkHeight() - 1; cy >= 0; cy--) {
             bool leftToRightChunks = rand() % 2 == 0;
 
@@ -31,7 +31,7 @@ public:
             }
         }
 
-        // gas: top-down chunk pass
+        // gas, top-down chunk pass
         for (int cy = 0; cy < grid.getChunkHeight(); cy++) {
             bool leftToRightChunks = rand() % 2 == 0;
 
@@ -74,10 +74,6 @@ private:
 
         Chunk &chunk = grid.chunkAt(cx, cy);
         if (!chunk.active) return;
-        // std::cout << "chunk " << cx << "," << cy
-        //         << " active=" << chunk.active
-        //         << " idle=" << chunk.idleFrames
-        //         << " moved=" << chunk.movedThisFrame << std::endl;
 
         int chunkSize = grid.getChunkSize();
 
@@ -139,10 +135,6 @@ private:
 
         Chunk &chunk = grid.chunkAt(cx, cy);
         if (!chunk.active) return;
-        // std::cout << "chunk " << cx << "," << cy
-        //         << " active=" << chunk.active
-        //         << " idle=" << chunk.idleFrames
-        //         << " moved=" << chunk.movedThisFrame << std::endl;
 
         int chunkSize = grid.getChunkSize();
 
@@ -284,6 +276,7 @@ private:
                density;
     }
 
+    //track player position in grid and eat particles near to player
     static void markPlayerOccupancy(ParticleGrid &grid, std::vector<std::unique_ptr<Entity> > &entities) {
         int radius = 4;
 
@@ -329,6 +322,8 @@ private:
         cells.clear();
     }
 
+    //allows liquid to move more than one cell at a time
+    //checks path to maxDist and will move maxDist if no cell blocks it
     bool tryFlowSideways(ParticleGrid &grid, int x, int y, int maxDist, bool isLiquid) {
         std::vector<int> flatTargets;
         std::vector<int> dropTargets;

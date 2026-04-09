@@ -15,8 +15,6 @@ public:
         for (auto &entity: entities) {
             if (entity->hasComponent<Particle>()) continue;
             if (entity->hasComponent<Transform>() && entity->hasComponent<Velocity>()) {
-                //t.position.x += 60 * dt;
-                //t.position.y += 60 * dt;
                 auto &t = entity->getComponent<Transform>();
                 auto &v = entity->getComponent<Velocity>();
                 //track previous frames position
@@ -29,7 +27,6 @@ public:
 
                 //Vector2D needs an operator function to multiply a float
                 Vector2D velocityVec = directionVec * v.magnitude;
-                //Vector2D velocityVec = directionVec;
                 t.position += velocityVec * dt;
             }
         }

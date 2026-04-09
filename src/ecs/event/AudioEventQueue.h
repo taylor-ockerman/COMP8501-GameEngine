@@ -22,6 +22,7 @@ public:
     }
 
     void execute() const {
+        //allows looping of sound effect or single play
         switch (command) {
             case AudioCommand::PlayOneShot:
                 AudioManager::playSfx(name);

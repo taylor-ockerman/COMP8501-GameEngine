@@ -59,6 +59,7 @@ struct MouseInteractionEvent : BaseEvent {
     }
 };
 
+//used for spawner HUD element that displays current spawner type
 struct SpawnerChangeEvent : BaseEvent {
     Entity *entity = nullptr;
 
@@ -70,6 +71,7 @@ struct SpawnerChangeEvent : BaseEvent {
     }
 };
 
+//used for gameplay control menu
 struct MenuToggleEvent : BaseEvent {
     MenuToggleEvent() {
         type = EventType::MenuToggle;

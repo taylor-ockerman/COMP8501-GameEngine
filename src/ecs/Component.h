@@ -109,21 +109,6 @@ struct Children {
     std::vector<Entity *> children{};
 };
 
-enum class ParticleType {
-    Empty,
-    Sand,
-    Stone,
-    Smoke,
-    Water,
-    Gunpowder,
-    Fire,
-    Wall,
-    Oil,
-    Wood,
-    Steam,
-    Erase,
-    Last
-};
 
 enum class ParticleBehaviour {
     Static,
@@ -141,11 +126,38 @@ struct ParticleProperties {
     SDL_FRect spriteSrc{};
 };
 
+
+enum class ParticleType {
+    Empty,
+    Sand,
+    Stone,
+    Smoke,
+    Water,
+    Gunpowder,
+    Fire,
+    Wall,
+    Oil,
+    Wood,
+    Steam,
+    Erase,
+    Last
+};
+
 struct Particle {
     ParticleType type = ParticleType::Sand;
     int gridX{};
     int gridY{};
     int life = 100;
+};
+
+struct BrushState {
+    ParticleType selectedParticle = ParticleType::Sand;
+    int brushSize = 1;
+    int maxBrushSize = 20;
+    Vector2D mouseScreenPos;
+    Vector2D mouseWorldPos;
+    bool isPainting = false;
+    bool uiCapturedClick = false;
 };
 
 enum class LabelType {
@@ -176,13 +188,5 @@ struct SpawnerHUDTag {
 struct MenuTag {
 };
 
-struct BrushState {
-    ParticleType selectedParticle = ParticleType::Sand;
-    int brushSize = 1;
-    int maxBrushSize = 20;
-    Vector2D mouseScreenPos;
-    Vector2D mouseWorldPos;
-    bool isPainting = false;
-    bool uiCapturedClick = false;
-};
+
 #endif //INC_8051TUTORIAL_COMPONENT_H

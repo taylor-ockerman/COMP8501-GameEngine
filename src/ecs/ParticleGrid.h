@@ -41,41 +41,8 @@ public:
         for (int i = 0; i < static_cast<int>(ParticleType::Last); i++) {
             particleTypeCountMap.emplace(static_cast<ParticleType>(i), 0);
         }
-        // for (auto &p: particleTypeCountMap) {
-        //     switch (p.first) {
-        //         case ParticleType::Empty:
-        //             std::cout << "Empty ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Sand:
-        //             std::cout << "Sand ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Stone:
-        //             std::cout << "Stone ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Water:
-        //             std::cout << "Water ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Gunpowder:
-        //             std::cout << "Gunpowder ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Fire:
-        //             std::cout << "Fire ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Oil:
-        //             std::cout << "Oil ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Wood:
-        //             std::cout << "Wood ParticleType added" << std::endl;
-        //             break;
-        //         case ParticleType::Steam:
-        //             std::cout << "Steam ParticleType added" << std::endl;
-        //             break;
-        //         default:
-        //             break;
-        //     }
-        // }
     };
-
+    //world coordinates to grid coordinates
     int worldToGridX(float worldX) const {
         return static_cast<int>(worldX) / cellSize;
     }
@@ -84,6 +51,7 @@ public:
         return static_cast<int>(worldY) / cellSize;
     }
 
+    //grid coordinates to world coordinates
     int gridToWorldX(int gx) const {
         return gx * cellSize;
     }
@@ -148,8 +116,8 @@ public:
         }
     }
 
-    Cell &at(int x, int y) {
-        return cells[y * width + x];
+    Cell &at(int gx, int gy) {
+        return cells[gy * width + gx];
     };
 
     bool isEmpty(int x, int y) const {
@@ -205,7 +173,7 @@ public:
         return previousPlayerCells;
     }
 
-
+    //helper functions used for debugging
     int getActiveChunkCount() {
         int count = 0;
         for (auto &chunk: chunks) {
@@ -222,6 +190,8 @@ public:
         return count;
     }
 
+    //returns coordinates of all cells immediately around the given coordinate
+    //used for locality checks during particle interactions
     std::vector<std::pair<int, int> > getNeighbours(int gx, int gy) {
         std::vector<std::pair<int, int> > neighbours{};
         if (!inBounds(gx, gy)) return neighbours;
@@ -243,6 +213,7 @@ private:
     std::vector<Cell> cells;
     std::vector<Chunk> chunks;
     std::vector<std::pair<int, int> > previousPlayerCells;
+    //helps to reduce area to search for an update player position from entire grid to limited parts of the grid
     std::unordered_map<ParticleType, int> particleTypeCountMap{};
 };
 
