@@ -1,5 +1,7 @@
 # Sandy Sim - COMP 8051 Game Engine Project
 
+![Main Menu Screen](./assets/menu.png)
+
 A custom 2D game engine and sandbox project built in C++ using SDL3 for BCIT’s game architecture course. The project combines a traditional entity-component-system architecture with a grid-based particle simulation, allowing the player to move through a side-scrolling world while spawning and interacting with materials such as sand, water, smoke, stone, wood, oil, steam, and fire. The engine TMX maps for level data, SDL_ttf for UI text, SDL_image for textures, SDL_mixer for audio, and TinyXML2 for asset and map parsing.
 
 At the core of the project is an ECS-style world manager. Entities are lightweight containers, while behavior is implemented through systems such as keyboard input, gravity, movement, collider synchronization, particle simulation, particle syncing, particle interaction, collision, animation, camera, HUD, UI rendering, and destruction. During each frame, the world updates these systems in order, then processes audio events, prepares render state, synchronizes deferred entities, and removes destroyed ones.
